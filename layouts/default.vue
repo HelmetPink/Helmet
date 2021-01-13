@@ -15,7 +15,7 @@
       <nuxt />
     </div>
     <PFooter :padding="200"></PFooter>
-    <MyPayaso></MyPayaso>
+    <!-- <MyPayaso></MyPayaso> -->
     <PMask></PMask>
     <!-- <RiskWarning
       v-if="showRiskWarning"
@@ -45,7 +45,7 @@ import { getID } from "~/assets/utils/address-pool.js";
 import { mateMaskInfo } from "~/assets/utils/matemask.js";
 import RiskWarning from "~/components/common/risk-warning.vue";
 import StatusDialog from "~/components/common/status-dialog.vue";
-import MyPayaso from "~/components/common/my-payaso.vue";
+// import MyPayaso from "~/components/common/my-payaso.vue";
 import PMask from "~/components/common/p-mask.vue";
 import WallectDownLoad from "~/components/common/wallet-download.vue";
 import { uniswap } from "~/assets/utils/address-pool.js";
@@ -60,7 +60,7 @@ export default {
     PFooter,
     RiskWarning,
     StatusDialog,
-    MyPayaso,
+    // MyPayaso,
     PMask,
     WallectDownLoad,
   },
@@ -305,7 +305,6 @@ export default {
       // helmet
       for (let i = 0; i < list.length; i++) {
         let px = await uniswap("WBNB", list[i]);
-        console.log(px, list[i]);
         let key = list[i];
         callIndexPirce[key] = px;
       }

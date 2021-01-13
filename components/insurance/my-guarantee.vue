@@ -152,6 +152,13 @@ export default {
       immediate: true,
     },
   },
+  mounted() {
+    this.$bus.$on("reload_my_guarantee", () => {
+      this.page = 0;
+      this.limit = 5;
+      this.setSettlementList(this.$store.state.myAboutInfoBuy);
+    });
+  },
   methods: {
     myAboutInfoBuyWatch(newValue) {
       if (newValue) {
@@ -240,9 +247,9 @@ export default {
       let second = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
-      let template = `${day} ${this.$t("Content.DayM")} ${hour} ${this.$t(
+      let template = `${day}${this.$t("Content.DayM")}${hour}${this.$t(
         "Content.HourM"
-      )} ${minute} ${this.$t("Content.MinM")} ${second} ${this.$t(
+      )}${minute}${this.$t("Content.MinM")}${second}${this.$t(
         "Content.SecondM"
       )}`;
       return template;

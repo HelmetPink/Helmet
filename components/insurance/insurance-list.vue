@@ -114,6 +114,8 @@ export default {
       sellList: [],
       buyList: [],
       isLoading: true,
+      listCoin: "",
+      listType: "",
     };
   },
   watch: {
@@ -137,18 +139,10 @@ export default {
       handler: "aboutInfoSellWatch",
       immediate: true,
     },
-    aboutInfoBuy: {
-      handler: "aboutInfoBuyWatch",
-      immediate: true,
-    },
   },
   computed: {
     aboutInfoSell() {
       let list = this.$store.state.aboutInfoSell;
-      return list;
-    },
-    aboutInfoBuy() {
-      let list = this.$store.state.aboutInfoBuy;
       return list;
     },
     indexArray() {
@@ -159,21 +153,24 @@ export default {
       return this.$store.state.repriceMap;
     },
   },
+  mounted() {
+    this.$bus.$on("reload_insurance_list", () => {
+      this.page = 0;
+      this.limit = 10;
+      this.setList(this.aboutInfoSell, this.currentCoin, this.currentType);
+      console.log(this.insuranceList);
+    });
+  },
   methods: {
     // 卖单数据
     aboutInfoSellWatch(newValue) {
       if (newValue) {
-        this.setList(newValue, this.aboutInfoBuy);
-      }
-    },
-    // 买单数据
-    aboutInfoBuyWatch(newValue) {
-      if (newValue) {
-        this.setList(this.aboutInfoSell, newValue);
+        console.log();
+        this.setList(newValue, this.currentCoin, this.currentType);
       }
     },
     // 格式化数据
-    async setList(sell) {
+    async setList(sell, coin, type) {
       this.isLoading = true;
       this.showList = [];
       const sellResult = [];
@@ -267,9 +264,16 @@ export default {
       this.isLoading = false;
       this.buyList = buyResult;
       this.sellList = sellResult;
-      let result = this.buyList.filter(
-        (item) => getTokenName(item._collateral) == this.currentCoin
-      );
+      let result;
+      if (type == 1) {
+        result = this.buyList.filter(
+          (item) => getTokenName(item._collateral) == coin
+        );
+      } else {
+        result = this.sellList.filter(
+          (item) => getTokenName(item._underlying) == coin
+        );
+      }
       this.insuranceList = result;
       this.showList = result.slice(this.page * this.limit, this.limit);
     },
@@ -287,6 +291,7 @@ export default {
         this.insuranceList = result;
         this.showList = result.slice(this.page * this.limit, this.limit);
       }
+      console.log(this.showList);
     },
     getNewPrice(id, rtArray) {
       let list = this.rePriceMap;
@@ -336,6 +341,8 @@ export default {
           _expiry: data._expiry,
           _collateral: getTokenName(data._collateral),
         };
+        this.listType = 2;
+        this.listCoin = data._collateral;
       } else {
         let Token = getTokenName(data._underlying);
         // (fromWei(item.volume, Token) * this.indexArray[0][unToken]) / 2;
@@ -350,6 +357,8 @@ export default {
           _expiry: data._expiry,
           _collateral: getTokenName(data._collateral),
         };
+        this.listType = 2;
+        this.listCoin = data._underlying;
       }
 
       buyInsuranceBuy(datas, (status) => {});

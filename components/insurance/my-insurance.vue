@@ -199,6 +199,13 @@ export default {
       immediate: true,
     },
   },
+  mounted() {
+    this.$bus.$on("reload_my_insurance", () => {
+      this.page = 0;
+      this.limit = 5;
+      this.setSettlementList(this.$store.state.myAboutInfoSell);
+    });
+  },
   methods: {
     myAboutInfoSellWatch(newValue) {
       if (newValue) {
@@ -310,6 +317,8 @@ export default {
       let array = list.filter((item) => item.askID === id)[0];
       if (array && array.askID) {
         let arr = this.getNewPrice(array.newAskID, array);
+        console.log(arr);
+
         return arr;
       }
       return rtArray;
@@ -346,7 +355,7 @@ export default {
       this.showList = list;
     },
     toMining() {
-      this.$router.push("/mining");
+      // this.$router.push("/mining");
     },
   },
 };

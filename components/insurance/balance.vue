@@ -158,9 +158,9 @@ export default {
       let second = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
-      let template = `${day} ${this.$t("Content.Day")} ${hour} ${this.$t(
+      let template = `${day}${this.$t("Content.Day")}${hour}${this.$t(
         "Content.Hour"
-      )} ${minute} ${this.$t("Content.Min")} ${second} ${this.$t(
+      )}${minute}${this.$t("Content.Min")}${second}${this.$t(
         "Content.Second"
       )}`;
       this.dueDate = template;
@@ -177,9 +177,9 @@ export default {
       let second = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
-      let template = `${day} ${this.$t("Content.Day")} ${hour} ${this.$t(
+      let template = `${day}${this.$t("Content.Day")}${hour}${this.$t(
         "Content.Hour"
-      )} ${minute} ${this.$t("Content.Min")} ${second} ${this.$t(
+      )}${minute}${this.$t("Content.Min")}${second}${this.$t(
         "Content.Second"
       )}`;
       this.helmetDate = template;
@@ -227,11 +227,7 @@ export default {
     section {
       display: flex;
       > div {
-        &:nth-of-type(1) {
-          width: 250px;
-        }
-        width: 300px;
-
+        margin-right: 30px;
         span {
           font-size: 14px;
           color: #919aa6;

@@ -26,7 +26,7 @@ export default {
   },
   mounted() {
     this.$bus.$on("CHANGE_TRADE_TYPE", (num) => {
-      this.handleClickInsurance(num);
+      // this.handleClickInsurance(num);
     });
   },
   methods: {

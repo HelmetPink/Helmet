@@ -3,14 +3,14 @@
     <div class="swiper-wrapper">
       <div class="text swiper-slide">
         <div>
-          <h3>{{ $t("Banner.Title") }}</h3>
+          <h3>HELMATE IFO 9倍超募 937.8%</h3>
           <span
-            >{{ $t("Banner.Text") }}
+            >Total raised 937.87% of the target 9x oversold
             <a href="https://pancakeswap.finance/ifo" target="_blank"
               >{{ $t("Banner.ReadMore") }}
             </a>
           </span>
-          <div>
+          <!-- <div>
             <p>
               <i>{{ day }}</i>
               <span>DAYS</span>
@@ -25,7 +25,7 @@
               <i>{{ minute }} </i>
               <span>MINUTES</span>
             </p>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="img swiper-slide">
