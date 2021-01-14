@@ -90,7 +90,10 @@ export default {
         dpr: this.dpr,
         indexPx: this.indexPx,
         strikePrice: this.strikePrice,
-        _expiry: new Date(this._expiry) * 1,
+        _expiry:
+          this.currentCoin == "HELMET"
+            ? new Date(this.helmetTime) * 1
+            : new Date(this._expiry) * 1,
         num: this.volume,
       };
     },
