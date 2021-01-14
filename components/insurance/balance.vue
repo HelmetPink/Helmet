@@ -5,7 +5,12 @@
         <span>{{ $t("Content.InsurancePrice") }}</span>
         <p>
           1 {{ currentCoin == "FORTUBE" ? "FOR" : currentCoin }} :
-          {{ currentCoin == "ETH" ? strikePrice : "--" }} BNB
+          {{
+            currentCoin == "ETH" || this.currentCoin == "BTCB"
+              ? strikePriceArray[this.currentType - 1][this.currentCoin]
+              : "--"
+          }}
+          BNB
           <!-- {{ currentCoin == "HELMET" ? "--" : strikePrice }} BNB -->
         </p>
       </div>
@@ -15,7 +20,9 @@
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-time"></use>
           </svg>
-          {{ currentCoin != "ETH" ? "--" : dueDate }}
+          {{
+            currentCoin != "ETH" && this.currentCoin != "BTCB" ? "--" : dueDate
+          }}
           <!-- {{ currentCoin == "HELMET" ? helmetDate : dueDate }} -->
           <!-- -- -->
         </p>
@@ -105,6 +112,9 @@ export default {
       let num = this.$store.state.BNB_BUSD;
       return num;
     },
+    strikePriceArray() {
+      return this.$store.state.strikePriceArray;
+    },
   },
   watch: {
     currentCoin(val, oldVal) {
@@ -152,7 +162,6 @@ export default {
       });
       clearTimeout();
     }, 1000);
-    console.log(this.IndexPxArray);
   },
   methods: {
     // 倒计时

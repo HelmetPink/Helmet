@@ -20,8 +20,9 @@
       <li>
         <!-- Helmet流通量 -->
         <p>
-          <label>{{ $t("Banner.HelmetTransfer") }}</label>
-          <span>{{
+          <label>{{ $t("Banner.HelmetPcice") }}</label>
+          <span>
+            <!-- {{
             addCommom(
               precision.plus(
                 precision.minus(totalHelmet, balanceMine),
@@ -29,7 +30,9 @@
               ),
               2
             )
-          }}</span>
+          }} -->
+            {{ helmetPrice }} BNB
+          </span>
         </p>
         <img src="~/assets/img/helmet/ba3@2x.png" alt="" />
       </li>
@@ -46,6 +49,7 @@ export default {
       precision: precision,
       fixD: fixD,
       addCommom: addCommom,
+      helmetPrice: 0,
     };
   },
   computed: {
@@ -73,11 +77,32 @@ export default {
     frequency() {
       return this.$store.state.assets.validBorrowing;
     },
+    indexArray() {
+      let list = this.$store.state.allIndexPrice;
+      return list;
+    },
+    helmetPrice(newVal, val) {
+      if (!newVal) {
+        this.getPrice();
+      }
+    },
   },
-
+  watch: {
+    IndexPxArray: {
+      handler: "IndexWacth",
+      immediate: true,
+    },
+  },
   mounted() {
     if (window.chainID == 56) {
       this.getBannerData();
+    }
+    if (!this.helmetPrice) {
+      setInterval(() => {
+        setTimeout(() => {
+          this.getPrice();
+        });
+      }, 1000);
     }
   },
   methods: {
@@ -87,7 +112,18 @@ export default {
         this.$store.dispatch("getBalanceMine"); //获取 Helmet 矿山余额
         this.$store.dispatch("getClaimAbleHelmet"); //获取 所有待结算 Helmet
         this.$store.dispatch("getValidBorrowing"); //获取 有效成交
+        this.getPrice();
       }, 2000);
+    },
+    getPrice() {
+      this.helmetPrice = addCommom(this.indexArray[1]["HELMET"], 4);
+    },
+    IndexWacth(newValue, val) {
+      if (newValue) {
+        this.helmetPrice = addCommom(this.indexArray[1]["HELMET"], 4);
+      } else {
+        this.getPrice;
+      }
     },
   },
 };

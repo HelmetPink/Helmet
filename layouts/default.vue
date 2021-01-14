@@ -363,6 +363,7 @@ export default {
       this.$store.commit("SET_ALL_INDEX_PRICE", arr);
       this.$store.commit("SET_BNB_BUSD", bnbbusd);
       this.$bus.$emit("DRAW_ECHART");
+      console.log(arr);
     },
   },
 };
