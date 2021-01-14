@@ -203,12 +203,13 @@ export default {
     this.$bus.$on("reload_my_insurance", () => {
       this.page = 0;
       this.limit = 5;
-      this.setSettlementList(this.$store.state.myAboutInfoSell);
+      this.setSettlementList(this.myAboutInfoSell);
     });
   },
   methods: {
     myAboutInfoSellWatch(newValue) {
       if (newValue) {
+          
         this.setSettlementList(newValue);
       }
     },
