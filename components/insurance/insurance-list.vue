@@ -289,7 +289,6 @@ export default {
         this.insuranceList = result;
         this.showList = result.slice(this.page * this.limit, this.limit);
       }
-      console.log(this.showList);
     },
     getNewPrice(id, rtArray) {
       let list = this.rePriceMap;
