@@ -183,7 +183,6 @@ export default {
         };
         onIssueSell(data, (status) => {});
       }
-      console.log(data);
     },
     watchRent(newValue) {
       if (!newValue.dpr || !newValue.num) {
