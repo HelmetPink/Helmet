@@ -77,7 +77,7 @@ export default {
       autoRounding,
       fixD,
       addCommom,
-      strikePrice: 0.0067,
+      strikePrice: 0.0049,
       // strikePrice: "--",
       dueDate: 0,
       helmetDate: 0,

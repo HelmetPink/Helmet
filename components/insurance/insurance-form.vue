@@ -81,6 +81,9 @@ export default {
     _expiry() {
       return this.$store.state.dueDate;
     },
+    helmetTime() {
+      return this.$store.state.helmetDate;
+    },
     // 保费参数
     RentGrounp() {
       return {
@@ -151,7 +154,7 @@ export default {
           annual: this.dpr,
           category: this.currentCoin, //
           currency: this.currency, //
-          expire: this._expiry, //
+          expire: this.currentCoin == "HELMET" ? this.helmetTime : this._expiry, //
           premium: this.Rent,
           price: this.strikePrice,
           volume: this.volume, //
@@ -165,7 +168,7 @@ export default {
           annual: this.dpr,
           category: this.currency, //
           currency: this.currentCoin, //
-          expire: this._expiry, //
+          expire: this.currentCoin == "HELMET" ? this.helmetTime : this._expiry, //
           premium: this.Rent,
           price: this.strikePrice,
           volume: this.volume, //

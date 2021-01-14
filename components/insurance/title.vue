@@ -29,8 +29,11 @@
         </div>
       </div>
       <div class="img swiper-slide">
-        <h3>{{ $t("Banner.TradeStart") }}</h3>
-        <p>{{ $t("Banner.TradeTime") }}</p>
+        <h3>
+          <!-- {{ $t("Banner.TradeStart") }} -->
+          Policy trading start
+        </h3>
+        <!-- <p>{{ $t("Banner.TradeTime") }}</p> -->
       </div>
     </div>
     <div class="swiper-pagination"></div>
