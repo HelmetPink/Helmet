@@ -199,17 +199,12 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    this.$bus.$on("reload_my_insurance", () => {
-      this.page = 0;
-      this.limit = 5;
-      this.setSettlementList(this.myAboutInfoSell);
-    });
-  },
+  mounted() {},
   methods: {
     myAboutInfoSellWatch(newValue) {
       if (newValue) {
-          
+        this.page = 0;
+        this.limit = 5;
         this.setSettlementList(newValue);
       }
     },

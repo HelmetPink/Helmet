@@ -58,7 +58,7 @@ export default {
       precision,
       Rent: 0,
       indexPx: 0.0033,
-      strikePrice: 0.0067,
+      strikePrice: 0.0049,
       unit: "BNB",
       currency: "WBNB",
       earnings: 0,
@@ -99,6 +99,9 @@ export default {
     },
     BalanceArray() {
       return this.$store.state.BalanceArray;
+    },
+    BNB_BUSD() {
+      return this.$store.state.BNB_BUSD;
     },
   },
   watch: {
@@ -155,9 +158,7 @@ export default {
           settleToken: "HELMET",
           _yield: 0,
         };
-        console.log(data);
         onIssueSellOnETH(data, (status) => {});
-        this.$bus.$emit("CHANGE_TRADE_TYPE", 1);
       } else {
         data = {
           private: false, //
@@ -172,11 +173,10 @@ export default {
           _yield: 0,
         };
         onIssueSell(data, (status) => {});
-        this.$bus.$emit("CHANGE_TRADE_TYPE", 1);
       }
+      console.log(data);
     },
     watchRent(newValue) {
-      console.log(newValue);
       if (!newValue.dpr || !newValue.num) {
         this.Rent = 0;
         return;
@@ -245,18 +245,18 @@ export default {
         px = list[1][coin];
         exPx = list[1][coin] * 2;
         this.unit = coin;
-        if (coin == "HELMET") {
-          this.strikePrice = 0.2;
+        if (this.currentCoin == "HELMET") {
+          this.strikePrice = addCommom(0.2 / this.BNB_BUSD, 4);
         }
       } else {
         px = list[1][coin];
         exPx = list[1][coin] * 0.5;
         this.unit = "BNB";
-        if (coin == "HELMET") {
-          this.strikePrice = 0.12;
+        if (this.currentCoin == "HELMET") {
+          this.strikePrice = addCommom(0.12 / this.BNB_BUSD, 4);
         }
       }
-      if (coin == "HELMET") {
+      if (this.currentCoin == "HELMET") {
         return;
       }
       this.indexPx = px;

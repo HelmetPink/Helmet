@@ -209,7 +209,7 @@ export const onIssueSellOnETH = async (data_, callBack) => {
                         });
                     }
                     setTimeout(() => {
-                        bus.$meit('REFRESH_ALL_DATA');
+                        bus.$emit('REFRESH_ALL_DATA');
                         bus.$emit('REFRESH_BALANCE');
                     }, 1000);
                 }
@@ -312,7 +312,7 @@ export const buyInsuranceBuy = async (_data, callBack) => {
                         });
                     }
                     setTimeout(() => {
-                        bus.$meit('REFRESH_ALL_DATA');
+                        bus.$emit('REFRESH_ALL_DATA');
                         bus.$emit('REFRESH_BALANCE');
                     }, 1000);
                 }

@@ -152,16 +152,12 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    this.$bus.$on("reload_my_guarantee", () => {
-      this.page = 0;
-      this.limit = 5;
-      this.setSettlementList(this.$store.state.myAboutInfoBuy);
-    });
-  },
+  mounted() {},
   methods: {
     myAboutInfoBuyWatch(newValue) {
       if (newValue) {
+        this.page = 0;
+        this.limit = 5;
         this.setSettlementList(newValue);
       }
     },

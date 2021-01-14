@@ -116,6 +116,7 @@ export default {
     // if (!window.localStorage.getItem('readRisk')) {
     //   this.showRiskWarning = true;
     // }
+
     this.copy();
     window.WEB3 = await web3();
     window.chainID = await getID();
@@ -151,7 +152,9 @@ export default {
         conText: "请连接到Binance Smart Chain网络",
       });
     }
-
+    if (window.chainID == 56) {
+      this.getBannerData();
+    }
     // 刷新所有数据
     this.$bus.$on("REFRESH_ALL_DATA", (data) => {
       this.refreshAllData();
@@ -170,6 +173,14 @@ export default {
     },
     closeDialog() {
       this.$emit("close");
+    },
+    async getBannerData() {
+      setTimeout(() => {
+        this.$store.dispatch("getTotalHelmet"); //获取 Helmet 总量
+        this.$store.dispatch("getBalanceMine"); //获取 Helmet 矿山余额
+        this.$store.dispatch("getClaimAbleHelmet"); //获取 所有待结算 Helmet
+        this.$store.dispatch("getValidBorrowing"); //获取 有效成交
+      }, 2000);
     },
     showWallet() {
       try {
@@ -303,6 +314,7 @@ export default {
       let callIndexPirce = {};
       let putIndexPirce = {};
       // helmet
+      let bnbbusd = await uniswap("WBNB", "BUSD");
       for (let i = 0; i < list.length; i++) {
         let px = await uniswap("WBNB", list[i]);
         let key = list[i];
@@ -349,6 +361,8 @@ export default {
       arr.push(callIndexPirce);
       arr.push(putIndexPirce);
       this.$store.commit("SET_ALL_INDEX_PRICE", arr);
+      this.$store.commit("SET_BNB_BUSD", bnbbusd);
+
       this.$bus.$emit("DRAW_ECHART");
     },
   },

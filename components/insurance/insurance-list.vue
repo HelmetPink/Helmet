@@ -153,19 +153,13 @@ export default {
       return this.$store.state.repriceMap;
     },
   },
-  mounted() {
-    this.$bus.$on("reload_insurance_list", () => {
-      this.page = 0;
-      this.limit = 10;
-      this.setList(this.aboutInfoSell, this.currentCoin, this.currentType);
-      console.log(this.insuranceList);
-    });
-  },
+
   methods: {
     // 卖单数据
     aboutInfoSellWatch(newValue) {
       if (newValue) {
-        console.log();
+        this.page = 0;
+        this.limit = 10;
         this.setList(newValue, this.currentCoin, this.currentType);
       }
     },
@@ -362,7 +356,6 @@ export default {
       }
 
       buyInsuranceBuy(datas, (status) => {});
-      this.$bus.$emit("CHANGE_TRADE_TYPE", 1);
     },
     // 计算数量
     setNum() {},

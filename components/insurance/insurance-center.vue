@@ -21,6 +21,7 @@
     <Echart></Echart>
     <InsuranceType
       @changeType="handleClickTradeType"
+      :currentCoin="curCoin"
       :currentType="TradeType"
     ></InsuranceType>
     <Balance

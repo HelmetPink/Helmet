@@ -100,6 +100,10 @@ export default {
       let obj = this.$store.state.BalanceArray;
       return obj;
     },
+    BNB_BUSD() {
+      let num = this.$store.state.BNB_BUSD;
+      return num;
+    },
   },
   watch: {
     currentCoin(val, oldVal) {
@@ -131,7 +135,7 @@ export default {
     },
     IndexPxArray(newValue, value) {
       if (newValue) {
-        this.strikePrice = 0.2;
+        this.strikePrice = addCommom(0.2 / this.BNB_BUSD, 4);
       }
     },
   },
@@ -143,6 +147,7 @@ export default {
       });
       clearTimeout();
     }, 1000);
+    console.log(this.IndexPxArray);
   },
   methods: {
     // 倒计时
@@ -198,18 +203,18 @@ export default {
         px = list[1][coin];
         exPx = list[1][coin] * 2;
         this.unit = "WBNB";
-        if (coin == "HELMET") {
-          this.strikePrice = 0.2;
+        if (this.currentCoin == "HELMET") {
+          this.strikePrice = addCommom(0.2 / this.BNB_BUSD, 4);
         }
       } else {
         px = list[1][coin];
         exPx = list[1][coin] * 0.5;
         this.unit = "WBNB";
-        if (coin == "HELMET") {
-          this.strikePrice = 0.12;
+        if (this.currentCoin == "HELMET") {
+          this.strikePrice = addCommom(0.12 / this.BNB_BUSD, 4);
         }
       }
-      if (coin == "HELMET") {
+      if (this.currentCoin == "HELMET") {
         return;
       }
       this.indexPx = fixD(toRounding(px, 4), 4);

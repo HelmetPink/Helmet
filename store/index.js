@@ -100,7 +100,7 @@ export const state = () => ({
     ETH_DAI_LPT: 0,
     myUNI: 0,
     myPAYA: 0,
-
+    BNB_BUSD: 0,
     helmetVarieties: 0, // 已经成交的保险品种的种类
     totalHelmetsBorrowedVolume: 0, // 保险交易过的资金量  （保单数量累加， vol 用抵押物处理）
     longTokenCreatedVolume: 0, // 24小时Long token 铸造量
@@ -276,6 +276,9 @@ export const mutations = {
     },
     SET_REPRICE_MAP(state, data) {
         state.repriceMap = data;
+    },
+    SET_BNB_BUSD(state, data) {
+        state.BNB_BUSD = data;
     },
 };
 

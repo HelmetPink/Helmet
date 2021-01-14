@@ -163,16 +163,12 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    this.$bus.$on("reload_my_settle", () => {
-      this.page = 0;
-      this.limit = 5;
-      this.setSettlementList(this.$store.state.myAboutInfoSell);
-    });
-  },
+
   methods: {
     myAboutInfoSellWatch(newValue) {
       if (newValue) {
+        this.page = 0;
+        this.limit = 5;
         this.setSettlementList(newValue);
       }
     },
