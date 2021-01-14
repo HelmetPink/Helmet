@@ -35,7 +35,7 @@ export default {
   props: ["currentCoin"],
   data() {
     return {
-      curCoin: "HELMET",
+      curCoin: "ETH",
       showTokens: false,
     };
   },

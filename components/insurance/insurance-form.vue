@@ -150,6 +150,9 @@ export default {
       // 到期日
       // 结算token
       // 单价
+      if (this.currentCoin != "ETH") {
+        return;
+      }
       let data;
       if (this.currentType == 2) {
         data = {

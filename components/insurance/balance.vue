@@ -5,7 +5,7 @@
         <span>{{ $t("Content.InsurancePrice") }}</span>
         <p>
           1 {{ currentCoin == "FORTUBE" ? "FOR" : currentCoin }} :
-          {{ strikePrice }} BNB
+          {{ currentCoin == "ETH" ? strikePrice : "--" }} BNB
           <!-- {{ currentCoin == "HELMET" ? "--" : strikePrice }} BNB -->
         </p>
       </div>
@@ -15,7 +15,8 @@
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#icon-time"></use>
           </svg>
-          {{ currentCoin == "HELMET" ? helmetDate : dueDate }}
+          {{ currentCoin != "ETH" ? "--" : dueDate }}
+          <!-- {{ currentCoin == "HELMET" ? helmetDate : dueDate }} -->
           <!-- -- -->
         </p>
       </div>
@@ -135,7 +136,11 @@ export default {
     },
     IndexPxArray(newValue, value) {
       if (newValue) {
-        this.strikePrice = addCommom(0.2 / this.BNB_BUSD, 4);
+        this.strikePrice = addCommom(
+          this.IndexPxArray[1][this.currentCoin] * 2,
+          4
+        );
+        // this.strikePrice = addCommom(0.2 / this.BNB_BUSD, 4);
       }
     },
   },
