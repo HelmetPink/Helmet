@@ -480,7 +480,6 @@ export const actions = {
             item = buyMap[key];
 
             sellInfo = sellObj[item.askID];
-
             // 过滤垃圾数据
             // 过滤未创建settleable 之前的数据
             // 过滤数量为0的数据
@@ -528,21 +527,17 @@ export const actions = {
             } else {
                 if (item.buyer.toLowerCase() === myAddress) {
                     let newItem;
-                    let newSellInfo;
                     for (let i = 0; i < state.repriceMap.length; i++) {
                         newItem = state.repriceMap[i];
                         if (newItem.newAskID == item.askID) {
-                            newSellInfo = newItem;
-                            if (
-                                sellObj[newItem.askID] &&
-                                sellObj[newItem.askID].longInfo
-                            ) {
-                                let sellInfo = sellObj[newItem.askID].longInfo;
+                            let sellInfo = sellObj[newItem.askID];
+                            if (sellInfo) {
+                                let list = JSON.parse(JSON.stringify(sellInfo));
+                                list['price'] = newItem.newPrice;
+                                list['askID'] = newItem.newAskID;
                                 myAboutInfoBuy.push({
-                                    new: true,
-                                    ...newItem,
                                     ...item,
-                                    sellInfo: { longInfo: sellInfo },
+                                    sellInfo: list,
                                 });
                             }
                         }
