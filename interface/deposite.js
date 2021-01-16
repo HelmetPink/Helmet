@@ -36,11 +36,21 @@ export const totalSupply = async (address) => {
             return window.WEB3.utils.fromWei(res, getWei(tocurrcy));
         });
 };
-export const balanceOf = async (type, currcy) => {
+export const balanceOf = async (type, currcy, flag = false) => {
     const charID = window.chainID;
     let adress = type;
-    if (type.indexOf('0x') === -1) {
-        adress = getAddress(type, charID);
+    if (flag) {
+        if (type.indexOf('0x') === -1) {
+            adress = getContract(type, charID);
+        }
+    } else {
+        if (type.indexOf('0x') === -1) {
+            adress = getAddress(type, charID);
+        }
+    }
+
+    if (currcy.indexOf('0x') === -1) {
+        currcy = getContract(currcy, charID);
     }
     if (!adress && !currcy) {
         return 0;
@@ -657,4 +667,43 @@ export const approveStatus = async (type) => {
     } else {
         return 0;
     }
+};
+export const getAllHelmet = async (contractAdress, adress1, adress2) => {
+    const charID = window.chainID;
+
+    if (contractAdress.indexOf('0x') === -1) {
+        contractAdress = getContract(contractAdress, charID);
+    }
+    if (adress1.indexOf('0x') === -1) {
+        adress1 = getContract(adress1, charID);
+    }
+    if (adress2.indexOf('0x') === -1) {
+        adress2 = getContract(adress2, charID);
+    }
+    const Contract = await expERC20(contractAdress);
+
+    const result = await Contract.methods.allowance(adress1, adress2).call();
+
+    return window.WEB3.utils.fromWei(result, getWei());
+};
+export const Rewards = async (contractAdress, adress1) => {
+    const charID = window.chainID;
+
+    if (contractAdress.indexOf('0x') === -1) {
+        contractAdress = getContract(contractAdress, charID);
+    }
+    if (adress1 == 0) {
+        adress1 = '0x0000000000000000000000000000000000000000';
+    }
+    if (adress1.indexOf('0x') === -1) {
+        adress1 = getContract(adress1, charID);
+    }
+
+    const Contract = await Deposite(contractAdress);
+
+    const result = await Contract.methods
+        .rewards('0x0000000000000000000000000000000000000000')
+        .call();
+
+    return window.WEB3.utils.fromWei(result, getWei());
 };
