@@ -1,30 +1,31 @@
 <template>
   <div class="helmet_pool">
-    <h3>{{ list.name }}</h3>
-    <div class="coin">
-      <p>
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-Helmet"></use>
-        </svg>
-        50%
-        <span> HELMET </span>
-      </p>
-      <p>
-        <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-BNB"></use>
-        </svg>
-        50%
-        <span> BNB </span>
-      </p>
-    </div>
     <div class="text">
-      <p v-for="(item, index) in textList" :key="index">
-        <span>{{ item.text }}</span>
-        <span :style="`color:${item.color}`"
-          >{{ item.num
-          }}<i v-if="item.unit" style="color: #919aa6">{{ item.unit }}</i>
-        </span>
-      </p>
+      <div class="coin">
+        <h3>{{ list.name }}</h3>
+        <div>
+          <p>
+            <img src="~/assets/img/helmet/helmetCoin.png" alt="" />
+            50%
+            <span> HELMET </span>
+          </p>
+          <p>
+            <img src="~/assets/img/helmet/bnbCoin.png" alt="" />
+
+            50%
+            <span> BNB </span>
+          </p>
+        </div>
+      </div>
+      <div class="index">
+        <p v-for="(item, index) in textList" :key="index">
+          <span>{{ item.text }}</span>
+          <span :style="`color:${item.color}`"
+            >{{ item.num
+            }}<i v-if="item.unit" style="color: #919aa6">{{ item.unit }}</i>
+          </span>
+        </p>
+      </div>
     </div>
     <div class="pool">
       <div class="deposit">
@@ -373,42 +374,55 @@ export default {
     > h3 {
       text-align: center;
     }
-    .coin {
-      margin-top: 12px;
-      justify-content: center;
-      display: flex;
-      align-items: center;
-      p {
-        display: flex;
-        align-items: center;
-        color: #121212;
-        font-size: 14px;
-        margin: 0 10px;
-        .icon {
-          margin-right: 4px;
-        }
-        span {
-          margin-left: 4px;
-          color: #919aa6;
-        }
-      }
-    }
     .text {
       display: flex;
       // padding: 0 140px;
-      justify-content: flex-end;
+      justify-content: space-between;
       margin-top: 28px;
-      p {
+      .coin {
         display: flex;
         flex-direction: column;
-        margin-left: 100px;
-        span {
-          &:nth-of-type(1) {
+        h3 {
+          height: 32px;
+          display: flex;
+          margin-bottom: 8px;
+          font-size: 24px;
+          line-height: 32px;
+        }
+        > div {
+          display: flex;
+          > p {
+            display: flex;
+            align-items: center;
+            color: #121212;
             font-size: 14px;
-            color: #919aa6;
+            margin-right: 14px;
+            img {
+              width: 32px;
+              height: 32px;
+              margin-right: 4px;
+            }
+            span {
+              margin-left: 4px;
+              color: #919aa6;
+            }
           }
-          &:nth-of-type(2) {
-            margin-top: 12px;
+        }
+      }
+      .index {
+        display: flex;
+        > p {
+          display: flex;
+          flex-direction: column;
+          margin-left: 100px;
+          span {
+            &:nth-of-type(1) {
+              font-size: 14px;
+              color: #919aa6;
+            }
+            &:nth-of-type(2) {
+              margin-top: 12px;
+            }
           }
         }
       }
