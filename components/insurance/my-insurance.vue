@@ -34,14 +34,10 @@
             </td>
             <td>{{ fixD(toRounding(item.price, 4), 4) }}</td>
             <td>
-              {{ fixD(toRounding(item.beSold, 4), 4) }}
+              {{ item.beSold }}
             </td>
             <td>
-              {{
-                item.remain == "0"
-                  ? fixD(toRounding(0, 4), 4)
-                  : fixD(toRounding(item.unSold, 4), 4)
-              }}
+              {{ item.remain == "0" ? 0 : item.unSold }}
               <span
                 class="cancel"
                 @click="handleClickCancel(item)"
@@ -240,8 +236,10 @@ export default {
         if (TokenFlag == "WBNB") {
           amount = fromWei(item.volume, Token);
         } else {
-          amount =
-            fromWei(item.volume, Token) * this.strikePriceArray[1][TokenFlag];
+          amount = precision.times(
+            fromWei(item.volume, Token),
+            this.strikePriceArray[1][TokenFlag]
+          );
           console.log(amount);
         }
         // 保单价格
@@ -282,7 +280,10 @@ export default {
           resultItem["unSold"] = askRes;
           resultItem["beSold"] = precision.minus(amount, askRes);
         } else {
-          resultItem["unSold"] = askRes * this.strikePriceArray[1][TokenFlag];
+          resultItem["unSold"] = precision.times(
+            askRes,
+            this.strikePriceArray[1][TokenFlag]
+          );
           resultItem["beSold"] = precision.minus(amount, askRes);
         }
 

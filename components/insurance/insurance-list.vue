@@ -255,7 +255,10 @@ export default {
             resultItem["id"] = newArray.newAskID;
           }
           let res = await asks(resultItem["id"], "sync", Token);
-          resultItem["remain"] = res * this.strikePriceArray[1][unToken];
+          resultItem["remain"] = precision.times(
+            res,
+            this.strikePriceArray[1][unToken]
+          );
           if (res != 0 && time > now) {
             sellResult.push(resultItem);
           }
