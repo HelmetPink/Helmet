@@ -227,9 +227,11 @@ export default {
             buyer: item.buyer,
             amt: fromWei(item.amt),
             price: InsurancePrice,
-            volume: precision.divide(
+            volume: precision.times(
               amount,
               this.strikePriceArray[1][TokenFlag]
+                ? this.strikePriceArray[1][TokenFlag]
+                : 1
             ),
             Rent: Rent,
             settleToken: item.sellInfo.settleToken,
@@ -296,7 +298,7 @@ export default {
       let data = {
         token: getTokenName(item._underlying),
         _underlying_vol: item.volume * item._strikePrice,
-        vol: toRounding(item.volume, 8),
+        vol: fixD(item.volume, 8),
         bidID: item.bidID,
         long: item.long,
         exPrice: autoRounding(precision.divide(1, item._strikePrice)),

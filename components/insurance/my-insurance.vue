@@ -243,6 +243,8 @@ export default {
           amount = precision.divide(
             fromWei(item.volume, Token),
             this.strikePriceArray[1][TokenFlag]
+              ? this.strikePriceArray[1][TokenFlag]
+              : 1
           );
         }
         // 保单价格
@@ -286,6 +288,8 @@ export default {
           resultItem["unSold"] = precision.divide(
             askRes,
             this.strikePriceArray[1][TokenFlag]
+              ? this.strikePriceArray[1][TokenFlag]
+              : 1
           );
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
         }

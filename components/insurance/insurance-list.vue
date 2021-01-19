@@ -261,11 +261,14 @@ export default {
             resultItem["id"] = newArray.newAskID;
           }
           let res = await asks(resultItem["id"], "sync", Token);
-
-          resultItem["remain"] = fixD(
-            precision.divide(res, this.strikePriceArray[1][unToken]),
-            8
-          );
+          if (this.strikePriceArray[1][unToken]) {
+            resultItem["remain"] = fixD(
+              precision.divide(res, this.strikePriceArray[1][unToken] || 1),
+              8
+            );
+          } else {
+            resultItem["remain"] = fixD(res, 8);
+          }
           if (res != 0 && time > now) {
             sellResult.push(resultItem);
           }
@@ -367,6 +370,8 @@ export default {
           volume: precision.divide(
             data.buyNum,
             this.strikePriceArray[1][getTokenName(data._underlying)]
+              ? this.strikePriceArray[1][getTokenName(data._underlying)]
+              : 1
           ),
           // volume: fixD(data.buyNum * this.indexArray[0][Token], 8) / 2,
           price: data.price,
