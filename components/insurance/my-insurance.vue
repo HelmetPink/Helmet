@@ -32,12 +32,16 @@
                   : getTokenName(item._underlying)
               }}
             </td>
-            <td>{{ fixD(toRounding(item.price, 4), 4) }}</td>
+            <td>{{ fixD(item.price, 4), }}</td>
             <td>
-              {{ item.beSold }}
+              {{ fixD(item.beSold, 8),  }}
             </td>
             <td>
-              {{ item.remain == "0" ? 0 : item.unSold }}
+              {{
+                item.remain == "0"
+                  ? fixD(0, 8)
+                  : fixD(item.unSold, 8),
+              }}
               <span
                 class="cancel"
                 @click="handleClickCancel(item)"
@@ -45,7 +49,7 @@
                 >{{ $t("Table.Cancel") }}</span
               >
             </td>
-            <td>{{ toRounding(item.shortBalance, 4) }}</td>
+            <td>{{ item.shortBalance }}</td>
             <td>{{ item.dueDate }}</td>
             <td class="option">
               <!-- <button class="o_button">{{ $t("Table.outSure") }}</button> -->
@@ -236,7 +240,7 @@ export default {
         if (TokenFlag == "WBNB") {
           amount = fromWei(item.volume, Token);
         } else {
-          amount = precision.times(
+          amount = precision.divide(
             fromWei(item.volume, Token),
             this.strikePriceArray[1][TokenFlag]
           );
@@ -279,12 +283,11 @@ export default {
           resultItem["unSold"] = askRes;
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
         } else {
-          resultItem["unSold"] = precision.times(
+          resultItem["unSold"] = precision.divide(
             askRes,
             this.strikePriceArray[1][TokenFlag]
           );
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
-          console.log(amount, askRes);
         }
 
         if (askRes == "0") {
@@ -344,8 +347,8 @@ export default {
     },
     // 撤销
     handleClickCancel(data) {
-      this.$bus.$emit("OPEN_REPRICE", data);
-      // onCancel(data.id, (status) => { });
+      // this.$bus.$emit("OPEN_REPRICE", data);
+      onCancel(data.id, (status) => {});
       // RePrice(data)
     },
     // 分页
