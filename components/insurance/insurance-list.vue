@@ -357,9 +357,10 @@ export default {
         // (fromWei(item.volume, Token) * this.indexArray[0][unToken]) / 2;
         datas = {
           askID: data.id,
-          volume:
-            data.buyNum /
-            this.strikePriceArray[1][getTokenName(data._underlying)],
+          volume: precision.divide(
+            data.buyNum,
+            this.strikePriceArray[1][getTokenName(data._underlying)]
+          ),
           // volume: fixD(data.buyNum * this.indexArray[0][Token], 8) / 2,
           price: data.price,
           settleToken: "HELMET",

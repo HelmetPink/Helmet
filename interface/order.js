@@ -159,9 +159,9 @@ export const onIssueSellOnETH = async (data_, callBack) => {
     bus.$emit('OPEN_STATUS_DIALOG', {
         type: 'pending',
         // 租用 0.5 个WETH 帽子，执行价格为300 USDT
-        conText: `<p>Rent <span>${data_.volume} ${
-            data_.category
-        }</span>, the execution price is <span>${
+        conText: `<p>Rent <span>${
+            data_.volume
+        } ${'BNB'}</span>, the execution price is <span>${
             data_.price
         } ${'BNB'}</span></p>`,
     });
