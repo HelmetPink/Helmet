@@ -15,7 +15,7 @@
       <tbody>
         <tr v-for="(item, index) in showList" :key="index">
           <td>
-            {{ item.showID }}
+            {{ item.id }}
           </td>
           <td>{{ item.price }}</td>
           <td>{{ item.remain }}</td>
@@ -367,11 +367,14 @@ export default {
         // (fromWei(item.volume, Token) * this.indexArray[0][unToken]) / 2;
         datas = {
           askID: data.id,
-          volume: precision.divide(
-            data.buyNum,
-            this.strikePriceArray[1][getTokenName(data._underlying)]
-              ? this.strikePriceArray[1][getTokenName(data._underlying)]
-              : 1
+          volume: fixD(
+            precision.divide(
+              data.buyNum,
+              this.strikePriceArray[1][getTokenName(data._underlying)]
+                ? this.strikePriceArray[1][getTokenName(data._underlying)]
+                : 1
+            ),
+            8
           ),
           // volume: fixD(data.buyNum * this.indexArray[0][Token], 8) / 2,
           price: data.price,

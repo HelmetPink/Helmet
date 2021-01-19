@@ -238,7 +238,6 @@ export const buyInsuranceBuy = async (_data, callBack) => {
     // 比如 WETH/DAI，两者精度都是18，那么价格的精度就是18-18+18=18
     // USDT/USDT，精度=6-6+18=18  在抵押物和结算物相同时，总是18
     let data = { ..._data };
-
     // const WEB3 = new web3();
     const charID = window.chainID;
     data.settleToken = getAddress(data.settleToken, charID);
@@ -271,6 +270,7 @@ export const buyInsuranceBuy = async (_data, callBack) => {
     // );
     // console.log('data.volume####', data.volume);
     // return;
+    console.log(data);
     const Contract = await expERC20(data.settleToken);
     bus.$emit('OPEN_STATUS_DIALOG', {
         type: 'pending',

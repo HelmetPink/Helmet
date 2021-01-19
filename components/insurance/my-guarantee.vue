@@ -227,11 +227,14 @@ export default {
             buyer: item.buyer,
             amt: fromWei(item.amt),
             price: InsurancePrice,
-            volume: precision.times(
-              amount,
-              this.strikePriceArray[1][TokenFlag]
-                ? this.strikePriceArray[1][TokenFlag]
-                : 1
+            volume: fixD(
+              precision.times(
+                amount,
+                this.strikePriceArray[1][TokenFlag]
+                  ? this.strikePriceArray[1][TokenFlag]
+                  : 1
+              ),
+              8
             ),
             Rent: Rent,
             settleToken: item.sellInfo.settleToken,

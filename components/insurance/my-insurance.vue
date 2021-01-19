@@ -240,11 +240,14 @@ export default {
         if (TokenFlag == "WBNB") {
           amount = fromWei(item.volume, Token);
         } else {
-          amount = precision.divide(
-            fromWei(item.volume, Token),
-            this.strikePriceArray[1][TokenFlag]
-              ? this.strikePriceArray[1][TokenFlag]
-              : 1
+          amount = fixD(
+            precision.divide(
+              fromWei(item.volume, Token),
+              this.strikePriceArray[1][TokenFlag]
+                ? this.strikePriceArray[1][TokenFlag]
+                : 1
+            ),
+            8
           );
         }
         // 保单价格
@@ -285,11 +288,14 @@ export default {
           resultItem["unSold"] = askRes;
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
         } else {
-          resultItem["unSold"] = precision.divide(
-            askRes,
-            this.strikePriceArray[1][TokenFlag]
-              ? this.strikePriceArray[1][TokenFlag]
-              : 1
+          resultItem["unSold"] = fixD(
+            precision.divide(
+              askRes,
+              this.strikePriceArray[1][TokenFlag]
+                ? this.strikePriceArray[1][TokenFlag]
+                : 1
+            ),
+            8
           );
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
         }
