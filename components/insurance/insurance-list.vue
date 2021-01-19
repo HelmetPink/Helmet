@@ -370,9 +370,10 @@ export default {
           volume: fixD(
             precision.divide(
               data.buyNum,
-              this.strikePriceArray[1][getTokenName(data._underlying)]
-                ? this.strikePriceArray[1][getTokenName(data._underlying)]
-                : 1
+              precision.divide(
+                1,
+                this.strikePriceArray[1][getTokenName(data._underlying)]
+              )
             ),
             8
           ),

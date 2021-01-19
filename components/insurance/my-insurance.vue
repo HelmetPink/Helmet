@@ -244,8 +244,6 @@ export default {
             precision.divide(
               fromWei(item.volume, Token),
               this.strikePriceArray[1][TokenFlag]
-                ? this.strikePriceArray[1][TokenFlag]
-                : 1
             ),
             8
           );
@@ -289,12 +287,7 @@ export default {
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
         } else {
           resultItem["unSold"] = fixD(
-            precision.divide(
-              askRes,
-              this.strikePriceArray[1][TokenFlag]
-                ? this.strikePriceArray[1][TokenFlag]
-                : 1
-            ),
+            precision.divide(askRes, this.strikePriceArray[1][TokenFlag]),
             8
           );
           resultItem["beSold"] = precision.minus(amount, resultItem["unSold"]);
