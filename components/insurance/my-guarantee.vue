@@ -47,7 +47,14 @@
     </table>
 
     <div>
-      <div class="item_box" v-for="(item, index) in showList" :key="index">
+      <div
+        class="item_box"
+        v-for="(item, index) in showList"
+        :key="index"
+        :class="
+          getTokenName(item._underlying) == 'WBNB' ? 'call_style' : 'put_style'
+        "
+      >
         <p>
           <span>{{ $t("Table.ID") }}</span
           ><span>{{ item.id }}</span>
@@ -140,6 +147,7 @@ export default {
       toRounding: toRounding,
       showList: [],
       guaranteeList: [],
+      transferList: [],
       getTokenName,
       fixD,
       page: 0,
@@ -151,6 +159,9 @@ export default {
     myAboutInfoBuy() {
       return this.$store.state.myAboutInfoBuy;
     },
+    transferMap() {
+      return this.$store.state.transferMap;
+    },
     strikePriceArray() {
       return this.$store.state.strikePriceArray;
     },
@@ -159,6 +170,20 @@ export default {
     myAboutInfoBuy: {
       handler: "myAboutInfoBuyWatch",
       immediate: true,
+    },
+    transferMap: {
+      handler: "myTransferMapWatch",
+      immediate: true,
+    },
+    guaranteeList(newList) {
+      if (newList) {
+        this.showList = newList.slice(this.page * this.limit, this.limit);
+      }
+    },
+    transferList(newList, list) {
+      if (JSON.stringify(this.transferList) == JSON.stringify(newList)) {
+        this.guaranteeList.push(...newList);
+      }
     },
   },
   mounted() {},
@@ -170,6 +195,13 @@ export default {
         this.setSettlementList(newValue);
       }
     },
+    myTransferMapWatch(newValue) {
+      if (newValue) {
+        this.page = 0;
+        this.limit = 5;
+        this.setTransfer(newValue);
+      }
+    },
     // 格式化数据
     async setSettlementList(list) {
       this.isLoading = true;
@@ -179,6 +211,7 @@ export default {
       let currentTime = new Date().getTime();
       let exerciseRes;
       let bidIDArr;
+
       for (let i = 0; i < list.length; i++) {
         item = list[i];
         let TokenFlag = getTokenName(item.sellInfo.longInfo._underlying);
@@ -266,6 +299,11 @@ export default {
           result.push(resultItem);
         }
       }
+
+      let arr = this.setTransfer(this.transferMap);
+      if (arr) {
+        result.push(...arr);
+      }
       this.isLoading = false;
       this.guaranteeList = result;
       this.showList = result.slice(this.page * this.limit, this.limit);
@@ -293,6 +331,7 @@ export default {
     },
     // 行权
     toActive(item) {
+      console.log(item);
       let data = {
         token: getTokenName(item._underlying),
         _underlying_vol: item.volume * item._strikePrice,
@@ -303,10 +342,44 @@ export default {
         _underlying: getTokenName(item._underlying),
         _collateral: getTokenName(item._collateral),
         settleToken: getTokenName(item.settleToken),
+        longAdress:item.longAdress,
+        flag: item.transfer ? true : false,
       };
-      console.log(data);
 
-      onExercise(data);
+      onExercise(data, data.flag);
+    },
+    setTransfer(data) {
+      let list = data;
+      let myAddress =
+        this.$store.state.userInfo.data &&
+        this.$store.state.userInfo.data.account &&
+        this.$store.state.userInfo.data.account.toLowerCase();
+      let resultItem;
+      let result = [];
+      if (!list || JSON.stringify(this.transferList) == JSON.stringify(data)) {
+        return;
+      }
+      list.forEach((item) => {
+        let Token = getTokenName(item._collateral);
+        if (item.to.toLowerCase() === myAddress) {
+          resultItem = {
+            id: 1,
+            bidID: 1,
+            buyer: item.to,
+            volume: fromWei(item.value, Token),
+            settleToken: "0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8",
+            dueDate: this.getDownTime(item._expiry),
+            _collateral: item._collateral,
+            _strikePrice: fromWei(item._strikePrice, Token),
+            _underlying: item._underlying,
+            _expiry: parseInt(item._expiry) * 1000,
+            transfer: item.transfer,
+            longAdress:item.address
+          };
+          result.push(resultItem);
+        }
+      });
+      return result;
     },
     // 分页
     upPage() {
@@ -339,42 +412,41 @@ export default {
 
 <style lang='scss' scoped>
 @import "~/assets/css/base.scss";
+.call_style {
+  background: rgba(0, 185, 0, 0.04);
+  &:hover {
+    td {
+      &:first-child:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0px;
+        border-left: 2px solid#00b900;
+      }
+    }
+  }
+}
+.put_style {
+  background: rgba(255, 100, 0, 0.04);
+  &:hover {
+    td {
+      &:first-child:before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0px;
+        border-left: 2px solid#ff9600;
+      }
+    }
+  }
+}
 @media screen and (min-width: 750px) {
-  .call_style {
-    background: rgba(0, 185, 0, 0.04);
-    &:hover {
-      td {
-        &:first-child:before {
-          content: "";
-          display: block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          width: 0px;
-          border-left: 2px solid#00b900;
-        }
-      }
-    }
-  }
-  .put_style {
-    background: rgba(255, 100, 0, 0.04);
-    &:hover {
-      td {
-        &:first-child:before {
-          content: "";
-          display: block;
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          width: 0px;
-          border-left: 2px solid#ff9600;
-        }
-      }
-    }
-  }
-
   .my_guarantee {
     position: relative;
     > div {
@@ -464,7 +536,6 @@ export default {
         width: 100%;
         height: 208px;
         padding: 20px 10px;
-        background: #f7f7fa;
         box-sizing: border-box;
         p {
           display: flex;
