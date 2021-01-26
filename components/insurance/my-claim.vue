@@ -30,12 +30,22 @@
                 :class="item._underlying == 'WBNB' ? 'call_icon' : 'put_icon'"
               ></i>
             </td>
-            <td>
-              <!-- {{ addCommom(precision.plus(item.col, item.longBalance), 4) }} -->
+            <td v-if="item._underlying == 'WBNB'">
               {{ fixD(item.col, 8) }}
               {{ item._collateral }}
             </td>
-            <td>{{ fixD(item.und, 8) }} {{ item._underlying }}</td>
+            <td v-else>
+              {{ fixD(item.und, 8) }}
+              {{ item._underlying }}
+            </td>
+            <td v-if="item._underlying == 'WBNB'">
+              {{ fixD(item.und, 8) }}
+              {{ item._underlying }}
+            </td>
+            <td v-else>
+              {{ fixD(item.col, 8) }}
+              {{ item._collateral }}
+            </td>
             <td class="option">
               <button class="b_b_button" @click="toClaim(item)">
                 {{ $t("Table.GetBack") }}
@@ -229,7 +239,7 @@ export default {
           } catch (err) {
             // console.log(err)
           }
-
+          console.log(resultItem);
           if (Number(resultItem.col) != 0 || Number(resultItem.und) != 0) {
             result.push(resultItem);
           }
