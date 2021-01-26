@@ -32,10 +32,10 @@
             </td>
             <td>
               <!-- {{ addCommom(precision.plus(item.col, item.longBalance), 4) }} -->
-              {{ fixD(item.shortBalance, 8) }}
+              {{ fixD(item.col, 8) }}
               {{ item._collateral }}
             </td>
-            <td>{{ fixD(item.longBalance, 8) }} {{ item._underlying }}</td>
+            <td>{{ fixD(item.und, 8) }} {{ item._underlying }}</td>
             <td class="option">
               <button class="b_b_button" @click="toClaim(item)">
                 {{ $t("Table.GetBack") }}
@@ -75,13 +75,11 @@
         <div>
           <p>
             <span>{{ $t("Table.DenAssets") }}</span
-            ><span>
-              {{ fixD(item.shortBalance, 8) }} {{ item._collateral }}</span
-            >
+            ><span> {{ fixD(item.col, 8) }} {{ item._collateral }}</span>
           </p>
           <p>
             <span>{{ $t("Table.BaseAssets") }}</span
-            ><span>{{ fixD(item.longBalance, 8) }} {{ item._underlying }}</span>
+            ><span>{{ fixD(item.und, 8) }} {{ item._underlying }}</span>
           </p>
         </div>
         <section>
@@ -231,33 +229,28 @@ export default {
           } catch (err) {
             // console.log(err)
           }
-          if (
-            Number(resultItem.longBalance) == 0 &&
-            Number(resultItem.und) == 0
-          ) {
-            resultItem["hidden"] = false;
-          } else {
-            resultItem["hidden"] = true;
-          }
-          // // 判断有没有这个品种的单子
-          let Flag = mapArray.some((item) => {
-            return (
-              item._underlying == resultItem._underlying &&
-              item._collateral == resultItem._collateral
-            );
-          });
-          // 没有这个品种则添加
-          if (!Flag && resultItem["hidden"]) {
+
+          if (Number(resultItem.col) != 0 || Number(resultItem.und) != 0) {
             result.push(resultItem);
           }
-          // 判断
-          mapArray = result.map((item) => {
-            return {
-              _underlying: item._underlying,
-              _collateral: item._collateral,
-            };
-          });
-          // result.push(resultItem);
+          // // 判断有没有这个品种的单子
+          // let Flag = mapArray.some((item) => {
+          //   return (
+          //     item._underlying == resultItem._underlying &&
+          //     item._collateral == resultItem._collateral
+          //   );
+          // });
+          // // 没有这个品种则添加
+          // if (!Flag && resultItem["hidden"]) {
+          //   result.push(resultItem);
+          // }
+          // // 判断
+          // mapArray = result.map((item) => {
+          //   return {
+          //     _underlying: item._underlying,
+          //     _collateral: item._collateral,
+          //   };
+          // });
         }
       }
       // result.push(resultItem);
