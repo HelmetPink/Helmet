@@ -239,28 +239,27 @@ export default {
           } catch (err) {
             // console.log(err)
           }
-          console.log(resultItem);
+          console.log(resultItem["short"]);
           if (Number(resultItem.col) != 0 || Number(resultItem.und) != 0) {
-            result.push(resultItem);
+            let Flag = mapArray.some((item) => {
+              return (
+                item._underlying == resultItem._underlying &&
+                item._collateral == resultItem._collateral
+              );
+            });
+            // 没有这个品种则添加
+            if (!Flag) {
+              result.push(resultItem);
+            }
+            // 判断
+            mapArray = result.map((item) => {
+              return {
+                _underlying: item._underlying,
+                _collateral: item._collateral,
+              };
+            });
           }
-          // // 判断有没有这个品种的单子
-          // let Flag = mapArray.some((item) => {
-          //   return (
-          //     item._underlying == resultItem._underlying &&
-          //     item._collateral == resultItem._collateral
-          //   );
-          // });
-          // // 没有这个品种则添加
-          // if (!Flag && resultItem["hidden"]) {
-          //   result.push(resultItem);
-          // }
-          // // 判断
-          // mapArray = result.map((item) => {
-          //   return {
-          //     _underlying: item._underlying,
-          //     _collateral: item._collateral,
-          //   };
-          // });
+          // 判断有没有这个品种的单子
         }
       }
       // result.push(resultItem);
