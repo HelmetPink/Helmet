@@ -211,7 +211,10 @@ export default {
             und: 0,
             long: item.longInfo.long,
             short: item.longInfo.short,
-            longBalance: longBalance,
+            longBalance:
+              Number(shortBalance) > Number(longBalance)
+                ? longBalance
+                : shortBalance,
           });
         }
         number = precision.minus(shortBalance, longBalance);
@@ -239,7 +242,7 @@ export default {
           }
         }
       }
-      console.log(result,)
+      console.log(result);
       // var newobj = {};
       // var newArr = [];
       // result.forEach((item) => {
@@ -270,6 +273,7 @@ export default {
     },
     // 行权
     toClaim(item) {
+      console.log(item);
       if (item.longBalance != 0) {
         burn(
           item.short,

@@ -29,8 +29,8 @@ export const settleable = async (seller, short) => {
 };
 
 export const burn = async (longOrshort, volume, opt = {}, data) => {
-    let colValue = addCommom(data.col + Number(data.longBalance), 4);
-    let undValue = addCommom(data.und, 4);
+    let colValue = addCommom(data.col + Number(data.longBalance), 8);
+    let undValue = addCommom(data.und, 8);
     bus.$emit('OPEN_STATUS_DIALOG', {
         type: 'pending',
         conText: `<p>Settlement ${addCommom(volume)} ${data._collateral}</p>`,
@@ -95,8 +95,8 @@ export const burn = async (longOrshort, volume, opt = {}, data) => {
 
 export const settle = async (short, data) => {
     console.log(data);
-    let colValue = addCommom(Number(data.col) + Number(data.longBalance), 4);
-    let undValue = addCommom(data.und, 4);
+    let colValue = addCommom(Number(data.col) + Number(data.longBalance), 8);
+    let undValue = addCommom(data.und, 8);
     let pendingText;
     if (undValue > 0) {
         pendingText = `<p>Settlement <span>${colValue > 0 &&
