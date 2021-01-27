@@ -330,10 +330,19 @@ export default {
           }
         }
       }
-      // result.push(resultItem);
+
+      var newobj = {};
+      var newArr = [];
+      result.forEach((item) => {
+        if (!newobj[item._collateral + item._underlying]) {
+          newobj[item._collateral + item._underlying] = 1;
+          newArr.push(item);
+        }
+      });
+      console.log(newArr);
       this.isLoading = false;
-      this.claimList = result;
-      this.showList = result.slice(this.page * this.limit, this.limit);
+      this.claimList = newArr;
+      this.showList = newArr.slice(this.page * this.limit, this.limit);
     },
     getDownTime(time) {
       let now = new Date() * 1;

@@ -76,7 +76,8 @@ export const burn = async (longOrshort, volume, opt = {}, data) => {
                     });
                 }
                 setTimeout(() => {
-                    bus.$emit('reload_my_settle');
+                    bus.$emit('REFRESH_ALL_DATA');
+                    bus.$emit('REFRESH_BALANCE');
                 }, 1000);
             }
         })
@@ -152,7 +153,7 @@ export const settle = async (short, data) => {
                     });
                 }
                 setTimeout(() => {
-                    bus.$emit('reload_my_settle');
+                    bus.$emit('REFRESH_BALANCE');
                 }, 1000);
             }
         })
@@ -233,7 +234,7 @@ export const onExercise = async (data, callBack) => {
                     });
                 }
                 setTimeout(() => {
-                    bus.$emit('REFRESH_ALL_DATA');
+                    bus.$emit('REFRESH_BALANCE');
                 }, 1000);
             }
         })
