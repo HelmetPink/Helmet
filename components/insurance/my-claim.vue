@@ -243,17 +243,17 @@ export default {
         }
       }
       console.log(result);
-      // var newobj = {};
-      // var newArr = [];
-      // result.forEach((item) => {
-      //   if (!newobj[item._collateral + item._underlying + item.short]) {
-      //     newobj[item._collateral + item._underlying + item.short] = 1;
-      //     newArr.push(item);
-      //   }
-      // });
+      var newobj = {};
+      var newArr = [];
+      result.forEach((item) => {
+        if (!newobj[item._collateral + item._underlying + item.short]) {
+          newobj[item._collateral + item._underlying + item.short] = 1;
+          newArr.push(item);
+        }
+      });
       this.isLoading = false;
-      this.claimList = result;
-      this.showList = result.slice(this.page * this.limit, this.limit);
+      this.claimList = newArr;
+      this.showList = newArr.slice(this.page * this.limit, this.limit);
     },
     getDownTime(time) {
       let now = new Date() * 1;
@@ -273,7 +273,6 @@ export default {
     },
     // 行权
     toClaim(item) {
-      console.log(item);
       if (item.longBalance != 0) {
         burn(
           item.short,
