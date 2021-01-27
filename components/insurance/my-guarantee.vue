@@ -295,6 +295,7 @@ export default {
       let transferItem = await this.setTransfer();
       result.push(transferItem);
       this.isLoading = false;
+      console.log(result);
       this.guaranteeList = result;
       this.showList = result.slice(this.page * this.limit, this.limit);
     },
