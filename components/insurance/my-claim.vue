@@ -242,7 +242,6 @@ export default {
           }
         }
       }
-      console.log(result);
       var newobj = {};
       var newArr = [];
       result.forEach((item) => {
