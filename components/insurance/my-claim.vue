@@ -3,7 +3,6 @@
     <table>
       <thead>
         <tr>
-          <td>ID</td>
           <td>{{ $t("Table.Type") }}</td>
           <td>{{ $t("Table.DenAssets") }}</td>
           <td>{{ $t("Table.BaseAssets") }}</td>
@@ -21,7 +20,6 @@
           "
         >
           <template>
-            <!-- <td>{{ item.askID }}</td> -->
             <td :class="item._underlying == 'WBNB' ? 'green' : 'orange'">
               {{
                 item._underlying == "WBNB" ? item._collateral : item._underlying
@@ -180,95 +178,6 @@ export default {
         this.setSettlementList(newValue);
       }
     },
-    // 格式化数据
-    // async setSettlementList(list) {
-    //   this.isLoading = true;
-    //   this.showList = [];
-    //   const result = [];
-    //   let mapArray = [];
-    //   let obj = {};
-    //   let item,
-    //     longBalance,
-    //     shortBalance,
-    //     _collateral,
-    //     _underlying,
-    //     number,
-    //     volume,
-    //     id,
-    //     und;
-    //   for (let i = 0; i < list.length; i++) {
-    //     item = list[i];
-    //     _collateral = getTokenName(item.longInfo._collateral, window.chainID);
-    //     longBalance = await getBalance(item.longInfo.long, _collateral);
-    //     _underlying = getTokenName(item.longInfo._underlying, window.chainID);
-    //     shortBalance = await getBalance(item.longInfo.short, _collateral);
-    //     let Token = _underlying == "WBNB" ? _underlying : _collateral;
-    //     let resultItem = {};
-    //     if (Number(shortBalance) > 0) {
-    //       resultItem["askID"] = item.askID;
-    //       resultItem["creator"] = item.seller;
-    //       resultItem["_collateral"] = _collateral;
-    //       resultItem["_underlying"] = _underlying;
-    //       resultItem["long"] = item.longInfo.long;
-    //       resultItem["short"] = item.longInfo.short;
-    //       resultItem["longBalance"] = longBalance;
-    //       resultItem["Balance"] = Math.min(
-    //         Number(shortBalance),
-    //         Number(longBalance)
-    //       );
-    //       resultItem["shortAddress"] = item.longInfo.short;
-    //       resultItem["shortBalance"] = shortBalance;
-    //       number = precision.minus(shortBalance, longBalance);
-    //       try {
-    //         volume = toWei(number, _collateral);
-    //         const settle = await settleable(item.longInfo.short, volume);
-    //         if (settle.col != "0" || settle.und != "0") {
-    //           if (_underlying == "CTK") {
-    //             und = fromWei(settle.und, "CTK");
-    //           } else {
-    //             und = fromWei(settle.und, Token);
-    //           }
-    //           resultItem["und"] = und;
-    //           resultItem["col"] = fromWei(settle.col, Token);
-    //           resultItem["fee"] = fromWei(settle.fee, Token);
-    //         } else {
-    //           resultItem["und"] = 0;
-    //           resultItem["col"] = 0;
-    //           resultItem["fee"] = 0;
-    //         }
-    //       } catch (err) {
-    //         // console.log(err)
-    //       }
-    //       console.log(resultItem);
-    //       // if (Number(resultItem.col) != 0 || Number(resultItem.und) != 0) {
-    //       //   let Flag = mapArray.some((item) => {
-    //       //     return (
-    //       //       item._underlying == resultItem._underlying &&
-    //       //       item._collateral == resultItem._collateral
-    //       //     );
-    //       //   });
-    //       //   // 没有这个品种则添加
-    //       //   if (!Flag) {
-    //       //     result.push(resultItem);
-    //       //   }
-    //       //   // 判断
-    //       //   mapArray = result.map((item) => {
-    //       //     return {
-    //       //       _underlying: item._underlying,
-    //       //       _collateral: item._collateral,
-    //       //     };
-    //       //   });
-    //       // }
-    //       // 判断有没有这个品种的单子
-    //       console.log(resultItem);
-    //       result.push(resultItem);
-    //     }
-    //   }
-    //   // result.push(resultItem);
-    //   this.isLoading = false;
-    //   this.claimList = result;
-    //   this.showList = result.slice(this.page * this.limit, this.limit);
-    // },
     // 倒计时
     async setSettlementList(list) {
       this.isLoading = true;
@@ -339,7 +248,6 @@ export default {
           newArr.push(item);
         }
       });
-      console.log(newArr);
       this.isLoading = false;
       this.claimList = newArr;
       this.showList = newArr.slice(this.page * this.limit, this.limit);
