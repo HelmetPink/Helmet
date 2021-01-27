@@ -353,7 +353,7 @@ export default {
     },
     // 行权
     toClaim(item) {
-      if (Number(item.longBalance) != 0) {
+      if (item.longBalance != 0) {
         burn(
           item.short,
           item.longBalance,
