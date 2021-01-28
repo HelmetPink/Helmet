@@ -498,10 +498,11 @@ export const actions = {
         const aboutInfoBuy = [];
         const myAboutInfoBuy = [];
         const aboutInfoBuySeller = [];
-        const myAddress =
-            state.userInfo.data &&
-            state.userInfo.data.account &&
-            state.userInfo.data.account.toLowerCase();
+        const myAddress = '0xe3f05b1512e6fa2a1e7b945427d74a3a67ae2381';
+        // const myAddress =
+        //     state.userInfo.data &&
+        //     state.userInfo.data.account &&
+        //     state.userInfo.data.account.toLowerCase();
 
         let item, tItem;
         let sellInfo;
