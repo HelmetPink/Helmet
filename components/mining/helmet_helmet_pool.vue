@@ -209,11 +209,11 @@ export default {
     });
     setTimeout(() => {
       this.getBalance();
-      this.getPrice();
+      this.getAPY();
     }, 1000);
     setInterval(() => {
       setTimeout(() => {
-        this.getPrice();
+        this.getAPY();
       });
     }, 20000);
   },
@@ -235,10 +235,10 @@ export default {
   methods: {
     WatchIndexArray(newValue, value) {
       if (newValue) {
-        this.getPrice();
+        this.getAPY();
       }
     },
-    async getPrice() {
+    async getAPY() {
       let HelmetVolume = await totalSupply("HELMETPOOL");
       let apy = fixD(
         precision.times(

@@ -1,5 +1,6 @@
 <template>
   <div class="helmet_pool">
+    <img src="~/assets/img/helmet/star.png" alt="" />
     <div class="text">
       <div class="coin">
         <h3>{{ list.name }}</h3>
@@ -221,11 +222,11 @@ export default {
     });
     setTimeout(() => {
       this.getBalance();
-      this.getPrice();
+      this.getAPY();
     }, 1000);
     setInterval(() => {
       setTimeout(() => {
-        this.getPrice();
+        this.getAPY();
       });
     }, 20000);
   },
@@ -260,10 +261,10 @@ export default {
   methods: {
     WatchIndexArray(newValue, value) {
       if (newValue) {
-        this.getPrice();
+        this.getAPY();
       }
     },
-    async getPrice() {
+    async getAPY() {
       this.helmetPrice = this.indexArray[1]["HELMET"];
       let cakePrice = this.$store.state.CAKE_BUSD;
       let bnbPrice = this.$store.state.BNB_BUSD;
