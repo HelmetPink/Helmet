@@ -53,6 +53,7 @@ export default {
     BSC_CTK: '0xA8c2B8eec3d368C0253ad3dae65a5F2BBB89c929',
     BSC_ETH: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
     BSC_BTCB: '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c',
+    BSC_HCCT: '0xf1be411556e638790dcdecd5b0f8f6d778f2dfd5',
 
     // 主网合约
     // 正式
