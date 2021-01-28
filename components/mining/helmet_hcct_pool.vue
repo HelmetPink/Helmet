@@ -32,7 +32,7 @@
         <div class="title">
           <span>{{ $t("Table.Deposit") }}</span>
           <p>
-            {{ balance.Deposite.length > 60 ? 0 : balance.Deposite }} HELMET
+            {{ balance.Deposite.length > 60 ? 0 : balance.Deposite }} LPT
             {{ $t("Table.DAvailable") }}
           </p>
         </div>
@@ -59,7 +59,7 @@
                 $t("Table.TotalDeposited")
               }}：</span
             >
-            <span> {{ balance.Withdraw }} /{{ balance.TotalLPT }} HELMET</span>
+            <span> {{ balance.Withdraw }} /{{ balance.TotalLPT }} LPT</span>
           </p>
           <p>
             <span>My Pool Share：</span>
@@ -70,7 +70,7 @@
       <div class="withdraw">
         <div class="title">
           <span>{{ $t("Table.Withdraw") }}</span>
-          <p>{{ balance.Withdraw }} HELMET {{ $t("Table.WAvailable") }}</p>
+          <p>{{ balance.Withdraw }} LPT {{ $t("Table.WAvailable") }}</p>
         </div>
         <div class="content">
           <label for="withdraw">{{ $t("Table.AmountWithdraw") }}</label>
@@ -211,9 +211,9 @@ export default {
     }, 1000);
     setInterval(() => {
       setTimeout(() => {
-        // this.getPrice();
+        this.getPrice();
       });
-    }, 2000);
+    }, 20000);
   },
   watch: {
     indexArray: {
@@ -239,16 +239,22 @@ export default {
     async getPrice() {
       let HcctVolume = await totalSupply("HCCTPOOL");
       let LptVolume = await totalSupply("HCCTPOOL_LPT");
-      console.log(HcctVolume, LptVolume);
-      // let apy = fixD(
-      //   precision.times(
-      //     precision.divide(precision.times(16000, 365), HelmetVolume),
-      //     100
-      //   ),
-      //   2
-      // );
-      // this.apy = apy;
-      // this.textList[1].num = this.apy + "%";
+      let HelmetValue = await balanceOf("HELMET", "HCCTPOOL_LPT", true);
+      let apy = fixD(
+        precision.times(
+          precision.divide(
+            precision.times(1, 16000, 365),
+            precision.times(
+              precision.divide(precision.times(HelmetValue, 2), LptVolume),
+              HcctVolume
+            )
+          ),
+          100
+        ),
+        2
+      );
+      this.apy = apy;
+      this.textList[1].num = this.apy + "%";
     },
     async getBalance() {
       let helmetType = "HCCTPOOL_LPT";

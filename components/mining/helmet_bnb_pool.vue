@@ -226,7 +226,7 @@ export default {
       setTimeout(() => {
         this.getPrice();
       });
-    }, 2000);
+    }, 20000);
   },
   watch: {
     indexArray: {
