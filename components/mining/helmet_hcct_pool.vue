@@ -237,16 +237,18 @@ export default {
       }
     },
     async getPrice() {
-      let HelmetVolume = await totalSupply("HELMETPOOL");
-      let apy = fixD(
-        precision.times(
-          precision.divide(precision.times(16000, 365), HelmetVolume),
-          100
-        ),
-        2
-      );
-      this.apy = apy;
-      this.textList[1].num = this.apy + "%";
+      let HcctVolume = await totalSupply("HCCTPOOL");
+      let LptVolume = await totalSupply("HCCTPOOL_LPT");
+      console.log(HcctVolume, LptVolume);
+      // let apy = fixD(
+      //   precision.times(
+      //     precision.divide(precision.times(16000, 365), HelmetVolume),
+      //     100
+      //   ),
+      //   2
+      // );
+      // this.apy = apy;
+      // this.textList[1].num = this.apy + "%";
     },
     async getBalance() {
       let helmetType = "HCCTPOOL_LPT";
