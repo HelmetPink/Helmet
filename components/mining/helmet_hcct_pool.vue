@@ -75,7 +75,7 @@
               <span> {{ balance.Share }} %</span>
             </p>
             <a
-              href="https://exchange.pancakeswap.finance/?_gl=1*1dr4rcd*_ga*MTYwNTE3ODIwNC4xNjEwNjQzNjU4*_ga_334KNG3DMQ*MTYxMTgxMTMzMi42Ny4wLjE2MTE4MTEzMzIuMA..#/add/0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8/0xf1BE411556e638790DcdEcd5b0f8F6d778f2Dfd5"
+              href="https://exchange.pancakeswap.finance/?_gl=1*1dr4rcd*_ga*MTYwNTE3ODIwNC4xNjEwNjQzNjU4*_ga_334KNG3DMQ*MTYxMTgxMTMzMi42Ny4wLjE2MTE4MTEzMzIuMA..#/add/0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8/0x17934fef9fC93128858e9945261524ab0581612e"
               target="_blank"
               >Go to Pancake Pool</a
             >
@@ -159,7 +159,7 @@ export default {
     return {
       list: {
         name: "LONG-HELMET",
-        dueDate: "2021-02-16 00:00",
+        dueDate: "2021-02-13 00:00",
         DownTime: "--",
       },
       textList: [
@@ -274,10 +274,8 @@ export default {
       let second = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
-      let template = `${day}${this.$t("Content.Day")}${hour}${this.$t(
-        "Content.Hour"
-      )}${minute}${this.$t("Content.Min")}${second}${this.$t(
-        "Content.Second"
+      let template = `${day}${this.$t("Content.DayD")} ${hour}${this.$t(
+        "Content.HourD"
       )}`;
       this.list.DownTime = template;
     },
