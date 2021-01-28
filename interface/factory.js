@@ -10,6 +10,7 @@ const netObj = {
     1: '',
     3: 'ropsten.',
     4: 'rinkeby.',
+    56: 'BSC',
 };
 const getFactory = async () => {
     if (!factoryObj) {
@@ -94,7 +95,6 @@ export const burn = async (longOrshort, volume, opt = {}, data) => {
 };
 
 export const settle = async (short, data) => {
-    console.log(data);
     let colValue = addCommom(Number(data.col) + Number(data.longBalance), 8);
     let undValue = addCommom(data.und, 8);
     let pendingText;
@@ -153,6 +153,7 @@ export const settle = async (short, data) => {
                     });
                 }
                 setTimeout(() => {
+                    bus.$emit('REFRESH_ALL_DATA');
                     bus.$emit('REFRESH_BALANCE');
                 }, 1000);
             }
