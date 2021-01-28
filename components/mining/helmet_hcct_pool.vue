@@ -195,6 +195,7 @@ export default {
   mounted() {
     this.$bus.$on("DEPOSITE_LOADING2", (data) => {
       this.stakeLoading = data.status;
+      this.DepositeNum = "";
     });
     this.$bus.$on("CLAIM_LOADING2", (data) => {
       this.claimLoading = false;

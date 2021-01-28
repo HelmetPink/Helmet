@@ -17,6 +17,7 @@ const netObj = {
     1: '',
     3: 'ropsten.',
     4: 'rinkeby.',
+    56: 'BSC',
 };
 export const totalSupply = async (address) => {
     const charID = window.chainID;
