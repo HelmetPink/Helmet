@@ -41,7 +41,15 @@
           <td>{{ fixD(item.volume, 8) }}</td>
           <td>{{ item.dueDate }}</td>
           <td>
-            <button class="b_b_button" @click="toActive(item)">
+            <button
+              class="b_b_button"
+              @click="toActive(item)"
+              :style="
+                item.symbol == 'HCCT'
+                  ? 'background: #ccc; pointer-events: none'
+                  : ''
+              "
+            >
               {{ $t("Table.outSure") }}
             </button>
           </td>
