@@ -359,6 +359,8 @@ export default {
           _collateral: getTokenName(item._collateral),
           settleToken: getTokenName(item.settleToken),
           flag: item.transfer ? true : false,
+          approveAddress1: item.approveAddress1,
+          approveAddress2: item.approveAddress2,
         };
       } else {
         data = {
@@ -437,8 +439,8 @@ export default {
           longAdress: "0xf1be411556e638790dcdecd5b0f8f6d778f2dfd5",
           type: "call",
           symbol: "HCCT",
-          approveAddress1: "FACTORY",
-          approveAddress2: "HCCTLONG",
+          approveAddress1: "ORDER",
+          approveAddress2: "ORDER",
         };
         return resultItem;
       }
