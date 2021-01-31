@@ -41,7 +41,7 @@
           <td>{{ fixD(item.volume, 8) }}</td>
           <td>{{ item.dueDate }}</td>
           <td>
-            <button class="b_b_button" @click="toActive(item)">
+            <button class="b_b_button" @click="toActive(item)" v-if="item.dueDate!='Expired'">
               {{ $t("Table.outSure") }}
             </button>
           </td>
@@ -432,7 +432,7 @@ export default {
           type: "call",
           symbol: "HCCT",
           approveAddress1: "FACTORY",
-          approveAddress2: "ORDER",
+          approveAddress2: "",
         };
         return resultItem;
       }
