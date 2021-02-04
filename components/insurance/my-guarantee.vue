@@ -302,7 +302,6 @@ export default {
         // 保费
 
         Rent = precision.times(amount, InsurancePrice);
-        console.log(amount, item.bidID, Rent);
         //倒计时
         downTime = this.getDownTime(item.sellInfo.longInfo._expiry);
         if (TokenFlag == "WBNB") {
@@ -397,7 +396,6 @@ export default {
       let cakePolicy = await this.CAKEPolicy();
       let hcctPolicy = await this.HCCTPolicy();
       let hctkPolicy = await this.HCTKPolicy();
-      console.log(hctkPolicy);
       if (cakePolicy) {
         result.push(cakePolicy);
       }
@@ -452,6 +450,7 @@ export default {
           flag: item.transfer ? true : false,
           approveAddress1: item.approveAddress1,
           approveAddress2: item.approveAddress2,
+          unit: item.unit ? item.unit : "",
         };
       } else {
         data = {
@@ -566,13 +565,14 @@ export default {
           _underlying: "0x948d2a81086a075b3130bac19e4c6dee1d2e3fe8",
           _expiry: 1613750400000,
           transfer: true,
-          longAdress: "0x17934fef9fc93128858e9945261524ab0581612e",
+          longAdress: "0x936909e72951a19a5e1d75a109b0d34f06f39838",
           type: "call",
           symbol: "hCTK",
           approveAddress1: "FACTORY",
           approveAddress2: "",
           outPrice: fromWei(2500000000000000000, Token),
           outPriceUnit: "HELMET",
+          unit: "lovelace",
         };
         return resultItem;
       }
