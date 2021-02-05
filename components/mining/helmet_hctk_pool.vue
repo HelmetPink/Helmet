@@ -1,5 +1,6 @@
 <template>
   <div class="hctk_pool">
+    <!-- <span class="miningTime"> {{ MingTime }}</span> -->
     <img src="~/assets/img/helmet/star.png" alt="" />
     <div class="text">
       <div class="coin">
@@ -239,12 +240,14 @@ export default {
       exitLoading: false,
       helmetPrice: 0,
       apy: 0,
+      MingTime: 0,
     };
   },
   mounted() {
     setInterval(() => {
       setTimeout(() => {
         this.getDownTime();
+        this.getMiningTime();
       });
       clearTimeout();
     }, 1000);
@@ -327,6 +330,31 @@ export default {
       )}`;
       this.list.DownTime = template;
     },
+    getMiningTime() {
+      let now = new Date() * 1;
+      let dueDate = "2021-02-06 00:00";
+      dueDate = new Date(dueDate);
+      let DonwTime = dueDate - now;
+      let day = Math.floor(DonwTime / (24 * 3600000));
+      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
+      let minute = Math.floor(
+        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
+      );
+      let second = Math.floor(
+        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
+      );
+      let template;
+      if (dueDate < now) {
+        template = `${0}${this.$t("Content.HourD")} ${0}${this.$t(
+          "Content.MinD"
+        )} ${0}${this.$t("Content.SecondD")}`;
+      } else {
+        template = `${hour}${this.$t("Content.HourD")} ${minute}${this.$t(
+          "Content.MinD"
+        )} ${second}${this.$t("Content.SecondD")}`;
+      }
+      this.MingTime = template;
+    },
     async getAPY() {
       let HCTKHELMET = await uniswap("HCTK", "HELMET"); //Hlemt价格
       let HctkVolume = await totalSupply("HCTKPOOL"); //数量
@@ -338,7 +366,7 @@ export default {
           precision.divide(
             precision.times(HCTKHELMET, precision.divide(70000, 21), 365),
             precision.times(
-              precision.divide(precision.times(HelmetValue, 2), LptVolume),
+              precision.divide(precision.times(HelmetValue, 2), 70000),
               HctkVolume
             )
           ),
@@ -461,6 +489,12 @@ export default {
   pointer-events: none;
 }
 @media screen and (min-width: 750px) {
+  .miningTime {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+  }
   .hctk_pool {
     margin-bottom: 20px;
     height: 506px;
@@ -640,6 +674,12 @@ export default {
   }
 }
 @media screen and (max-width: 750px) {
+  .miningTime {
+    position: absolute;
+    right: 10%;
+    top: 45px;
+    font-size: 20px;
+  }
   .ContractAddress {
     line-height: 20px;
   }
