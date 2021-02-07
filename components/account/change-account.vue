@@ -96,9 +96,14 @@ export default {
     },
     async connectWallet() {
       const walletConnectProvider = new WalletConnectProvider({
-        infuraId: "3cd774e14cf34ff78167908f8377051c", // Required // qrcode: true
+        bridge: "https://bridge.walletconnect.org",
+        rpc: {
+          56: "https://bsc-dataseed.binance.org",
+        },
+        qrcode: true,
+        pollingInterval: 10000,
       });
-      await walletConnectProvider.enable();
+      let res = await walletConnectProvider.enable();
       const web3 = new Web3(walletConnectProvider);
       const coinbase = walletConnectProvider.wc.accounts[0];
       window.WEB3 = web3;
