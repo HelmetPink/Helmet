@@ -1,6 +1,7 @@
 <template>
   <div class="hcct_pool">
     <img src="~/assets/img/helmet/star.png" alt="" />
+    <img class="finished" src="~/assets/img/helmet/finished.png" alt="" />
     <div class="text">
       <div class="coin">
         <h3>
@@ -20,7 +21,7 @@
               <span> HELMET </span>
             </p>
           </div>
-          <p>
+          <p v-if="list.DownTime">
             <span>
               {{ $t("Table.SurplusTime") }}：
               <span>
@@ -333,9 +334,14 @@ export default {
       let second = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
-      let template = `${day}${this.$t("Content.DayD")} ${hour}${this.$t(
-        "Content.HourD"
-      )}`;
+      let template;
+      if (dueDate > now) {
+        template = `${day}${this.$t("Content.DayD")} ${hour}${this.$t(
+          "Content.HourD"
+        )}`;
+      } else {
+        template = false;
+      }
       this.list.DownTime = template;
     },
     async getAPY() {
@@ -485,6 +491,14 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 78px;
+      height: 78px;
+      transform: translateY(0px);
     }
     > h3 {
       text-align: center;
@@ -692,6 +706,14 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 78px;
+      height: 78px;
+      transform: translateY(0px);
     }
     > h3 {
       text-align: center;
