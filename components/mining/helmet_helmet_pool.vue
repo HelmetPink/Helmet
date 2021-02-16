@@ -10,12 +10,6 @@
             100%
             <span> HELMET </span>
           </p>
-          <!-- <p>
-            <img src="~/assets/img/helmet/bnbCoin.png" alt="" />
-
-            50%
-            <span> BNB </span>
-          </p> -->
         </div>
       </div>
       <div class="index">
@@ -63,6 +57,15 @@
             <span>My Pool Share：</span>
             <span> {{ balance.Share }} %</span>
           </p>
+          <button
+            @click="toCompound"
+            :class="
+              stakeLoading ? 'disable o_button compound' : 'compound o_button'
+            "
+          >
+            <i :class="stakeLoading ? 'loading_pic' : ''"></i
+            >{{ $t("Table.Compound") }}
+          </button>
         </div>
       </div>
       <div class="withdraw">
@@ -119,21 +122,14 @@
 <script>
 import {
   totalSupply,
-  balanceOf,
   getLPTOKEN,
   CangetPAYA,
-  CangetUNI,
   getPAYA,
   exitStake,
-  getLastTime,
-  approveStatus,
   getBalance,
   toDeposite,
-  getMined,
-  WithdrawAvailable,
-  getAllHelmet,
-  Rewards,
   RewardsDuration,
+  compound,
 } from "~/interface/deposite";
 import precision from "~/assets/js/precision.js";
 import { fixD, addCommom, autoRounding, toRounding } from "~/assets/js/util.js";
@@ -151,7 +147,7 @@ export default {
           unit: "",
         },
         {
-          text: this.$t("Table.PoolAPR"),
+          text: this.$t("Table.PoolAPY"),
           num: 0,
           color: "#00B900",
           unit: "",
@@ -239,24 +235,24 @@ export default {
       let HelmetVolume = await totalSupply("HELMETPOOL");
       let helmetTime = (await RewardsDuration("HELMETPOOL")) / 86400;
       // （1+日产量/总质押量）^365
-      let apy = fixD(
-        Math.pow(
-          precision.plus(1, precision.divide(74601.783, HelmetVolume)),
-          365
-        ) * 100,
-        2
-      );
-
       // let apy = fixD(
-      //   precision.times(
-      //     precision.divide(
-      //       precision.times(74601.783, 365),
-      //       Number(HelmetVolume)
-      //     ),
-      //     100
-      //   ),
+      //   Math.pow(
+      //     precision.plus(1, precision.divide(74601.783, HelmetVolume)),
+      //     365
+      //   ) * 100,
       //   2
       // );
+
+      let apy = fixD(
+        precision.times(
+          precision.divide(
+            precision.times(74601.783, 365),
+            Number(HelmetVolume)
+          ),
+          100
+        ),
+        2
+      );
       this.apy = HelmetVolume ? apy : 0;
       this.textList[1].num = this.apy + "%";
     },
@@ -294,6 +290,14 @@ export default {
       this.stakeLoading = true;
       let type = "HELMETPOOL";
       toDeposite(type, { amount: this.DepositeNum }, true, (status) => {});
+    },
+    // 复投
+    toCompound() {
+      this.$bus.$emit("OPEN_COMPOUND", {
+        title: "Compound HELMET Earned",
+        number: this.balance.Helmet,
+        pool: "HELMETPOOL",
+      });
     },
     // 结算Paya
     async toClaim() {
@@ -347,6 +351,10 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   animation: loading 2s 0s linear infinite;
+}
+.compound {
+  width: auto !important;
+  min-width: 106px;
 }
 .disable {
   pointer-events: none;
@@ -432,7 +440,7 @@ export default {
       margin-top: 30px;
       > div {
         width: 540px;
-        height: 293px;
+        height: 313px;
         padding: 30px 40px;
         .title {
           display: flex;
@@ -593,7 +601,7 @@ export default {
       flex-direction: column;
       margin-top: 30px;
       > div {
-        height: 293px;
+        height: 313px;
         padding: 30px 16px;
         .title {
           display: flex;
