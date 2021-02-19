@@ -335,19 +335,28 @@ export default {
       // bnb
       let callIndexPirce = {};
       let putIndexPirce = {};
+      let echartIndexArray = {};
       // helmet
       let bnbbusd = await uniswap("WBNB", "BUSD");
       let cakebusd = await uniswap("CAKE", "BUSD");
       let helmetbusd = await uniswap("BUSD", "HELMET");
       for (let i = 0; i < list.length; i++) {
         let px;
+        let indexPx;
         if ("WBNB" != list[i]) {
           px = await uniswap("WBNB", list[i]);
         } else {
           px = 1;
         }
+        indexPx = await uniswap(
+          this.policyUndArray[1][list[i]],
+          this.policyUndArray[0][list[i]]
+        );
+
         let key = list[i];
         callIndexPirce[key] = px;
+        let key1 = list[i];
+        echartIndexArray[key1] = indexPx;
       }
       for (let i = 0; i < list.length; i++) {
         let px;
@@ -404,9 +413,11 @@ export default {
       arr.push(callIndexPirce);
       arr.push(putIndexPirce);
       this.$store.commit("SET_ALL_INDEX_PRICE", arr);
+      this.$store.commit("SET_ECHART_INDEX_PRICE", echartIndexArray);
       this.$store.commit("SET_BNB_BUSD", bnbbusd);
       this.$store.commit("SET_CAKE_BUSD", cakebusd);
       this.$store.commit("SET_HELMET_BUSD", helmetbusd);
+
       this.$bus.$emit("DRAW_ECHART", { drawFlag: true });
     },
   },
