@@ -26,7 +26,6 @@
       </div>
       <div class="num">
         <input type="text" v-model="volume" />
-
         <i>{{ unit == "FORTUBE" ? "FOR" : unit }}</i>
         <span class="right" @click="toAll">{{ $t("Table.ALL") }}</span>
       </div>
@@ -102,18 +101,8 @@ export default {
         };
       }
     },
-    // 时间
-    _expiry() {
-      return this.$store.state.dueDate;
-    },
-    helmetTime() {
-      return this.$store.state.helmetDate;
-    },
-    ctkTime() {
-      return this.$store.state.ctkDate;
-    },
-    burgerTime() {
-      return this.$store.state.burgerDate;
+    allDueDate() {
+      return this.$store.state.allDueDate;
     },
     // 保费参数
     RentGrounp() {
@@ -121,10 +110,6 @@ export default {
         dpr: this.dpr,
         indexPx: this.indexPx,
         strikePrice: this.strikePrice,
-        // _expiry:
-        //   this.currentCoin == "HELMET"
-        //     ? new Date(this.helmetTime) * 1
-        //     : new Date(this._expiry) * 1,
         _expiry: this.getTime(this.currentCoin),
         num: this.volume,
       };
@@ -143,6 +128,14 @@ export default {
     },
     strikePriceArray() {
       return this.$store.state.strikePriceArray;
+    },
+    // 抵押物
+    policyColArray() {
+      return this.$store.state.policyColArray;
+    },
+    // 标的物
+    policyUndArray() {
+      return this.$store.state.policyUndArray;
     },
   },
   watch: {
@@ -174,18 +167,7 @@ export default {
   },
   methods: {
     getTime(coin) {
-      switch (coin) {
-        case "HELMET":
-          return new Date(this.helmetTime) * 1;
-        case "CTK":
-          return new Date(this.ctkTime) * 1;
-        case "BURGER":
-          return new Date(this.burgerTime) * 1;
-        case "CAKE":
-          return "--";
-        default:
-          return new Date(this._expiry) * 1;
-      }
+      return this.allDueDate[0][coin];
     },
     handleClickDpr() {
       this.optionFlag = !this.optionFlag;
@@ -214,33 +196,22 @@ export default {
         return;
       }
       let data;
-      if (this.currentType == 2) {
-        data = {
-          private: false, //
-          annual: this.dpr,
-          category: this.currentCoin, //
-          currency: this.currency, //
-          expire: this.getTime(this.currentCoin), //
-          premium: this.Rent,
-          price: this.strikePriceArray[1][this.currentCoin],
-          volume: this.volume, //
-          settleToken: "HELMET",
-          _yield: 0,
-        };
+      data = {
+        private: false, //
+        annual: this.dpr,
+        category: this.policyUndArray[this.currentType - 1][this.currentCoin], //标的物
+        currency: this.policyColArray[this.currentType - 1][this.currentCoin], //抵押物
+        expire: this.getTime(this.currentCoin), //
+        premium: this.Rent,
+        price: this.strikePriceArray[this.currentType - 1][this.currentCoin],
+        volume: this.volume, //
+        settleToken: "HELMET",
+        showType: this.currentCoin == "WBNB" ? "BUSD" : "HELMET",
+        _yield: 0,
+      };
+      if (data.currency == "WBNB" && data.category != "BUSD") {
         onIssueSellOnETH(data, (status) => {});
       } else {
-        data = {
-          private: false, //
-          annual: this.dpr,
-          category: this.currency, //
-          currency: this.currentCoin, //
-          expire: this.getTime(this.currentCoin), //
-          premium: this.Rent,
-          price: this.strikePriceArray[0][this.currentCoin],
-          volume: this.volume, //
-          settleToken: "HELMET",
-          _yield: 0,
-        };
         onIssueSell(data, (status) => {});
       }
     },
@@ -317,7 +288,7 @@ export default {
       } else {
         px = list[1][coin];
         exPx = list[1][coin] * 0.5;
-        this.unit = "BNB";
+        this.unit = this.currentCoin == "WBNB" ? "BUSD" : "BNB";
         if (this.currentCoin == "HELMET") {
           this.strikePrice = addCommom(0.12 / this.BNB_BUSD, 4);
         }

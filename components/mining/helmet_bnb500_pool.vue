@@ -1,6 +1,6 @@
 <template>
-  <div class="hctk_pool">
-    <span class="miningTime"> {{ MingTime }}</span>
+  <div class="bnb500">
+    <!-- <span class="miningTime"> {{ MingTime }}</span> -->
     <img src="~/assets/img/helmet/star.png" alt="" />
     <img class="circle right" src="~/assets/img/helmet/leftCircle.png" alt="" />
     <div class="text">
@@ -423,8 +423,7 @@ export default {
         2
       );
       this.apy = apy ? apy : 0;
-      // this.textList[1].num = this.apy + "%";
-      this.textList[1].num = "Infinity" + "%";
+      this.textList[1].num = this.apy + "%";
     },
     async getBalance() {
       let helmetType = "BNB500POOL_LPT";
@@ -540,20 +539,20 @@ export default {
   pointer-events: none;
 }
 @media screen and (min-width: 750px) {
-  .miningTime {
-    position: absolute;
-    left: 75%;
-    top: 10px;
-    font-size: 20px;
-    transform: translateX(5%);
-  }
-  .hctk_pool {
+  .bnb500 {
     width: 500px;
     margin-bottom: 20px;
     background: #ffffff;
     padding: 40px;
     position: relative;
     border-radius: 10px;
+    > .miningTime {
+      position: absolute;
+      left: 75%;
+      top: 10px;
+      font-size: 20px;
+      transform: translateX(5%);
+    }
     > img {
       position: absolute;
       width: 36px;
@@ -781,14 +780,14 @@ export default {
   }
 }
 @media screen and (max-width: 750px) {
-  .hctk_pool {
+  .bnb500 {
     width: 100%;
     margin-bottom: 20px;
     background: #ffffff;
     padding: 40px 16px;
     position: relative;
     border-radius: 10px;
-    .miningTime {
+    > .miningTime {
       position: absolute;
       left: 75%;
       top: 10px;

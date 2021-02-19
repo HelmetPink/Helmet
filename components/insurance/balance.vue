@@ -9,9 +9,9 @@
             currentCoin != "CAKE"
               ? strikePriceArray[this.currentType - 1][this.currentCoin]
               : "--"
+          }}{{
+            currentCoin != "CAKE" ? policyColArray[1][this.currentCoin] : "--"
           }}
-          BNB
-          <!-- {{ currentCoin == "HELMET" ? "--" : strikePrice }} BNB -->
         </p>
       </div>
       <div>
@@ -22,14 +22,6 @@
           </svg>
           <!-- {{ currentCoin == "CAKE" ? "--" : dueDate }} -->
           {{ getTime(currentCoin) }}
-          <!-- {{
-            currentCoin == "HELMET"
-              ? helmetDate
-              : currentCoin == "CAKE"
-              ? "--"
-              : dueDate
-          }} -->
-          <!-- -- -->
         </p>
       </div>
     </section>
@@ -91,10 +83,6 @@ export default {
       fixD,
       addCommom,
       strikePrice: 0.0049,
-      dueDate: 0,
-      helmetDate: 0,
-      ctkDate: 0,
-      burgerDate:0
     };
   },
   computed: {
@@ -120,6 +108,12 @@ export default {
     },
     strikePriceArray() {
       return this.$store.state.strikePriceArray;
+    },
+    policyColArray() {
+      return this.$store.state.policyColArray;
+    },
+    allDueDate() {
+      return this.$store.state.allDueDate;
     },
   },
   watch: {
@@ -160,136 +154,10 @@ export default {
       }
     },
   },
-  mounted() {
-    setInterval(() => {
-      setTimeout(() => {
-        this.getDownTime();
-        this.getHelmetTime();
-        this.getCtkTime();
-        this.getBurgerTime()
-      });
-      clearTimeout();
-    }, 1000);
-  },
+  mounted() {},
   methods: {
     getTime(coin) {
-      switch (coin) {
-        case "HELMET":
-          return this.helmetDate;
-        case "CTK":
-          return this.ctkDate;
-        case "BURGER":
-          return this.burgerDate;
-        case "CAKE":
-          return "--";
-        default:
-          return this.dueDate;
-      }
-    },
-    // 倒计时
-    getDownTime(time) {
-      let now = new Date() * 1;
-      let dueDate = new Date(this.$store.state.dueDate);
-      let DonwTime = dueDate - now;
-      let day = Math.floor(DonwTime / (24 * 3600000));
-      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
-      let minute = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
-      );
-      let template;
-      if (dueDate > now) {
-        template = `${day}${this.$t("Content.DayM")} ${hour}${this.$t(
-          "Content.HourM"
-        )} ${minute}${this.$t("Content.MinM")} ${second}${this.$t(
-          "Content.SecondM"
-        )}`;
-      } else {
-        template = `${0}${this.$t("Content.DayM")} ${0}${this.$t(
-          "Content.HourM"
-        )} ${0}${this.$t("Content.MinM")} ${0}${this.$t("Content.SecondM")}`;
-      }
-      this.dueDate = template;
-    },
-    getHelmetTime(time) {
-      let now = new Date() * 1;
-      let dueDate = new Date(this.$store.state.helmetDate);
-      let DonwTime = dueDate - now;
-      let day = Math.floor(DonwTime / (24 * 3600000));
-      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
-      let minute = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
-      );
-      let template;
-      if (dueDate > now) {
-        template = `${day}${this.$t("Content.DayM")} ${hour}${this.$t(
-          "Content.HourM"
-        )} ${minute}${this.$t("Content.MinM")} ${second}${this.$t(
-          "Content.SecondM"
-        )}`;
-      } else {
-        template = `${0}${this.$t("Content.DayM")} ${0}${this.$t(
-          "Content.HourM"
-        )} ${0}${this.$t("Content.MinM")} ${0}${this.$t("Content.SecondM")}`;
-      }
-      this.helmetDate = template;
-    },
-    getCtkTime(time) {
-      let now = new Date() * 1;
-      let dueDate = new Date(this.$store.state.ctkDate);
-      let DonwTime = dueDate - now;
-      let day = Math.floor(DonwTime / (24 * 3600000));
-      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
-      let minute = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
-      );
-      let template;
-      if (dueDate > now) {
-        template = `${day}${this.$t("Content.DayM")} ${hour}${this.$t(
-          "Content.HourM"
-        )} ${minute}${this.$t("Content.MinM")} ${second}${this.$t(
-          "Content.SecondM"
-        )}`;
-      } else {
-        template = `${0}${this.$t("Content.DayM")} ${0}${this.$t(
-          "Content.HourM"
-        )} ${0}${this.$t("Content.MinM")} ${0}${this.$t("Content.SecondM")}`;
-      }
-      this.ctkDate = template;
-    },
-    getBurgerTime(time) {
-      let now = new Date() * 1;
-      let dueDate = new Date(this.$store.state.burgerDate);
-      let DonwTime = dueDate - now;
-      let day = Math.floor(DonwTime / (24 * 3600000));
-      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
-      let minute = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
-      );
-      let template;
-      if (dueDate > now) {
-        template = `${day}${this.$t("Content.DayM")} ${hour}${this.$t(
-          "Content.HourM"
-        )} ${minute}${this.$t("Content.MinM")} ${second}${this.$t(
-          "Content.SecondM"
-        )}`;
-      } else {
-        template = `${0}${this.$t("Content.DayM")} ${0}${this.$t(
-          "Content.HourM"
-        )} ${0}${this.$t("Content.MinM")} ${0}${this.$t("Content.SecondM")}`;
-      }
-      this.burgerDate = template;
+      return this.allDueDate[0][coin];
     },
     undAndColWatch(newValue) {
       let list = this.IndexPxArray;
