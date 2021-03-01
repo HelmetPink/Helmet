@@ -2,6 +2,7 @@
   <div class="hctk_pool">
     <!-- <span class="miningTime"> {{ MingTime }}</span> -->
     <img src="~/assets/img/helmet/star.png" alt="" />
+    <img class="finished" src="~/assets/img/helmet/finished.png" alt="" />
     <img
       class="circle right"
       src="~/assets/img/helmet/rightCircle.png"
@@ -113,6 +114,7 @@
             <button
               @click="toDeposite"
               :class="stakeLoading ? 'disable b_button' : 'b_button'"
+              style="background: #ccc !important; pointer-events: none"
             >
               <i :class="stakeLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.ConfirmDeposit") }}
@@ -231,6 +233,7 @@
             <button
               @click="toClaim"
               :class="claimLoading ? 'disable o_button' : 'o_button'"
+              style="background: #ccc !important; pointer-events: none"
             >
               <i :class="claimLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.ClaimAllRewards") }}
@@ -431,7 +434,6 @@ export default {
         Message({
           message: "Successfully copied",
           type: "success",
-          // duration: 0,
         });
         copys.destroy();
       });
@@ -516,7 +518,8 @@ export default {
         2
       );
       this.apy = apy ? apy : 0;
-      this.textList[1].num = this.apy + "%";
+      // this.textList[1].num = this.apy + "%";
+      this.textList[1].num = "--";
     },
     async getBalance() {
       let helmetType = "HCTKPOOL_LPT";
@@ -537,7 +540,8 @@ export default {
       this.balance.hCTK = fixD(Helmet, 8);
       this.balance.TotalLPT = fixD(TotalLPT, 8);
       this.balance.Share = fixD((Withdraw / TotalLPT) * 100, 2);
-      this.textList[0].num = fixD((70000 / 21) * 7, 2) + " hCTK";
+      // this.textList[0].num = fixD((70000 / 21) * 7, 2) + " hCTK";
+      this.textList[0].num = "--";
     },
     // 抵押
     toDeposite() {
@@ -656,6 +660,13 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      width: 102px;
+      height: 102px;
+      top: 0;
+      right: 0;
+      transform: translateY(0);
     }
     .circle {
       width: 102px;
@@ -909,6 +920,13 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      width: 102px;
+      height: 102px;
+      top: 0;
+      right: 0;
+      transform: translateY(0);
     }
     .circle {
       width: 102px;
