@@ -112,6 +112,10 @@ export default {
     policyUndArray() {
       return this.$store.state.policyUndArray;
     },
+    ChainID() {
+      let chainID = this.$store.state.chainID
+      return chainID
+    }
   },
   watch: {
     longMapAndSellMap: {
@@ -121,6 +125,14 @@ export default {
     aboutInfoSell: {
       handler: "aboutInfoSellWatch",
       immediate: true,
+    },
+    ChainID(newValue) {
+      if (newValue == 56) {
+        this.getBannerData();
+        this.closeNetWorkTip()
+      } else {
+        this.showNetWorkTip()
+      }
     },
   },
   async mounted() {
@@ -132,6 +144,7 @@ export default {
     window.WEB3 = await web3();
     window.chainID = await getID();
     this.showWallet();
+    this.$store.commit('SET_CHAINID', window.chainID)
 
     this.getUserInfo();
     // 获取映射
@@ -158,14 +171,10 @@ export default {
       this.closeStatusDialog();
       window.statusDialog = false;
     });
-    if (window.chainID != 56) {
-      this.$bus.$emit("OPEN_STATUS_DIALOG", {
-        type: "warning",
-        conText: "请连接到Binance Smart Chain网络",
-      });
-    }
     if (window.chainID == 56) {
       this.getBannerData();
+      this.getBalance();
+      this.getIndexPirce();
     }
     // 刷新所有数据
     this.$bus.$on("REFRESH_ALL_DATA", (data) => {
@@ -174,12 +183,21 @@ export default {
     this.$bus.$on("REFRESH_BALANCE", () => {
       this.getBalance();
     });
-    setTimeout(() => {
-      this.getBalance();
-      this.getIndexPirce();
-    }, 1000);
+
   },
   methods: {
+    closeNetWorkTip() {
+      this.$bus.$emit("CLOSE_STATUS_DIALOG", (data) => {
+        this.closeStatusDialog();
+        window.statusDialog = false;
+      });
+    },
+    showNetWorkTip() {
+      this.$bus.$emit("OPEN_STATUS_DIALOG", {
+        type: "warning",
+        conText: "请连接到Binance Smart Chain网络",
+      });
+    },
     copy() {
       let copy = new ClipboardJS("#copy_default");
       copy.on("success", function (e) {
@@ -271,7 +289,8 @@ export default {
       if (window.ethereum) {
         ethereum.on("networkChanged", (chainID) => {
           window.chainID = chainID;
-          this.$bus.$emit("REFRESH_ALL_DATA");
+          this.$store.commit('SET_CHAINID', (chainID))
+          window.location.reload()
         });
       } else {
         if (this.times < 10) {
@@ -287,8 +306,14 @@ export default {
         ethereum.on("accountsChanged", async (account) => {
           let userInfo = await mateMaskInfo(account[0], "MetaMask");
           this.$store.dispatch("setUserInfo", userInfo);
-          this.$bus.$emit("REFRESH_ALL_DATA");
-          this.$bus.$emit("REFRESH_MINING");
+          setTimeout(() => {
+            this.getBannerData();
+            this.getBalance()
+            this.getIndexPirce()
+            this.$bus.$emit("REFRESH_ALL_DATA");
+            this.$bus.$emit("REFRESH_MINING");
+          }, 200);
+
         });
       }
     },

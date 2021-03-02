@@ -5,20 +5,12 @@
       <div class="coin">
         <h3>
           {{ list.name }}
-          <img src="~/assets/img/helmet/3x.png" alt="" />
         </h3>
         <div>
-          <p>
-            <img src="~/assets/img/helmet/helmetCoin.png" alt="" />
-            50%
-            <span> HELMET </span>
-          </p>
-          <p>
-            <img src="~/assets/img/helmet/bnbCoin.png" alt="" />
-
-            50%
-            <span> BNB </span>
-          </p>
+          <h4>
+            Earn：
+            <img src="~/assets/img/icon/helmetcake.png" alt="" />
+          </h4>
         </div>
       </div>
       <div class="index">
@@ -211,7 +203,7 @@ export default {
   data() {
     return {
       list: {
-        name: "HELMET-BNB",
+        name: "HELMET-BNB LP",
       },
       textList: [
         {
@@ -412,7 +404,7 @@ export default {
       }
       this.stakeLoading = true;
       let type = "HELMETBNB";
-      toDeposite(type, { amount: this.DepositeNum }, true, (status) => {});
+      toDeposite(type, { amount: this.DepositeNum }, true, (status) => { });
     },
     // 结算Paya
     async toClaim() {
@@ -505,6 +497,15 @@ export default {
         }
         > div {
           display: flex;
+          > h4 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            img {
+              width: 58px;
+              height: 32px;
+            }
+          }
           > p {
             display: flex;
             align-items: center;
@@ -517,7 +518,6 @@ export default {
               margin-right: 4px;
             }
             span {
-              margin-left: 4px;
               color: #919aa6;
             }
           }
@@ -703,6 +703,15 @@ export default {
         }
         > div {
           display: flex;
+          > h4 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            img {
+              width: 58px;
+              height: 32px;
+            }
+          }
           > p {
             display: flex;
             align-items: center;

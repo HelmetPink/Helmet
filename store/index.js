@@ -42,6 +42,7 @@ import factory_abi from '~/abi/factory_abi.json';
 export const state = () => ({
     locales: ['en_US', 'zh_CN'],
     locale: 'en_US',
+    chainID: null,
     localeList: [
         {
             key: 'en_US',
@@ -59,12 +60,6 @@ export const state = () => ({
     // typeList: ["WETH", "UNI", "WBTC", "CRV", "OTHERS"],
     coinList: ['HELMET', 'ETH', 'BTCB', 'CAKE', 'CTK', 'BURGER', 'WBNB'],
     // coinList: ['BTCB', 'ETH', 'HELMET', 'CAKE', 'CTK', 'FORTUBE'],
-    typeFixObj: {
-        WETH: 0,
-        UNI: 0,
-        WBTC: 0,
-        CRV: 2,
-    },
     longMap: null,
     sellMap: null,
     buyMap: null,
@@ -105,10 +100,6 @@ export const state = () => ({
         payaSettle: 0,
         claimAbleHelmet: 0,
     },
-    DAI_ETH: 0,
-    ETH_DAI_LPT: 0,
-    myUNI: 0,
-    myPAYA: 0,
     BNB_BUSD: 0,
     CAKE_BUSD: 0,
     HELMET_BUSD: 0,
@@ -283,6 +274,9 @@ export const mutations = {
     },
     SET_LONG_MAP(state, data) {
         state.longMap = data;
+    },
+    SET_CHAINID(state, data) {
+        state.chainID = data;
     },
     SET_SELL_MAP(state, data) {
         state.sellMap = data;
@@ -587,14 +581,15 @@ export const actions = {
             state.userInfo.data &&
             state.userInfo.data.account &&
             state.userInfo.data.account.toLowerCase();
-
         let item, tItem;
         let sellInfo;
         let totalHelmetsBorrowedVolume = 0; // 保险交易过的资金量  （保单数量累加， vol 用抵押物处理）
         const createTime = new Date('2020-10-16').getTime() / 1000;
         let _col;
+
         for (let key in buyMap) {
             item = buyMap[key];
+
             sellInfo = sellObj[item.askID];
             // 过滤垃圾数据
             // 过滤未创建settleable 之前的数据
@@ -672,7 +667,6 @@ export const actions = {
                 }
             }
         }
-
         commit('SET_ABOUT_INFO_BUY', {
             aboutInfoBuy,
             myAboutInfoBuy,

@@ -10,19 +10,12 @@
           <!-- <img src="~/assets/img/helmet/3x.png" alt="" /> -->
         </h3>
         <div>
-          <div>
-            <p>
-              <img src="~/assets/img/helmet/helmetCoin.png" alt="" />
-              50%
-              <span> HELMET </span>
-            </p>
-            <p>
-              <img src="~/assets/img/helmet/burgerCoin.png" alt="" />
-
-              50%
-              <span> hBURGER </span>
-            </p>
-          </div>
+          <h4>
+            Earn：
+            <img src="~/assets/img/icon/helmetburger.png" alt="" />
+          </h4>
+        </div>
+        <div>
           <p>
             <span>
               {{ $t("Table.SurplusTime") }}：
@@ -243,7 +236,7 @@ export default {
   data() {
     return {
       list: {
-        name: "HELMET-hBURGER",
+        name: "HELMET-hBURGER LP",
         dueDate: "2021-03-07 00:00",
         DownTime: "--",
       },
@@ -509,7 +502,7 @@ export default {
       }
       this.stakeLoading = true;
       let type = "BURGERHELMET";
-      toDeposite(type, { amount: this.DepositeNum }, true, (status) => {});
+      toDeposite(type, { amount: this.DepositeNum }, true, (status) => { });
     },
     // 结算Paya
     async toClaim() {
@@ -577,7 +570,7 @@ export default {
   .burger_pool {
     height: 536px;
     background: #ffffff;
-    padding: 60px 40px 40px 40px;
+    padding: 40px;
     margin-bottom: 20px;
     > .combo {
       width: 148px;
@@ -615,8 +608,8 @@ export default {
             line-height: 16px;
             display: flex;
             align-items: center;
-            margin-left: 8px;
             cursor: pointer;
+            margin-left: 4px;
             &:hover {
               color: #ff8200;
             }
@@ -633,29 +626,29 @@ export default {
         }
         > div {
           display: flex;
-          align-items: center;
-          > div {
+          > h4 {
             display: flex;
-            > p {
-              display: flex;
-              align-items: center;
-              color: #121212;
-              font-size: 14px;
-              margin-right: 14px;
-              img {
-                width: 32px;
-                height: 32px;
-                margin-right: 4px;
-              }
-              span {
-                margin-left: 4px;
-                color: #919aa6;
-              }
+            align-items: center;
+            margin-bottom: 8px;
+            img {
+              width: 58px;
+              height: 32px;
             }
           }
-          p {
-            color: #919aa6;
+          > p {
+            display: flex;
+            align-items: center;
+            color: #121212;
             font-size: 14px;
+            margin-right: 14px;
+            img {
+              width: 32px;
+              height: 32px;
+              margin-right: 4px;
+            }
+            span {
+              color: #919aa6;
+            }
           }
         }
       }
@@ -858,7 +851,6 @@ export default {
             line-height: 16px;
             display: flex;
             align-items: center;
-            margin-left: 8px;
             cursor: pointer;
             &:hover {
               color: #ff8200;
@@ -877,8 +869,18 @@ export default {
         > div {
           display: flex;
           flex-direction: column;
+          > h4 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            img {
+              width: 58px;
+              height: 32px;
+            }
+          }
           > div {
             display: flex;
+
             > p {
               display: flex;
               align-items: center;
@@ -931,7 +933,7 @@ export default {
       flex-direction: column;
       margin-top: 30px;
       > div {
-        height: 343px;
+        height: 293px;
         padding: 30px 16px;
         .title {
           display: flex;
@@ -975,6 +977,7 @@ export default {
         }
       }
       .deposit {
+        height: 343px;
         border-top: 2px solid #00b900;
         background: rgba(0, 185, 0, 0.04);
         .title {
