@@ -413,7 +413,6 @@ export default {
       });
     },
     copyAdress(e, text) {
-      let _this = this;
       let copys = new ClipboardJS(".copy", { text: () => text });
       copys.on("success", function (e) {
         Message({
