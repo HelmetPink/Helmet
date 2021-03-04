@@ -8,6 +8,7 @@ import {
     getRePrice,
 } from '~/interface/order.js';
 import {
+<<<<<<< HEAD
     getLongList,
     getSellList,
     getBuyList,
@@ -15,6 +16,16 @@ import {
     getMintList,
 } from '~/interface/event.js';
 import { getProgress } from '~/interface/price.js';
+=======
+  getLongList,
+  getSellList,
+  getBuyList,
+  getRePriceList,
+  getMintList,
+  getLongValues,
+} from "~/interface/event.js";
+import { getProgress } from "~/interface/price.js";
+>>>>>>> 29bda5de2cf373c735bdb61027e485ffc47ad2b4
 import {
     getID,
     newGetSymbol,
@@ -667,6 +678,7 @@ export const actions = {
                 }
             }
         }
+<<<<<<< HEAD
         commit('SET_ABOUT_INFO_BUY', {
             aboutInfoBuy,
             myAboutInfoBuy,
@@ -674,6 +686,18 @@ export const actions = {
         });
         commit('SET_TOTAL_HELMETS_BORROWED_VOLUME', totalHelmetsBorrowedVolume);
     },
+=======
+      }
+    }
+    // let longValue = getLongValues(longArray);
+    commit("SET_ABOUT_INFO_BUY", {
+      aboutInfoBuy,
+      myAboutInfoBuy,
+      aboutInfoBuySeller,
+    });
+    commit("SET_TOTAL_HELMETS_BORROWED_VOLUME", totalHelmetsBorrowedVolume);
+  },
+>>>>>>> 29bda5de2cf373c735bdb61027e485ffc47ad2b4
 
     async getCountByType({ commit, state }, data) {
         const aboutInfoSell = state.aboutInfoSell;
