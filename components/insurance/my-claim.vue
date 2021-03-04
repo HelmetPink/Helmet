@@ -104,7 +104,7 @@
           </button>
         </section>
       </div>
-      <div class="loading" v-if="isLoading && !isLogin">
+      <div class="loading" v-if="isLoading">
         <img src="~/assets/img/loading.gif" />
       </div>
     </div>
@@ -156,7 +156,7 @@ export default {
       getTokenName,
       fixD,
       page: 0,
-      limit: 8,
+      limit: 5,
       isLoading: true,
       isLogin: false,
     };

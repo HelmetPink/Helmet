@@ -90,7 +90,7 @@
           ></PInput>
         </div>
       </section>
-      <div class="loading" v-if="isLoading && !isLogin">
+      <div class="loading" v-if="isLoading">
         <img src="~/assets/img/loading.gif" />
       </div>
     </div>
@@ -444,15 +444,15 @@ export default {
             data.buyNum == data.remain
               ? precision.times(data.relVol, num)
               : fixD(
+                precision.divide(
+                  data.buyNum,
                   precision.divide(
-                    data.buyNum,
-                    precision.divide(
-                      1,
-                      this.strikePriceArray[1][getTokenName(data._underlying)]
-                    )
-                  ),
-                  8
+                    1,
+                    this.strikePriceArray[1][getTokenName(data._underlying)]
+                  )
                 ),
+                8
+              ),
           price: data.price,
           settleToken: "HELMET",
           _strikePrice: data._strikePrice,
@@ -464,11 +464,15 @@ export default {
         this.listType = 2;
         this.listCoin = data._underlying;
       }
+<<<<<<< HEAD
 
       buyInsuranceBuy(datas, (status) => {});
+=======
+      buyInsuranceBuy(datas, (status) => { });
+>>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
     },
     // 计算数量
-    setNum() {},
+    setNum() { },
   },
 };
 </script>
