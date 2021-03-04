@@ -13,10 +13,7 @@ import {
     getBuyList,
     getRePriceList,
     getMintList,
-<<<<<<< HEAD
-=======
     getLongValues,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
 } from '~/interface/event.js';
 import { getProgress } from '~/interface/price.js';
 import {
@@ -62,9 +59,6 @@ export const state = () => ({
         },
     ],
     // typeList: ["WETH", "UNI", "WBTC", "CRV", "OTHERS"],
-<<<<<<< HEAD
-    coinList: ['HELMET', 'ETH', 'BTCB', 'CAKE', 'CTK', 'BURGER', 'WBNB'],
-=======
     coinList: [
         'HELMET',
         'ETH',
@@ -75,7 +69,6 @@ export const state = () => ({
         'WBNB',
         'MATH',
     ],
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
     // coinList: ['BTCB', 'ETH', 'HELMET', 'CAKE', 'CTK', 'FORTUBE'],
     longMap: null,
     sellMap: null,
@@ -146,10 +139,7 @@ export const state = () => ({
             CTK: '2021-03-08 00:00',
             BURGER: '2021-03-12 00:00',
             WBNB: '2021-03-21 00:00',
-<<<<<<< HEAD
-=======
             MATH: '2021-04-05 00:00',
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
     ],
     echartIndexArray: {
@@ -160,10 +150,7 @@ export const state = () => ({
         CTK: 0,
         BURGER: 0,
         WBNB: 0,
-<<<<<<< HEAD
-=======
         MATH: 0,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
     },
     strikePriceArray: [
         // 翻倍价格
@@ -175,10 +162,7 @@ export const state = () => ({
             CTK: 0.04,
             BURGER: 0.06,
             WBNB: 600,
-<<<<<<< HEAD
-=======
             MATH: 0.014,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
         // 腰斩价格
         {
@@ -189,10 +173,7 @@ export const state = () => ({
             CTK: 0.01,
             BURGER: 0.015,
             WBNB: 150,
-<<<<<<< HEAD
-=======
             MATH: 0.003,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
     ],
     // 抵押物
@@ -206,10 +187,7 @@ export const state = () => ({
             CTK: 'CTK',
             BURGER: 'BURGER',
             WBNB: 'WBNB',
-<<<<<<< HEAD
-=======
             MATH: 'MATH',
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
         // 腰斩抵押物
         {
@@ -220,10 +198,7 @@ export const state = () => ({
             CTK: 'WBNB',
             BURGER: 'WBNB',
             WBNB: 'BUSD',
-<<<<<<< HEAD
-=======
             MATH: 'WBNB',
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
     ],
     // 标的物
@@ -237,10 +212,7 @@ export const state = () => ({
             CTK: 'WBNB',
             BURGER: 'WBNB',
             WBNB: 'BUSD',
-<<<<<<< HEAD
-=======
             MATH: 'WBNB',
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
         // 腰斩标的物
         {
@@ -251,10 +223,7 @@ export const state = () => ({
             CTK: 'CTK',
             BURGER: 'BURGER',
             WBNB: 'WBNB',
-<<<<<<< HEAD
-=======
             MATH: 'MATH',
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
     ],
     allIndexPrice: [
@@ -267,10 +236,7 @@ export const state = () => ({
             ETH: 0,
             CKT: 0,
             BURGER: 0,
-<<<<<<< HEAD
-=======
             MATH: 0,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
         {
             HELMET: 0,
@@ -281,10 +247,7 @@ export const state = () => ({
             ETH: 0,
             CKT: 0,
             BURGER: 0,
-<<<<<<< HEAD
-=======
             MATH: 0,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
     ],
     allHelmetPrice: [
@@ -297,10 +260,7 @@ export const state = () => ({
             ETH: 0,
             CKT: 0,
             BURGER: 0,
-<<<<<<< HEAD
-=======
             MATH: 0,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
         {
             HELMET: 0,
@@ -311,10 +271,7 @@ export const state = () => ({
             ETH: 0,
             CKT: 0,
             BURGER: 0,
-<<<<<<< HEAD
-=======
             MATH: 0,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
         },
     ],
 
@@ -327,10 +284,7 @@ export const state = () => ({
         ETH: 0,
         CKT: 0,
         BURGER: 0,
-<<<<<<< HEAD
-=======
         MATH: 0,
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
     },
     transferMap: [],
 });
@@ -636,187 +590,6 @@ export const actions = {
         commit('SET_SELL_OBJ', sellObj);
         commit('SET_NOT_EXPRIED_ABOUT_INFO_SELL', notExpiredAboutInfoSell); // 设置未过期的数据
     },
-<<<<<<< HEAD
-
-    async mapAboutInfoBuy({ commit, state }, data) {
-        const charID = await getID();
-        // const longMap = state.longMap;
-        const sellObj = state.sellObj;
-        const buyMap = state.buyMap;
-        const repriceMap = state.repriceMap;
-        const aboutInfoBuy = [];
-        const myAboutInfoBuy = [];
-        const aboutInfoBuySeller = [];
-        const myAddress =
-            state.userInfo.data &&
-            state.userInfo.data.account &&
-            state.userInfo.data.account.toLowerCase();
-        let item, tItem;
-        let sellInfo;
-        let totalHelmetsBorrowedVolume = 0; // 保险交易过的资金量  （保单数量累加， vol 用抵押物处理）
-        const createTime = new Date('2020-10-16').getTime() / 1000;
-        let _col;
-
-        for (let key in buyMap) {
-            item = buyMap[key];
-
-            sellInfo = sellObj[item.askID];
-            // 过滤垃圾数据
-            // 过滤未创建settleable 之前的数据
-            // 过滤数量为0的数据
-            // 过滤时间戳过长的脏数据 (例如1603123200000000000000000000000)
-            // if (charID === 1 || (sellInfo.longInfo && parseInt(sellInfo.longInfo.count) >= 63 && sellInfo.longInfo._expiry.length === 10 && parseInt(sellInfo.longInfo._expiry) >= createTime && parseInt(item.vol) !== 0)) {
-            if (sellInfo) {
-                if (
-                    sellInfo.longInfo &&
-                    sellInfo.longInfo._expiry.length === 10
-                ) {
-                    // totalHelmetsBorrowedVolume
-                    _col = newGetSymbol(
-                        sellInfo.longInfo._collateral,
-                        window.chainID
-                    );
-                    totalHelmetsBorrowedVolume += Number(
-                        fromWei(item.vol, _col)
-                    );
-                }
-                if (
-                    charID === 1 ||
-                    (sellInfo.longInfo &&
-                        sellInfo.longInfo._expiry.length === 10 &&
-                        parseInt(sellInfo.longInfo._expiry) >= createTime &&
-                        parseInt(item.vol) !== 0)
-                ) {
-                    aboutInfoBuy.push({
-                        ...item,
-                        sellInfo,
-                    });
-
-                    if (item.buyer.toLowerCase() === myAddress) {
-                        myAboutInfoBuy.push({
-                            ...item,
-                            sellInfo,
-                        });
-                    }
-                    if (sellInfo.seller.toLowerCase() === myAddress) {
-                        aboutInfoBuySeller.push({
-                            ...item,
-                            sellInfo,
-                        });
-                    }
-                }
-            } else {
-                function getOldOrder(id, rtArray) {
-                    let list = repriceMap;
-                    let array = list.filter((item) => item.newAskID == id)[0];
-                    if (array && array.newAskID) {
-                        let arr = getOldOrder(array.askID, array);
-                        return arr;
-                    }
-                    return rtArray;
-                }
-                if (item.buyer.toLowerCase() === myAddress) {
-                    let askID = item['askID'];
-                    let result = getOldOrder(askID);
-                    let newItem;
-                    for (let i = 0; i < repriceMap.length; i++) {
-                        newItem = repriceMap[i];
-                        if (newItem.newAskID == item.askID) {
-                            let sellInfo = sellObj[result.askID];
-                            if (sellInfo) {
-                                let list = JSON.parse(JSON.stringify(sellInfo));
-                                list['price'] = newItem.newPrice;
-                                list['askID'] = newItem.newAskID;
-                                myAboutInfoBuy.push({
-                                    ...item,
-                                    sellInfo: list,
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        commit('SET_ABOUT_INFO_BUY', {
-            aboutInfoBuy,
-            myAboutInfoBuy,
-            aboutInfoBuySeller,
-        });
-        commit('SET_TOTAL_HELMETS_BORROWED_VOLUME', totalHelmetsBorrowedVolume);
-    },
-
-    async getCountByType({ commit, state }, data) {
-        const aboutInfoSell = state.aboutInfoSell;
-        let expiry;
-        let current = new Date().getTime();
-        let _col;
-        let arr = [];
-        aboutInfoSell.forEach((item) => {
-            expiry = parseInt(item.longInfo._expiry) * 1000;
-            // 今天之后过期的卖单
-            if (expiry > current) {
-                // 抵押品
-                _col = newGetSymbol(item.longInfo._collateral, window.chainID);
-                arr.push({
-                    askID: item.askID,
-                    volume: fromWei(item.volume, _col),
-                    price: fromWei(item.price, _col),
-                    // 标的物
-                    _underlying: newGetSymbol(
-                        item.longInfo._underlying,
-                        window.chainID
-                    ),
-                    _collateral: _col,
-                    // 行权价
-                    _strikePrice: fromWei(item.longInfo._strikePrice, _col),
-                    // 到期日
-                    _expiry: expiry,
-                });
-            }
-        });
-        Promise.all(
-            arr.map(async (item) => {
-                const res = await asks(item.askID);
-                return {
-                    ...item,
-                    remain: fromWei(res.remain, item.settleToken),
-                };
-            })
-        ).then((res) => {
-            let und_arr = [];
-            let data_obj = {};
-            res.forEach((item) => {
-                let remain = mul(item.remain, item._strikePrice);
-                let count = mul(item.volume, item._strikePrice);
-                let min = accDiv(1, item._strikePrice);
-                let max = accDiv(1, item._strikePrice);
-                if (und_arr.includes(item._underlying)) {
-                    data_obj[item._underlying] = {
-                        remain: add(data_obj[item._underlying].remain, remain),
-                        count: add(data_obj[item._underlying].count, count),
-                        min:
-                            min < data_obj[item._underlying].min
-                                ? min
-                                : data_obj[item._underlying].min,
-                        max:
-                            max > data_obj[item._underlying].max
-                                ? max
-                                : data_obj[item._underlying].max,
-                    };
-                } else {
-                    data_obj[item._underlying] = {
-                        remain,
-                        count,
-                        min,
-                        max,
-                    };
-                    und_arr.push(item._underlying);
-                }
-            });
-            commit('SET_TOTAL_INFO', data_obj);
-        });
-=======
-
     async mapAboutInfoBuy({ commit, state }, data) {
         const charID = await getID();
         // const longMap = state.longMap;
@@ -995,7 +768,6 @@ export const actions = {
             });
             commit('SET_TOTAL_INFO', data_obj);
         });
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
     },
     setUserInfo({ commit, state }, data) {
         commit('SET_USER_INFO', data);

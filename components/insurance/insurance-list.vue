@@ -464,12 +464,7 @@ export default {
         this.listType = 2;
         this.listCoin = data._underlying;
       }
-<<<<<<< HEAD
-
-      buyInsuranceBuy(datas, (status) => {});
-=======
       buyInsuranceBuy(datas, (status) => { });
->>>>>>> 9091fd410801aacdfeea0cac7ddec902896ec0bc
     },
     // 计算数量
     setNum() { },
