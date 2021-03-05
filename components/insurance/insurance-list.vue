@@ -464,7 +464,6 @@ export default {
         this.listType = 2;
         this.listCoin = data._underlying;
       }
-
       buyInsuranceBuy(datas, (status) => { });
     },
     // 计算数量
