@@ -14,8 +14,9 @@
           >{{ $t("Header.Mining") }}
           <p class="new"></p>
         </nuxt-link>
-        <nuxt-link to="/flashmining"
-          >{{ $t("Header.FlashMining") }}
+        <nuxt-link to="/flashmining">{{ $t("Header.FlashMining") }} </nuxt-link>
+        <nuxt-link to="/burnmining"
+          >{{ $t("Header.BruningBox") }}
           <p class="fire"></p>
         </nuxt-link>
         <a href="https://helmet-insure.gitbook.io/helmet/" target="_blank">{{
@@ -74,7 +75,7 @@ import WallectSelect from "./wallet-select";
 import CurrentAccount from "~/components/account/current-account.vue";
 import ChangeAccount from "~/components/account/change-account.vue";
 import Langauage from "~/components/common/langauage.vue";
-import { getID } from '~/assets/utils/address-pool.js'
+import { getID } from "~/assets/utils/address-pool.js";
 export default {
   name: "p-header",
   components: {
@@ -104,9 +105,9 @@ export default {
       return obj;
     },
     ChainID() {
-      let chainID = this.$store.state.chainID
-      return chainID
-    }
+      let chainID = this.$store.state.chainID;
+      return chainID;
+    },
   },
   watch: {
     userInfo: {
@@ -114,12 +115,10 @@ export default {
       immediate: true,
     },
     ChainID(newValue) {
-      this.chainID = newValue
+      this.chainID = newValue;
     },
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     openChangeWallet() {
       this.showChangeWallet = true;
@@ -299,18 +298,18 @@ export default {
     }
   }
 }
-// @media screen and (min-width: 1360px) {
-//   .header-container {
-//     > div {
-//       padding: 0 80px;
-//     }
-//   }
-// }
+@media screen and (min-width: 1360px) {
+  .header-container {
+    > div {
+      padding: 0 80px;
+    }
+  }
+}
 @media screen and (min-width: 750px) {
   .header-container {
     > div {
-      width: 1200px;
-      // min-width: 1200px;
+      // width: 1200px;
+      min-width: 1200px;
       .logo {
         img {
           height: 40px;

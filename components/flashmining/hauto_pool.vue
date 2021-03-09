@@ -2,7 +2,17 @@
   <div class="hauto_pool">
     <!-- <span class="miningTime"> {{ MingTime }}</span> -->
     <img src="~/assets/img/helmet/star.png" alt="" />
-    <img class="circle left" src="~/assets/img/helmet/leftCircle.png" alt="" />
+    <img
+      class="finished"
+      src="~/assets/img/helmet/finished.png"
+      alt=""
+      v-if="expired"
+    />
+    <img
+      class="circle right"
+      src="~/assets/img/helmet/rightCircle.png"
+      alt=""
+    />
     <div class="text">
       <div class="coin">
         <h3>
@@ -13,18 +23,6 @@
           </div>
         </h3>
         <div>
-          <!-- <div>
-            <p>
-              <img src="~/assets/img/helmet/hctkCoin.png" alt="" />
-              50%
-              <span> hCTK </span>
-            </p>
-            <p>
-              <img src="~/assets/img/helmet/helmetCoin.png" alt="" />
-              50%
-              <span> HELMET </span>
-            </p>
-          </div> -->
           <p>
             <span>
               {{ $t("Table.SurplusTime") }}：
@@ -109,6 +107,11 @@
             <button
               @click="toDeposite"
               :class="stakeLoading ? 'disable b_button' : 'b_button'"
+              :style="
+                expired
+                  ? 'background: #ccc !important; pointer-events: none'
+                  : ''
+              "
             >
               <i :class="stakeLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.ConfirmDeposit") }}
@@ -227,6 +230,11 @@
             <button
               @click="toClaim"
               :class="claimLoading ? 'disable o_button' : 'o_button'"
+              :style="
+                expired
+                  ? 'background: #ccc !important; pointer-events: none'
+                  : ''
+              "
             >
               <i :class="claimLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.ClaimAllRewards") }}
@@ -340,6 +348,7 @@ export default {
       actionType: "deposit",
       fixD,
       isLogin: false,
+      expired: false
     };
   },
   mounted() {
@@ -462,6 +471,7 @@ export default {
         template = `${0}${this.$t("Content.DayD")} ${0}${this.$t(
           "Content.HourD"
         )}`;
+        this.expired = true
       }
       this.list.DownTime = template;
     },
@@ -510,8 +520,11 @@ export default {
         2
       );
       this.apy = apy ? apy : 0;
-      // this.textList[1].num = "Infinity" + "%";
-      this.textList[1].num = this.apy + "%";
+      if (this.expired) {
+        this.textList[1].num = '--';
+      } else {
+        this.textList[1].num = this.apy + "%";
+      }
     },
     async getBalance() {
       let helmetType = "HAUTOPOOL_LPT";
@@ -532,7 +545,11 @@ export default {
       this.balance.hCTK = fixD(Helmet, 8);
       this.balance.TotalLPT = fixD(TotalLPT, 8);
       this.balance.Share = fixD((Withdraw / TotalLPT) * 100, 2);
-      this.textList[0].num = fixD((10 / 14) * 7, 2) + " hAUTO";
+      if (this.expired) {
+        this.textList[0].num = '--';
+      } else {
+        this.textList[0].num = fixD((10 / 14) * 7, 2) + " hAUTO";
+      }
     },
     // 抵押
     toDeposite() {
@@ -652,6 +669,13 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      width: 102px;
+      height: 102px;
+      top: 0;
+      right: 0;
+      transform: translateY(0);
     }
     .circle {
       width: 102px;
@@ -906,6 +930,13 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      width: 102px;
+      height: 102px;
+      top: 0;
+      right: 0;
+      transform: translateY(0);
     }
     .circle {
       width: 102px;
