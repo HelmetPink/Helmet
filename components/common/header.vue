@@ -164,6 +164,7 @@ export default {
   width: 100%;
   height: 80px;
   background: #fff;
+  border-bottom: 1px solid #f7f7fa;
   > div {
     height: 100%;
     margin: 0 auto;

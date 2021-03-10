@@ -690,11 +690,6 @@ export const actions = {
                 }
             }
         }
-        commit('SET_ABOUT_INFO_BUY', {
-            aboutInfoBuy,
-            myAboutInfoBuy,
-            aboutInfoBuySeller,
-        });
         getLongValues(longArray).then((res) => {
             let value = 0;
             let data = res.data;
@@ -702,6 +697,11 @@ export const actions = {
                 value += Object.values(data[i])[0];
             }
             commit('SET_TOTAL_HELMETS_BORROWED_VOLUME', value);
+        });
+        commit('SET_ABOUT_INFO_BUY', {
+            aboutInfoBuy,
+            myAboutInfoBuy,
+            aboutInfoBuySeller,
         });
     },
 

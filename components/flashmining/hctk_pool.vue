@@ -8,11 +8,7 @@
       alt=""
       v-if="expired"
     />
-    <img
-      class="circle right"
-      src="~/assets/img/helmet/rightCircle.png"
-      alt=""
-    />
+    <img class="circle left" src="~/assets/img/helmet/leftCircle.png" alt="" />
     <div class="text">
       <div class="coin">
         <h3>
@@ -156,7 +152,7 @@
               >
             </p>
             <p>
-              <span>My Pool Share：</span>
+              <span>{{ $t("Table.MyPoolShare") }}：</span>
               <span> {{ isLogin ? balance.Share : "--" }} %</span>
             </p>
             <a
