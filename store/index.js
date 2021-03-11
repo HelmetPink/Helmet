@@ -39,7 +39,6 @@ import { getUnderlying } from "~/interface/price.js";
 import { accDiv, add, mul } from "~/assets/utils/calculate.js";
 import { toRounding } from "~/assets/js/util.js";
 import factory_abi from "~/abi/factory_abi.json";
-import { fixDEAdd } from "~/assets/js/util.js";
 export const state = () => ({
   locales: ["en_US", "zh_CN"],
   locale: "en_US",
