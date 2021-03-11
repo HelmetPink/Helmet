@@ -1,17 +1,20 @@
 <template>
-  <div class="mining_container">
-    <div class="pool_wrap">
-      <HmathPool></HmathPool>
-      <HautoPool></HautoPool>
+  <div class="main_container">
+    <div class="flashmining_container">
+      <div class="pool_wrap">
+        <!-- <HdodoPool></HdodoPool> -->
+        <HmathPool></HmathPool>
+        <HautoPool></HautoPool>
+      </div>
+      <div class="pool_wrap">
+        <Bnb500Pool></Bnb500Pool>
+        <HctkPool></HctkPool>
+      </div>
+      <div class="pool_wrap">
+        <HcctPool></HcctPool>
+      </div>
+      <Onepager></Onepager>
     </div>
-    <div class="pool_wrap">
-      <Bnb500Pool></Bnb500Pool>
-      <HctkPool></HctkPool>
-    </div>
-    <div class="pool_wrap">
-      <HcctPool></HcctPool>
-    </div>
-    <Onepager></Onepager>
   </div>
 </template>
 
@@ -21,6 +24,7 @@ import HctkPool from "~/components/flashmining/hctk_pool.vue";
 import Bnb500Pool from "~/components/flashmining/bnb500_pool.vue";
 import HautoPool from "~/components/flashmining/hauto_pool.vue";
 import HmathPool from "~/components/flashmining/hmath_pool.vue";
+import HdodoPool from "~/components/flashmining/hdodo_pool.vue";
 import Onepager from "~/components/mining/onepager.vue";
 export default {
   layout: "default",
@@ -31,6 +35,7 @@ export default {
     Bnb500Pool,
     HautoPool,
     HmathPool,
+    HdodoPool
   },
   data() {
     return {
@@ -69,14 +74,16 @@ export default {
 
 <style lang='scss' scoped>
 @import "~/assets/css/base.scss";
-.mining_container {
+
+.main_container {
   background: #f7f7fa;
 }
-
 @media screen and (min-width: 750px) {
-  .mining-list-title {
-    height: 60px;
-    line-height: 60px;
+  .main_container {
+    > .flashmining_container {
+      width: 1200px;
+      margin: 20px auto 0;
+    }
   }
   .pool_wrap {
     display: flex;
@@ -84,13 +91,7 @@ export default {
     padding: 0 40px;
   }
 }
+
 @media screen and (max-width: 750px) {
-  .mining-list-title {
-    font-size: 16px;
-    color: $text-t;
-    height: 60px;
-    line-height: 60px;
-    padding-left: 16px;
-  }
 }
 </style>

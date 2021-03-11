@@ -1,7 +1,12 @@
 <template>
   <div class="hcct_pool">
     <img src="~/assets/img/helmet/star.png" alt="" />
-    <img class="finished" src="~/assets/img/helmet/finished.png" alt="" />
+    <img
+      class="finished"
+      src="~/assets/img/helmet/finished.png"
+      alt=""
+      v-if="expired"
+    />
     <img
       class="circle right"
       src="~/assets/img/helmet/rightCircle.png"
@@ -113,7 +118,11 @@
             <button
               @click="toDeposite"
               :class="stakeLoading ? 'disable b_button' : 'b_button'"
-              style="background: #ccc !important; pointer-events: none"
+              :style="
+                expired
+                  ? 'background: #ccc !important; pointer-events: none'
+                  : ''
+              "
             >
               <i :class="stakeLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.ConfirmDeposit") }}
@@ -146,7 +155,7 @@
               >
             </p>
             <p>
-              <span>My Pool Share：</span>
+              <span>{{ $t("Table.MyPoolShare") }}：</span>
               <span> {{ isLogin ? balance.Share : "--" }} %</span>
             </p>
             <a
@@ -231,7 +240,11 @@
             <button
               @click="toClaim"
               :class="claimLoading ? 'disable o_button' : 'o_button'"
-              style="background: #ccc !important; pointer-events: none"
+              :style="
+                expired
+                  ? 'background: #ccc !important; pointer-events: none'
+                  : ''
+              "
             >
               <i :class="claimLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.ClaimAllRewards") }}
@@ -342,6 +355,7 @@ export default {
       actionType: "deposit",
       fixD,
       isLogin: false,
+      expired: false
     };
   },
   mounted() {
@@ -462,6 +476,7 @@ export default {
         template = `${0}${this.$t("Content.DayD")} ${0}${this.$t(
           "Content.HourD"
         )}`;
+        this.expired = true
       }
       this.list.DownTime = template;
     },
@@ -484,8 +499,11 @@ export default {
         2
       );
       this.apy = apy;
-      // this.textList[1].num = this.apy + "%";
-      this.textList[1].num = "--";
+      if (this.expired) {
+        this.textList[1].num = '--';
+      } else {
+        this.textList[1].num = this.apy + "%";
+      }
     },
     async getBalance() {
       let helmetType = "HCCTPOOL_LPT";
@@ -506,8 +524,11 @@ export default {
       this.balance.Helmet = fixD(Helmet, 8);
       this.balance.TotalLPT = fixD(TotalLPT, 8);
       this.balance.Share = fixD((Withdraw / TotalLPT) * 100, 2);
-      // this.textList[0].num = fixD(16000 * 7, 2) + " HCCT";
-      this.textList[0].num = "--";
+      if (this.expired) {
+        this.textList[0].num = '--';
+      } else {
+        this.textList[0].num = fixD(16000 * 7, 2) + " HCCT";
+      }
     },
     // 抵押
     toDeposite() {
@@ -519,7 +540,7 @@ export default {
       }
       this.stakeLoading = true;
       let type = "HCCTPOOL";
-      toDeposite(type, { amount: this.DepositeNum }, true, (status) => {});
+      toDeposite(type, { amount: this.DepositeNum }, true, (status) => { });
     },
     // 结算Paya
     async toClaim() {

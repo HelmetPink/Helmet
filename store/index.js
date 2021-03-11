@@ -39,7 +39,7 @@ import { getUnderlying } from "~/interface/price.js";
 import { accDiv, add, mul } from "~/assets/utils/calculate.js";
 import { toRounding } from "~/assets/js/util.js";
 import factory_abi from "~/abi/factory_abi.json";
-
+import { fixDEAdd } from "~/assets/js/util.js";
 export const state = () => ({
   locales: ["en_US", "zh_CN"],
   locale: "en_US",
@@ -610,8 +610,11 @@ export const actions = {
         if (sellInfo.longInfo && sellInfo.longInfo._expiry.length === 10) {
           // totalHelmetsBorrowedVolume
           _col = newGetSymbol(sellInfo.longInfo._collateral, window.chainID);
-          longArray.push(sellInfo.longInfo.long);
-          totalHelmetsBorrowedVolume += Number(fromWei(item.vol, _col));
+          let obj = {};
+          obj[sellInfo.longInfo._collateral] = Number(item.vol);
+          if (item.vol != 0) {
+            longArray.push(obj);
+          }
         }
         if (
           charID === 1 ||
@@ -670,13 +673,19 @@ export const actions = {
         }
       }
     }
-    // let longValue = getLongValues(longArray);
+    getLongValues(longArray).then((res) => {
+      let value = 0;
+      let data = res.data;
+      for (let i = 0; i < data.length; i++) {
+        value += Object.values(data[i])[0];
+      }
+      commit("SET_TOTAL_HELMETS_BORROWED_VOLUME", value);
+    });
     commit("SET_ABOUT_INFO_BUY", {
       aboutInfoBuy,
       myAboutInfoBuy,
       aboutInfoBuySeller,
     });
-    commit("SET_TOTAL_HELMETS_BORROWED_VOLUME", totalHelmetsBorrowedVolume);
   },
 
   async getCountByType({ commit, state }, data) {

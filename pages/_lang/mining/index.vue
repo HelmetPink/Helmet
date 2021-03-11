@@ -1,21 +1,20 @@
 <template>
-  <div class="mining_container">
-    <!-- <Banner></Banner> -->
-    <!-- <p class="mining-list-title">Select Your Mining Pool</p> -->
-    <HelmetBnbPool></HelmetBnbPool>
-    <HelmetForPool></HelmetForPool>
-    <HelmetBurgerPool></HelmetBurgerPool>
-    <HelmetHelmetPool></HelmetHelmetPool>
-    <Onepager></Onepager>
-    <!-- <MiningList></MiningList> -->
-    <!-- <Protect :styleClass="'mining-home'"></Protect> -->
-    <Compound></Compound>
-    <Deposite
-      :current="current"
-      :TradeType="TradeType"
-      @close="closeDeposite"
-      v-if="showDeposite"
-    ></Deposite>
+  <div class="main_container">
+    <div class="mining_container">
+      <HelmetBnbPool></HelmetBnbPool>
+      <!-- <HelmetDodoPool></HelmetDodoPool> -->
+      <HelmetForPool></HelmetForPool>
+      <HelmetHelmetPool></HelmetHelmetPool>
+      <HelmetBurgerPool></HelmetBurgerPool>
+      <Onepager></Onepager>
+      <Compound></Compound>
+      <Deposite
+        :current="current"
+        :TradeType="TradeType"
+        @close="closeDeposite"
+        v-if="showDeposite"
+      ></Deposite>
+    </div>
   </div>
 </template>
 
@@ -25,6 +24,7 @@ import HelmetBnbPool from "~/components/mining/helmet_bnb_pool.vue";
 import HelmetForPool from "~/components/mining/helmet_for_pool.vue";
 import HelmetHelmetPool from "~/components/mining/helmet_helmet_pool.vue";
 import HelmetBurgerPool from "~/components/mining/helmet_burger_pool.vue";
+import HelmetDodoPool from "~/components/mining/helmet_dodo_pool.vue";
 import MiningList from "~/components/mining/mining-list.vue";
 import Deposite from "~/components/mining/deposite-dialog.vue";
 import Withdraw from "~/components/mining/withdraw-dialog.vue";
@@ -38,6 +38,7 @@ export default {
     HelmetBurgerPool,
     HelmetForPool,
     HelmetBnbPool,
+    HelmetDodoPool,
     MiningList,
     Deposite,
     Withdraw,
@@ -81,22 +82,17 @@ export default {
 
 <style lang='scss' scoped>
 @import "~/assets/css/base.scss";
-.mining_container {
+.main_container {
   background: #f7f7fa;
 }
 @media screen and (min-width: 750px) {
-  .mining-list-title {
-    height: 60px;
-    line-height: 60px;
+  .main_container {
+    > .mining_container {
+      width: 1200px;
+      margin: 20px auto 0;
+    }
   }
 }
 @media screen and (max-width: 750px) {
-  .mining-list-title {
-    font-size: 16px;
-    color: $text-t;
-    height: 60px;
-    line-height: 60px;
-    padding-left: 16px;
-  }
 }
 </style>
