@@ -53,6 +53,7 @@
     <div class="pool">
       <div class="pool_tab">
         <button
+          :style="expired ? 'pointer-events: none' : ''"
           :class="
             actionType == 'deposit'
               ? 'deposit_btn deposit_active'
@@ -305,7 +306,7 @@ export default {
     return {
       list: {
         name: "hMATH Pool (By hAUTO-Helmet LPT)",
-        dueDate: "2021-03-18 00:00",
+        dueDate: "2021-03-17 00:00",
         DownTime: {
           day: 0,
           hour: 0,
@@ -489,6 +490,7 @@ export default {
           hour: "00",
         };
         this.expired = true;
+        this.actionType = "withdraw";
       }
       this.list.DownTime = template;
     },
@@ -687,6 +689,13 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      width: 102px;
+      height: 102px;
+      top: 0;
+      right: 0;
+      transform: translateY(0);
     }
     .circle {
       width: 102px;
@@ -983,6 +992,13 @@ export default {
       height: 36px;
       top: 0;
       transform: translateY(-5px);
+    }
+    .finished {
+      width: 102px;
+      height: 102px;
+      top: 0;
+      right: 0;
+      transform: translateY(0);
     }
     .circle {
       width: 102px;
