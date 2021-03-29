@@ -1,15 +1,14 @@
 <template>
   <div class="insurance_list">
     <div class="insurance_title">
-      <h3>保险交易</h3>
-      <span>···</span>
+      <h3>{{ $t("Insurance.Insurance_text1") }}</h3>
     </div>
     <div class="insurance_type">
       <div class="insurance_text">
-        <span>保险品种</span>
-        <span>最新价</span>
-        <span>保期</span>
-        <span>操作</span>
+        <span>{{ $t("Insurance.Insurance_text2") }}</span>
+        <span>{{ $t("Insurance.Insurance_text3") }}</span>
+        <span>{{ $t("Insurance.Insurance_text4") }}</span>
+        <span>{{ $t("Insurance.Insurance_text5") }}</span>
       </div>
       <div
         class="insurance_item"
@@ -33,7 +32,7 @@
             <span>{{ item.InsuranceType }}</span>
           </section>
           <section>
-            <span>{{ item.InsurancePriceBNB }}BNB</span>
+            <span>{{ item.InsurancePriceBNB }} BNB</span>
             <span>${{ item.InsurancePriceBUSD }}</span>
           </section>
           <section>
@@ -56,7 +55,7 @@
                   : 'buyPutInsurance'
               "
             >
-              购买腰斩险
+              {{ $t("Insurance.Insurance_text6") }}
               <i class="selectDown"></i>
             </button>
             <button
@@ -69,7 +68,7 @@
                   : 'buyCallInsurance'
               "
             >
-              购买翻倍险
+              {{ $t("Insurance.Insurance_text7") }}
               <i class="selectDown"></i>
             </button>
             <button
@@ -82,7 +81,7 @@
                   : 'issueInsurance'
               "
             >
-              发行保险
+              {{ $t("Insurance.Insurance_text8") }}
               <i class="selectDown"></i>
             </button>
           </section>
@@ -91,6 +90,13 @@
           class="insurance_detail"
           v-if="showActiveInsurance && activeInsurance == item.InsuranceType"
         >
+          <svg
+            class="close"
+            aria-hidden="true"
+            @click="showActiveInsurance = false"
+          >
+            <use xlink:href="#icon-close"></use>
+          </svg>
           <PutInsurance
             :activeInsurance="activeInsurance"
             v-if="activeType == 'PUT'"
@@ -239,11 +245,12 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @media screen and (min-width: 750px) {
   .insurance_list {
     width: 100%;
     margin: 0 auto 100px;
+    min-height: 300px;
   }
   .insurance_title {
     display: flex;
@@ -278,7 +285,6 @@ export default {
         padding-left: 20px;
       }
       &:nth-of-type(3) {
-        padding-left: 20px;
         flex: 3;
       }
       &:nth-of-type(4) {
@@ -306,6 +312,7 @@ export default {
           display: flex;
           align-items: center;
           flex: 3;
+          min-width: 150px;
           img {
             width: 32px;
             height: 32px;
@@ -323,6 +330,7 @@ export default {
           flex: 3;
           display: flex;
           flex-direction: column;
+          min-width: 120px;
           span {
             &:nth-of-type(1) {
               font-size: 14px;
@@ -342,6 +350,7 @@ export default {
         }
         &:nth-of-type(3) {
           flex: 3;
+          min-width: 200px;
           > div {
             display: flex;
             align-items: center;
@@ -380,11 +389,15 @@ export default {
           flex: 4;
           display: flex;
           justify-content: flex-end;
+          min-width: 370px;
           .activeButton {
             border: 2px solid #fd7e14;
             padding: 0px 9px;
             color: #fd7e14;
             i {
+              border-right: 5px solid transparent;
+              border-top: 6px solid #fd7e14;
+              border-left: 5px solid transparent;
               transform: rotate(180deg);
             }
           }
@@ -403,17 +416,49 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
+            &:hover {
+              padding: 0px 9px;
+              height: 36px;
+              border: 2px solid #fd7e14;
+              color: #fd7e14;
+              i {
+                border-right: 5px solid transparent;
+                border-top: 6px solid #fd7e14;
+                border-left: 5px solid transparent;
+              }
+            }
 
             i {
-              display: block;
-              width: 16px;
-              height: 16px;
-              background-repeat: no-repeat;
-              background-image: url("../../assets/img/insurancelist/select_down.png");
-              background-size: 100%;
+              position: relative;
+              margin-left: 6px;
+              border-right: 5px solid transparent;
+              border-top: 6px solid rgba(23, 23, 58, 0.6);
+              border-left: 5px solid transparent;
+              &::after {
+                content: "";
+                position: absolute;
+                top: -6px;
+                left: -3px;
+                border-right: 3px solid transparent;
+                border-top: 4px solid #f8f9fa;
+                border-left: 3px solid transparent;
+              }
             }
           }
         }
+      }
+    }
+    .insurance_detail {
+      position: relative;
+      .close {
+        position: absolute;
+        right: 20px;
+        width: 24px;
+        height: 24px;
+        top: 20px;
+        fill: #ccc;
+        cursor: pointer;
       }
     }
   }

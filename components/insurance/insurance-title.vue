@@ -1,29 +1,82 @@
 .<template>
   <div class="insurance_title">
     <div class="strikePrice">
-      <span>出险价格</span>
+      <span>{{ $t("Content.InsurancePrice") }}</span>
       <span>
         {{ activeInsurance }}:
-        {{ putStrikePrice[activeInsurance] }}
-        {{ putStrikeUnit[activeInsurance] }}</span
+        {{
+          activeType == "CALL"
+            ? callStrikePrice[activeInsurance]
+            : putStrikePrice[activeInsurance]
+        }}
+        {{
+          activeType == "CALL"
+            ? callStrikeUnit[activeInsurance]
+            : putStrikeUnit[activeInsurance]
+        }}</span
       >
     </div>
-    <div class="echartPrice"></div>
+    <div class="echartPrice">
+      <div class="bg_progress_bar">
+        <!--  对应替换数据即可  -->
+        <div class="progress_bar_left" style="width: 33.3%">
+          <p style="right: 0">
+            {{ $t("Insurance.Insurance_text19") }}
+            <span>{{ putStrikePrice[activeInsurance] }}</span>
+          </p>
+        </div>
+        <div class="progress_bar_center" style="width: 33.3%">
+          <i :style="`left: ${positionLeft}%`"></i>
+          <p style="left: 50%">
+            {{ $t("Insurance.Insurance_text20") }}
+            <span>{{ toRounding(indexPrice[activeInsurance], 4) }}</span>
+          </p>
+        </div>
+        <div class="progress_bar_right" style="width: 33.3%">
+          <p style="left: 0">
+            {{ $t("Insurance.Insurance_text21") }}
+            <span>{{ callStrikePrice[activeInsurance] }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
     <div class="myBalance">
-      <span>可用余额</span>
+      <span>{{ $t("Content.UsableBalance") }}</span>
       <p>
-        <span>{{ BalanceArray["BNB"] }} BNB</span>
-        <span>{{ BalanceArray[activeInsurance] }} {{ activeInsurance }}</span>
+        <span>
+          <img src="~/assets/img/insurancelist/bnbCoin.png" alt="" />
+          <i>{{ BalanceArray["BNB"] ? BalanceArray["BNB"] : 0 }} BNB</i>
+        </span>
+        <span>
+          <img src="~/assets/img/insurancelist/helmetCoin.png" alt="" />
+          <i
+            >{{ BalanceArray["HELMET"] ? BalanceArray["HELMET"] : 0 }} HELMET</i
+          ></span
+        >
       </p>
     </div>
   </div>
 </template>
 
 <script>
+import {
+  fixD,
+  addCommom,
+  autoRounding,
+  toRounding,
+  fixDEAdd,
+} from "~/assets/js/util.js";
 export default {
-  props: ["activeInsurance"],
+  props: ["activeInsurance", "activeType"],
   data() {
-    return {};
+    return {
+      fixD,
+      addCommom,
+      autoRounding,
+      toRounding,
+      fixDEAdd,
+      positionLeft: 50,
+    };
   },
   computed: {
     putStrikePrice() {
@@ -32,15 +85,37 @@ export default {
     putStrikeUnit() {
       return this.$store.state.policyColArray[1];
     },
+    callStrikePrice() {
+      return this.$store.state.strikePriceArray[0];
+    },
+    callStrikeUnit() {
+      return this.$store.state.policyUndArray[0];
+    },
+    indexPrice() {
+      return this.$store.state.allIndexPrice[1];
+    },
     BalanceArray() {
       return this.$store.state.BalanceArray;
     },
   },
-  mounted() {},
+  mounted() {
+    setTimeout(() => {
+      this.initEchart();
+    }, 1000);
+  },
+  methods: {
+    initEchart() {
+      let callPrice = this.callStrikePrice[this.activeInsurance];
+      let putPrice = this.putStrikePrice[this.activeInsurance];
+      let curPrice = this.indexPrice[this.activeInsurance];
+      let number = (curPrice - putPrice) / (callPrice - putPrice);
+      this.positionLeft = number * 100;
+    },
+  },
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @media screen and (min-width: 750px) {
   .insurance_title {
     width: 100%;
@@ -69,10 +144,134 @@ export default {
       }
     }
     .echartPrice {
-      width: 246px;
-      height: 40px;
-      background: #fcc;
+      width: 300px;
       margin-left: 60px;
+      .bg_progress_bar {
+        position: relative;
+        width: 100%;
+        height: 6px;
+        background: #e8e8eb;
+        border-radius: 3px;
+      }
+      .progress_bar_left {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 33%;
+        height: 100%;
+        border-radius: 3px 0 0 3px;
+        background: linear-gradient(180deg, #f0657b 0%, #dc3545 100%);
+        &:after {
+          content: "";
+          position: absolute;
+          top: -2px;
+          right: 0;
+          width: 1px;
+          height: 10px;
+          background: linear-gradient(180deg, #f0657b 0%, #dc3545 100%);
+        }
+        p {
+          position: absolute;
+          top: 14px;
+          right: 0;
+          font-size: 12px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(23, 23, 58, 0.45);
+          line-height: 12px;
+          text-align: center;
+          span {
+            font-size: 12px;
+            font-family: IBMPlexSans-Medium, IBMPlexSans;
+            font-weight: 500;
+            color: #dc3545;
+            line-height: 12px;
+          }
+        }
+      }
+      .progress_bar_right {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 33%;
+        height: 100%;
+        border-radius: 0 3px 3px 0;
+        background: linear-gradient(180deg, #51d37b 0%, #28a745 100%);
+        &:after {
+          content: "";
+          position: absolute;
+          top: -2px;
+          left: 0;
+          width: 1px;
+          height: 10px;
+          background: linear-gradient(180deg, #51d37b 0%, #28a745 100%);
+        }
+        p {
+          position: absolute;
+          top: 14px;
+          left: 0;
+          font-size: 12px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(23, 23, 58, 0.45);
+          line-height: 12px;
+          text-align: center;
+          span {
+            font-size: 12px;
+            font-family: IBMPlexSans-Medium, IBMPlexSans;
+            font-weight: 500;
+            color: #28a745;
+            line-height: 12px;
+          }
+        }
+      }
+      .progress_bar_center {
+        position: absolute;
+        left: 33%;
+        top: 0;
+        width: 33%;
+        height: 100%;
+        i {
+          position: absolute;
+          top: -2px;
+          left: 45%;
+          width: 1px;
+          height: 10px;
+          background: #e8e8eb;
+        }
+        p {
+          position: absolute;
+          bottom: 14px;
+          left: 50%;
+          transform: translateX(-50%);
+          padding: 8px 6px;
+          width: 100%;
+          font-size: 12px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(23, 23, 58, 0.45);
+          line-height: 12px;
+          background: #f8f9fa;
+          text-align: center;
+          &:after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -4px;
+            transform: translateX(-50%);
+            border-right: 4px solid transparent;
+            border-top: 5px solid #f8f9fa;
+            border-left: 4px solid transparent;
+          }
+          span {
+            font-size: 12px;
+            font-family: IBMPlexSans-Medium, IBMPlexSans;
+            font-weight: 500;
+            color: #fd7e14;
+            line-height: 12px;
+          }
+        }
+      }
     }
     .myBalance {
       margin-left: 60px;
@@ -86,12 +285,26 @@ export default {
       }
       p {
         margin-top: 13px;
+        display: flex;
+        align-items: center;
         span {
-          font-size: 16px;
-          font-family: Helvetica;
-          color: #17173a;
-          line-height: 16px;
-          font-weight: 600;
+          display: flex;
+          align-items: center;
+          &:nth-of-type(1) {
+            margin-right: 20px;
+          }
+          img {
+            width: 18px;
+            height: 18px;
+            margin-right: 4px;
+          }
+          i {
+            font-size: 16px;
+            font-family: Helvetica;
+            color: #17173a;
+            line-height: 16px;
+            font-weight: 600;
+          }
         }
       }
     }

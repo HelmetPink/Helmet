@@ -1,6 +1,9 @@
 <template>
   <div class="put-insurance">
-    <InsuranceTitle :activeInsurance="activeInsurance"></InsuranceTitle>
+    <InsuranceTitle
+      :activeInsurance="activeInsurance"
+      :activeType="'CALL'"
+    ></InsuranceTitle>
     <div class="insurance_list">
       <table>
         <thead>
@@ -37,7 +40,7 @@
                 v-model="item.buyNum"
                 :max="item.remain"
                 :maxlength="8"
-                placeholder="请输入认购张数"
+                :placeholder="$t('Table.NumberSubscriptions')"
               />
             </td>
             <td
@@ -48,17 +51,28 @@
                   : ''
               "
             >
-              <button @click="handleClickBuy(item)">认购</button>
+              <button @click="handleClickBuy(item)">
+                {{ $t("Table.Subscribe") }}
+              </button>
             </td>
           </tr>
         </tbody>
         <div class="loading" v-if="isLoading">
           <img src="~/assets/img/loading.png" />
           <div class="shadow"></div>
-          <p>loading the wallet data</p>
+          <p>{{ $t("Table.LoadingWallet") }}</p>
         </div>
       </table>
     </div>
+    <section
+      class="noData"
+      v-if="(showList.length < 1 && !isLoading) || !isLogin"
+    >
+      <div>
+        <img src="~/assets/img/helmet/nodata.png" alt="" />
+        <p>{{ $t("Table.NoData") }}</p>
+      </div>
+    </section>
     <section class="pages" v-if="insuranceList.length > 10 && isLogin">
       <Page
         :total="insuranceList.length"
@@ -258,7 +272,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @media screen and (min-width: 750px) {
   .insurance_list {
     position: relative;

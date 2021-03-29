@@ -5,17 +5,27 @@
     </div>
     <div class="content_h5">
       <h3>
-        <img src="~/assets/img/iio/helmet_logo.png" alt="" /> Coming soon…
+        <img src="~/assets/img/iio/helmet_logo.png" alt="" />
+        {{ $t('IIO.ComingSoon') }}
       </h3>
-      <p>Your OPTION to redefine Initial Offering</p>
+      <p>{{ $t('IIO.InitialOffering') }}</p>
     </div>
+    <div class="apply_iio">
+      <div class="left">
+        <p>Want to launch your own IIO with Helmet?</p>
+        <button>Apply Now</button>
+      </div>
+      <div class="right"></div>
+    </div>
+    <div class="action_wrap">
+
     <div class="action">
       <div class="action_step_wrap">
         <div class="action_step_item">
           <svg class="icon" aria-hidden="true">
             <use href="#icon-buy"></use>
           </svg>
-          <span>{{ $t("IIO.BuyTokenTicket") }}</span>
+          <span>{{ $t('IIO.BuyTokenTicket') }}</span>
         </div>
         <svg class="icon" aria-hidden="true">
           <use href="#icon-WhiteRight"></use>
@@ -24,7 +34,7 @@
           <svg class="icon" aria-hidden="true">
             <use href="#icon-share"></use>
           </svg>
-          <span>{{ $t("IIO.DepositLptReward") }}</span>
+          <span>{{ $t('IIO.DepositLptReward') }}</span>
         </div>
         <svg class="icon" aria-hidden="true">
           <use href="#icon-WhiteRight"></use>
@@ -33,15 +43,17 @@
           <svg class="icon" aria-hidden="true">
             <use href="#icon-earn"></use>
           </svg>
-          <span>{{ $t("IIO.SwapToken") }}</span>
+          <span>{{ $t('IIO.SwapToken') }}</span>
         </div>
       </div>
     </div>
     <div class="content_pc">
       <h3>
-        <img src="~/assets/img/iio/helmet_logo.png" alt="" /> Coming soon…
+        <img src="~/assets/img/iio/helmet_logo.png" alt="" />
+        {{ $t('IIO.ComingSoon') }}
       </h3>
-      <p>Your OPTION to redefine Initial Offering</p>
+      <p><p>{{ $t('IIO.InitialOffering') }}</p></p>
+    </div>
     </div>
   </div>
 </template>
@@ -50,9 +62,11 @@
 export default {};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @media screen and (min-width: 750px) {
   .iiO {
+    margin-bottom: 50px;
+
     > .banner {
       width: 100%;
       height: 380px;
@@ -69,12 +83,57 @@ export default {};
         background-position: center;
       }
     }
+    .apply_iio {
+      width: 100%;
+      height: 270px;
+      padding: 50px 250px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      .left {
+        width: 442px;
+        p {
+          font-size: 30px;
+          font-family: IBMPlexSans-Medium, IBMPlexSans;
+          font-weight: 500;
+          color: #17173a;
+          line-height: 50px;
+        }
+        button {
+          margin-top: 30px;
+          width: 180px;
+          height: 40px;
+          background: #17173a;
+          border-radius: 5px;
+          font-size: 16px;
+          font-family: IBMPlexSans-Bold, IBMPlexSans;
+          font-weight: bold;
+          color: #ffffff;
+          line-height: 20px;
+          &:hover {
+            background: #2c2c2c;
+          }
+        }
+      }
+      .right {
+        width: 180px;
+        height: 180px;
+        background-image: url("../../../assets/img/iio/apply_iio_web.png");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+      }
+    }
+    .action_wrap {
+      background: #fff;
+      padding: 30px 0;
+    }
     .action_step_wrap {
       display: flex;
       width: 1050px;
       margin: 0 auto;
       justify-content: space-between;
-      margin-top: 80px;
       align-items: center;
       .action_step_item {
         width: 261px;

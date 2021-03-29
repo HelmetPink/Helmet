@@ -1,15 +1,26 @@
 <template>
   <div class="slider">
-    <a href="" class="logo"></a>
+    <a href="https://helmet.insure" class="logo"></a>
     <ul class="menu">
       <li class="menu_group menu_item">
-        <nuxt-link to="/" :class="routeObj.name === 'index' ? 'active' : ''">
+        <nuxt-link
+          to="/"
+          :class="
+            routeObj.name === 'index'
+              ? 'active'
+              : routeObj.name == 'myPolicy' ||
+                routeObj.name == 'mySupply' ||
+                routeObj.name == 'myClaim'
+              ? 'active_child_one'
+              : ''
+          "
+        >
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-insurance"></use>
           </svg>
-          保险
+          {{ $t("Table.safe") }}
           <svg class="icon svg-icon right" aria-hidden="true">
-            <use xlink:href="#icon-right1"></use>
+            <use xlink:href="#icon-right"></use>
           </svg>
         </nuxt-link>
         <ul
@@ -26,7 +37,7 @@
               to="/myPolicy"
               :class="routeObj.name === 'myPolicy' ? 'child_active ' : ''"
             >
-              我的保单
+              {{ $t("Type.MyGuarantee") }}
             </nuxt-link>
           </li>
           <li class="child_menu_item">
@@ -34,7 +45,7 @@
               to="/mySupply"
               :class="routeObj.name === 'mySupply' ? 'child_active ' : ''"
             >
-              我发布的保险
+              {{ $t("Type.IssueInsurance") }}
             </nuxt-link>
           </li>
           <li class="child_menu_item">
@@ -42,7 +53,7 @@
               to="/myClaim"
               :class="routeObj.name === 'myClaim' ? 'child_active ' : ''"
             >
-              我的结算
+              {{ $t("Type.Claim") }}
             </nuxt-link>
           </li>
         </ul>
@@ -55,7 +66,7 @@
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-mining1"></use>
           </svg>
-          挖矿
+          {{ $t("Header.Mining") }}
         </nuxt-link>
       </li>
       <li class="menu_item">
@@ -66,7 +77,7 @@
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-flashmining"></use>
           </svg>
-          闪电挖矿
+          {{ $t("Header.FlashMining") }}
         </nuxt-link>
       </li>
       <li class="menu_item">
@@ -77,7 +88,7 @@
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-burnbox"></use>
           </svg>
-          燃烧挖矿
+          {{ $t("Table.BurnMining") }}
         </nuxt-link>
       </li>
       <li class="menu_item">
@@ -85,7 +96,7 @@
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-iio"></use>
           </svg>
-          IIO
+          {{ $t("Header.IIO") }}
         </nuxt-link>
       </li>
       <li class="menu_item">
@@ -93,7 +104,7 @@
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-papar"></use>
           </svg>
-          使用指南
+          {{ $t("Header.GuideBook") }}
         </a>
       </li>
       <li class="menu_item">
@@ -101,7 +112,7 @@
           <svg class="icon svg-icon" aria-hidden="true">
             <use xlink:href="#icon-medium"></use>
           </svg>
-          博客</a
+          {{ $t("Header.Medium") }}</a
         >
       </li>
     </ul>
@@ -154,7 +165,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @media screen and (min-width: 750px) {
   .icon {
     width: 24px;
@@ -222,15 +233,18 @@ export default {
           display: flex;
           align-items: center;
           > a {
+            padding-left: 40px;
             width: 100%;
             display: flex;
             align-items: center;
-            justify-content: center;
             font-size: 14px;
             font-family: HelveticaNeue;
             color: rgba(23, 23, 58, 0.8);
             line-height: 40px;
             font-weight: normal;
+            &:hover {
+              color: #17173a;
+            }
           }
           .child_active {
             width: 180px;
@@ -238,6 +252,9 @@ export default {
             background: #fd7e14;
             border-radius: 5px;
             color: #ffffff;
+            &:hover {
+              color: #fff;
+            }
           }
         }
       }
@@ -253,6 +270,16 @@ export default {
       }
       .right {
         transform: rotate(90deg);
+      }
+    }
+    .active_child_one {
+      color: #fd7e14;
+      .icon {
+        fill: #fd7e14;
+      }
+      .right {
+        transform: rotate(90deg);
+        fill: #fd7e14 !important;
       }
     }
   }

@@ -1,9 +1,9 @@
 <template>
   <div class="my_claim">
     <div class="claim_title">
-      <h3>结算</h3>
+      <h3>{{ $t("Type.Claim") }}</h3>
     </div>
-    <div class="claim_text">
+    <div class="claim_text" v-if="showList.length">
       <span>{{ $t("Table.Type") }}</span>
       <span>{{ $t("Table.DenAssets") }}</span>
       <span>{{ $t("Table.BaseAssets") }}</span>
@@ -37,13 +37,13 @@
         </span>
       </section>
       <section>
-        <button @click="toClaim(item)">取回</button>
+        <button @click="toClaim(item)">{{ $t("Table.GetBack") }}</button>
       </section>
     </div>
     <div class="loading" v-if="isLoading">
       <img src="~/assets/img/loading.png" />
       <div class="shadow"></div>
-      <p>loading the wallet data</p>
+      <p>{{ $t("Table.LoadingWallet") }}</p>
     </div>
     <section
       class="noData"
@@ -269,7 +269,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import "~/assets/css/base.scss";
 .green {
   color: #00b900 !important;
@@ -314,13 +314,13 @@ export default {
 @media screen and (min-width: 750px) {
   .my_claim {
     position: relative;
-    min-height: 800px;
+    min-height: 600px;
     display: flex;
     align-items: center;
     flex-direction: column;
-
     .loading {
       width: 100%;
+      margin: auto 0;
     }
     .pages {
       width: 100%;

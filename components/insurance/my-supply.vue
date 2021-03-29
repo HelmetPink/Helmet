@@ -1,5 +1,8 @@
 <template>
   <div class="my_supply">
+    <div class="supply_title">
+      <h3>{{ $t("Type.IssueInsurance") }}</h3>
+    </div>
     <!-- pc -->
     <div class="supply_item" v-for="item in showList" :key="item.id">
       <section>
@@ -16,11 +19,11 @@
       </section>
       <section>
         <p>
-          <span>出险价: </span>
+          <span>{{ $t("Insurance.Insurance_text11") }}: </span>
           <span>{{ item.outPrice }} {{ item.outPriceUnit }}</span>
         </p>
         <p>
-          <span>单价: </span>
+          <span>{{ $t("Insurance.Insurance_text12") }}: </span>
           <span>{{ fixD(item.price, 8) }} HELMET</span>
         </p>
       </section>
@@ -36,25 +39,29 @@
           </span>
         </p>
         <p>
-          <span>可抵押: </span>
+          <span>{{ $t("Table.DAvailable") }}: </span>
           <span>{{ fixD(item.shortBalance, 8) }} Short Token</span>
         </p>
       </section>
       <section>
         <button
           :style="item.remain == '0' ? 'pointer-events: none;' : ''"
-          @click="toActive(item)"
+          @click="handleClickCancel(item)"
         >
-          {{ item.remain == 0 ? "已全部成交" : "撤单" }}
+          {{
+            item.remain == 0
+              ? $t("Insurance.Insurance_text14")
+              : $t("Insurance.Insurance_text15")
+          }}
         </button>
-        <button>抵押挖矿</button>
+        <button>{{ $t("Table.StakeMining") }}</button>
       </section>
     </div>
 
     <div class="loading" v-if="isLoading">
       <img src="~/assets/img/loading.png" />
       <div class="shadow"></div>
-      <p>loading the wallet data</p>
+      <p>{{ $t("Table.LoadingWallet") }}</p>
     </div>
     <section
       class="noData"
@@ -349,7 +356,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import "~/assets/css/base.scss";
 .cancel {
   display: inline-block;
@@ -411,14 +418,18 @@ export default {
   }
   .my_supply {
     position: relative;
-    min-height: 800px;
+    min-height: 600px;
     display: flex;
     align-items: center;
     flex-direction: column;
     .loading {
       width: 100%;
+      margin: auto 0;
     }
     .pages {
+      width: 100%;
+    }
+    .supply_title {
       width: 100%;
     }
     .supply_item {

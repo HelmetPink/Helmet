@@ -2,7 +2,7 @@
   <div class="issue-insurance">
     <div class="issue-call">
       <p>
-        <span>出险价格</span>
+        <span>{{ $t("Content.InsurancePrice") }}</span>
         <span>
           {{ activeInsurance }}:
           {{ strikePriceArray[0][activeInsurance] }}
@@ -37,19 +37,28 @@
         <span class="left">DPR</span>
         <span class="right"><i></i></span>
       </div>
-      <span>预期最大收益: {{ callRent }} HELMET</span>
+      <span>{{ $t("Content.Earning") }}: {{ callRent }} HELMET</span>
       <div class="input">
         <input type="text" v-model="callInsuranceNum" />
-        <span class="text">HELMET</span>
-        <span class="max">全部</span>
+        <span class="text">{{ policyColArray[0][activeInsurance] }}</span>
+        <span
+          class="max"
+          @click="callInsuranceNum = BalanceArray[activeInsurance]"
+          >{{ $t("Table.ALL") }}</span
+        >
       </div>
-      <span>可用余额: {{ BalanceArray["HELMET"] }} HELMET</span>
-      <button class="call" @click="submitSupply(1)">立即创建翻倍险</button>
+      <span
+        >{{ $t("Content.UsableBalance") }}: {{ BalanceArray[activeInsurance] }}
+        {{ activeInsurance }}</span
+      >
+      <button class="call" @click="submitSupply(1)">
+        {{ $t("Insurance.Insurance_text9") }}
+      </button>
     </div>
     <i></i>
     <div class="issue-put">
       <p>
-        <span>出险价格</span>
+        <span>{{ $t("Content.InsurancePrice") }}</span>
         <span>
           {{ activeInsurance }}:
           {{ strikePriceArray[1][activeInsurance] }}
@@ -75,7 +84,22 @@
           </p>
         </div>
         <div class="info">
-          <i></i>
+          <i
+            ><svg
+              t="1617039040708"
+              class="icon"
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="1287"
+              width="16"
+              height="16"
+            >
+              <path
+                d="M512 43.904c258.112 0 468.096 209.984 468.096 468.096 0 258.112-209.984 468.096-468.096 468.096C253.888 980.096 43.904 770.112 43.904 512 43.904 253.888 253.888 43.904 512 43.904z m0 643.648a58.432 58.432 0 1 0-0.128 116.928A58.432 58.432 0 0 0 512 687.552z m0-468.096c-96.768 0-175.552 71.424-175.552 159.232 0 25.216 22.4 45.568 50.176 45.568 27.712 0 50.112-20.352 50.112-45.568 0-37.632 33.792-68.224 75.264-68.224 41.472 0 75.264 30.592 75.264 68.224 0 37.696-33.792 68.288-75.264 68.288-27.712 0-50.176 20.352-50.176 45.504v91.008c0 25.216 22.4 45.568 50.176 45.568 27.712 0 50.176-20.352 50.176-45.568V530.56c72.192-19.712 125.376-79.936 125.376-151.872 0-87.808-78.72-159.232-175.552-159.232z"
+                p-id="1288"
+              ></path></svg
+          ></i>
           <p>
             {{ $t("Tip.Dpr") }}
             <i></i>
@@ -84,14 +108,26 @@
         <span class="left">DPR</span>
         <span class="right"><i></i></span>
       </div>
-      <span>预期最大收益: {{ putRent }} HELMET</span>
+      <span>{{ $t("Content.Earning") }}: {{ putRent }} HELMET</span>
       <div class="input">
         <input type="text" v-model="putInsuranceNum" />
-        <span class="text">HELMET</span>
-        <span class="max">全部</span>
+        <span class="text">{{
+          policyColArray[1][activeInsurance] == "WBNB"
+            ? "BNB"
+            : policyColArray[1][activeInsurance]
+        }}</span>
+        <span
+          class="max"
+          @click="putInsuranceNum = BalanceArray[activeInsurance]"
+          >{{ $t("Table.ALL") }}</span
+        >
       </div>
-      <span>可用余额: {{ BalanceArray["BNB"] }} BNB</span>
-      <button class="put" @click="submitSupply(2)">立即创建腰斩险</button>
+      <span
+        >{{ $t("Content.UsableBalance") }}: {{ BalanceArray["BNB"] }} BNB</span
+      >
+      <button class="put" @click="submitSupply(2)">
+        {{ $t("Insurance.Insurance_text10") }}
+      </button>
     </div>
   </div>
 </template>
@@ -99,29 +135,23 @@
 <script>
 import precision from "~/assets/js/precision.js";
 import { onIssueSell, onIssueSellOnETH } from "~/interface/order.js";
-import {
-  fixD,
-  addCommom,
-  autoRounding,
-  toRounding,
-  fixInput,
-} from "~/assets/js/util.js";
+import { fixD } from "~/assets/js/util.js";
 export default {
   props: ["activeInsurance"],
   data() {
     return {
       dprList: [
-        { num: 0.07, warn: false, show: "0.07%" },
         { num: 0.14, warn: false, show: "0.14%" },
         { num: 0.28, warn: true, show: "0.28%" },
+        { num: 0.56, warn: false, show: "0.56%" },
       ],
       precision,
-      callDpr: 0.07,
-      callDprShow: "0.07%",
+      callDpr: 0.14,
+      callDprShow: "0.14%",
       callRent: 0,
       callOptionFlag: false,
-      putDpr: 0.07,
-      putDprShow: "0.07%",
+      putDpr: 0.14,
+      putDprShow: "0.14%",
       putRent: 0,
       putOptionFlag: false,
       callInsuranceNum: "",
@@ -150,6 +180,9 @@ export default {
     },
     strikePriceArray() {
       return this.$store.state.strikePriceArray;
+    },
+    HelmetPrice() {
+      return this.$store.state.allHelmetPrice;
     },
     HELMET_BUSD() {
       return this.$store.state.HELMET_BUSD;
@@ -239,27 +272,30 @@ export default {
         let earnings;
         let number;
         // call
-        if (callInsuranceNum) {
+        if (callInsuranceNum.length) {
           if (this.activeInsurance == "HELMET") {
             number = precision.times(callDPR, callInsuranceNum, day);
           } else {
             number = precision.times(
               callDPR,
-              this.HelmetPrice[1][this.activeInsurance] * callInsuranceNum,
+              this.HelmetPrice[1][this.activeInsurance] *
+                Number(callInsuranceNum),
               day
             );
           }
+          console.log(number);
           premium = precision.minus(
             number,
             Math.min(precision.minus(callStrikePrice, callIndexPx), 0)
           );
+          console.log(callInsuranceNum);
           earnings = -(Math.max(callIndexPx - callStrikePrice, 0) - premium);
           this.callRent = fixD(earnings < 0 ? 0 : earnings, 8);
         } else {
           this.callRent = 0;
         }
         // put
-        if (putInsuranceNum) {
+        if (putInsuranceNum.length) {
           if (this.activeInsurance == "WBNB") {
             number = precision.times(
               putDPR,
@@ -323,8 +359,12 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @media screen and (min-width: 750px) {
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
   .issue-insurance {
     display: flex;
     justify-content: space-evenly;
@@ -358,7 +398,7 @@ export default {
       }
       > button {
         display: block;
-        width: 320px;
+        width: 370px;
         height: 40px;
         border-radius: 5px;
         font-size: 14px;
@@ -367,14 +407,20 @@ export default {
       }
       .call {
         background: #28a745;
+        &:hover {
+          background: #3daf57;
+        }
       }
       .put {
         background: #dc3545;
+        &:hover {
+          background: #df4857;
+        }
       }
     }
     .dpr {
       margin-top: 20px;
-      width: 320px;
+      width: 370px;
       height: 40px;
       border-radius: 5px;
       display: flex;
@@ -386,17 +432,20 @@ export default {
         width: 500px;
         display: flex;
         align-items: center;
+        left: 40px;
         > i {
-          display: block;
-          position: absolute;
-          width: 16px;
-          height: 16px;
-          background-image: url("../../assets/img/helmet/info.png");
-          background-repeat: no-repeat;
-          background-size: 100% 100%;
-          left: 42px;
           margin: 0 4px 0 2px;
           cursor: pointer;
+          svg {
+            width: 16px;
+            height: 16px;
+            fill: rgba(164, 162, 178, 1);
+          }
+          &:hover {
+            svg {
+              fill: #fd8a2b;
+            }
+          }
         }
         > p {
           display: none;
@@ -404,11 +453,11 @@ export default {
           background: #1d1d1d;
           min-width: 340px;
           position: absolute;
-          top: -45px;
+          top: -35px;
           font-size: 14px;
           color: #f7f7fa;
           border-radius: 3px;
-          left: 30px;
+          left: -10px;
           z-index: 9;
           i {
             border: 5px solid #1d1d1d;
@@ -486,7 +535,7 @@ export default {
     }
     .input {
       margin-top: 16px;
-      width: 320px;
+      width: 370px;
       height: 40px;
       border-radius: 5px;
       border: 2px solid #e8e8eb;

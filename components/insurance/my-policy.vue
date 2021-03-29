@@ -1,5 +1,8 @@
 <template>
-  <div class="my_poilcy">
+  <div class="my_policy">
+    <div class="policy_title">
+      <h3>{{ $t("Type.MyGuarantee") }}</h3>
+    </div>
     <div class="policy_item" v-for="item in showList" :key="item.id">
       <section>
         <p>
@@ -15,7 +18,7 @@
       </section>
       <section>
         <p>
-          <span>出险价: </span>
+          <span>{{ $t("Insurance.Insurance_text11") }}: </span>
           <span>{{ item.outPrice }} {{ item.outPriceUnit }}</span>
         </p>
         <p>
@@ -25,11 +28,11 @@
       </section>
       <section>
         <p>
-          <span>单价: </span>
+          <span>{{ $t("Insurance.Insurance_text12") }}: </span>
           <span>{{ fixD(item.price, 8) }} HELMET</span>
         </p>
         <p>
-          <span>{{ $t("Table.Position") }}: </span>
+          <span>{{ $t("Table.Premium") }}: </span>
           <span>{{ fixD(item.Rent, 8) }} HELMET</span>
         </p>
       </section>
@@ -38,7 +41,11 @@
           :style="item.status == 'Expired' ? 'pointer-events: none;' : ''"
           @click="toActive(item)"
         >
-          {{ item.status == "Expired" ? "已到期" : "出险" }}
+          {{
+            item.status == "Expired"
+              ? $t("Insurance.Insurance_text13")
+              : $t("Table.outSure")
+          }}
           <i class="selectDown"></i>
         </button>
       </section>
@@ -46,7 +53,7 @@
     <div class="loading" v-if="isLoading">
       <img src="~/assets/img/loading.png" />
       <div class="shadow"></div>
-      <p>loading the wallet data</p>
+      <p>{{ $t("Table.LoadingWallet") }}</p>
     </div>
     <section
       class="noData"
@@ -1022,7 +1029,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import "~/assets/css/base.scss";
 .call_style {
   background: rgba(0, 185, 0, 0.04);
@@ -1065,16 +1072,20 @@ export default {
   color: #dc3545 !important;
 }
 @media screen and (min-width: 750px) {
-  .my_poilcy {
+  .my_policy {
     position: relative;
-    min-height: 800px;
+    min-height: 600px;
     display: flex;
     align-items: center;
     flex-direction: column;
     .loading {
       width: 100%;
+      margin: auto 0;
     }
     .pages {
+      width: 100%;
+    }
+    .policy_title {
       width: 100%;
     }
     .policy_item {
@@ -1090,6 +1101,7 @@ export default {
       section {
         &:nth-of-type(1) {
           flex: 5;
+          min-width: 300px;
           > p {
             display: flex;
             align-items: center;
@@ -1141,6 +1153,7 @@ export default {
           flex: 4;
           display: flex;
           flex-direction: column;
+          min-width: 150px;
           p {
             &:nth-of-type(2) {
               margin-top: 12px;
@@ -1165,6 +1178,7 @@ export default {
           flex: 4;
           display: flex;
           flex-direction: column;
+          min-width: 200px;
           p {
             &:nth-of-type(2) {
               margin-top: 12px;
@@ -1189,6 +1203,7 @@ export default {
           flex: 3;
           display: flex;
           justify-content: flex-end;
+          min-width: 120px;
           button {
             padding: 0px 10px;
             height: 36px;
