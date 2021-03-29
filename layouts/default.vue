@@ -559,6 +559,11 @@ export default {
     }
   }
 }
+@media screen and(min-width:1560px) {
+  .content_wrap {
+    padding: 0 8%;
+  }
+}
 @media screen and (max-width: 750px) {
   .layout-container {
     > p {
