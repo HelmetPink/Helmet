@@ -7,7 +7,6 @@
           <label>{{ $t("Banner.ClosedPolicy") }}</label>
           <span>{{ isLogin ? helmetVarieties : "--" }}</span>
         </p>
-        <img src="~/assets/img/helmet/ba1@2x.png" alt="" />
       </li>
       <li>
         <!-- LONG当前总价值 -->
@@ -25,26 +24,26 @@
           </span>
           <span v-else>--</span>
         </p>
-        <img src="~/assets/img/helmet/ba2@2x.png" alt="" />
       </li>
       <li>
         <!-- Helmet流通量 -->
         <p>
           <label>
             <span>{{ $t("Banner.HelmetPcice") }}</span>
-            <span>
-              From:&nbsp;
-              <a
-                href="https://exchange.pancakeswap.finance/#/swap"
-                target="_blank"
-              >
-                pancakeswap.finance
-              </a>
-            </span>
+            <span> {{ isLogin ? helmetPrice : "--" }} USD </span>
           </label>
-          <span> {{ isLogin ? helmetPrice : "--" }} USD </span>
+          <span>
+            From:&nbsp;
+            <i></i>
+            &nbsp;
+            <a
+              href="https://exchange.pancakeswap.finance/#/swap"
+              target="_blank"
+            >
+              pancakeswap.finance
+            </a>
+          </span>
         </p>
-        <img src="~/assets/img/helmet/ba3@2x.png" alt="" />
       </li>
     </ul>
   </div>
@@ -150,7 +149,6 @@ export default {
 <style lang="scss" scoped>
 @import "~/assets/css/base.scss";
 .insurance-banner {
-  background: #fff;
   ul {
     height: 100%;
     label {
@@ -165,9 +163,8 @@ export default {
 }
 @media screen and (min-width: 750px) {
   .insurance-banner {
-    width: 1200px;
+    width: 100%;
     height: 200px;
-    padding: 40px 60px;
     margin: 0 auto;
     font-size: 16px;
     color: $text-m;
@@ -178,73 +175,96 @@ export default {
       text-align: center;
       justify-content: space-between;
       li {
-        padding: 20px 30px;
-        width: 340px;
+        width: 328px;
         height: 120px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: relative;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        padding: 0 20px;
         p {
           display: flex;
           flex-direction: column;
           text-align: left;
           label {
-            color: #919aa6;
-            span {
+            font-size: 16px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            color: #ffffff;
+            line-height: 16px;
+          }
+          span {
+            font-size: 24px;
+            font-family: NotoSansOriya-Bold, NotoSansOriya;
+            font-weight: bold;
+            color: #ffffff;
+            line-height: 24px;
+            margin-top: 16px;
+          }
+        }
+        &:nth-of-type(3) {
+          position: relative;
+          p {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            label {
               display: flex;
-              font-weight: normal;
-              color: #919aa6;
-              &:nth-of-type(1) {
-                font-size: 16px;
+              flex-direction: column;
+              text-align: left;
+              > span {
+                &:nth-of-type(1) {
+                  font-size: 16px;
+                  font-family: PingFangSC-Regular, PingFang SC;
+                  color: #ffffff;
+                  line-height: 16px;
+                  margin-top: 0;
+                }
+                &:nth-of-type(2) {
+                  font-size: 24px;
+                  font-family: NotoSansOriya-Bold, NotoSansOriya;
+                  font-weight: bold;
+                  color: #ffffff;
+                  line-height: 24px;
+                  margin-top: 16px;
+                }
               }
-              &:nth-of-type(2) {
-                font-size: 14px;
-                margin-top: 0;
+            }
+            > span {
+              position: absolute;
+              font-size: 12px;
+              font-family: PingFangSC-Regular, PingFang SC;
+              font-weight: 400;
+              color: #ffffff;
+              line-height: 12px;
+              bottom: 12px;
+              display: flex;
+              align-items: center;
+              i {
+                display: block;
+                width: 12px;
+                height: 12px;
+                background-image: url("../../assets/img/insurancelist/share_icon.png");
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
               }
-              > a {
-                font-size: 14px;
-                color: #ff9600;
-                font-weight: 600;
-                position: relative;
-                z-index: 1;
+              a {
+                color: #ffffff;
+                text-decoration: underline;
               }
             }
           }
-          span {
-            margin-top: 8px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #121212;
-          }
-        }
-        img {
-          width: 120px;
-          height: 80px;
-          position: absolute;
-          right: 30px;
-          z-index: 0;
         }
       }
       li:nth-of-type(1) {
-        background: #f7f7fa;
-        border-radius: 3px;
+        background-image: url("../../assets/img/insurancelist/card1@2x.png");
       }
       li:nth-of-type(2) {
-        background: #ff9600;
-        border-radius: 3px;
-        p {
-          label {
-            color: rgba(255, 255, 255, 0.8);
-          }
-          span {
-            color: #fff;
-          }
-        }
+        background-image: url("../../assets/img/insurancelist/card2@2x.png");
       }
       li:nth-of-type(3) {
-        background: #f7f7fa;
-        border-radius: 3px;
+        background-image: url("../../assets/img/insurancelist/card3@2x.png");
       }
     }
   }

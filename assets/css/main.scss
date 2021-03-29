@@ -2,8 +2,6 @@
 * {
     margin: 0px;
     padding: 0px;
-    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
-        Microsoft YaHei, '微软雅黑', Arial, sans-serif;
 }
 html,
 body,
@@ -203,11 +201,74 @@ $td-gap: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    position: relative;
     img {
         width: 40px;
         height: 40px;
-        margin: 40px 0px;
+        animation: helmet 1s ease-in infinite alternate;
+        position: absolute;
     }
+    > div {
+        height: 100%;
+        position: relative;
+        perspective: 100px;
+        perspective-origin: bottom left;
+    }
+    @keyframes helmet {
+        0% {
+            height: 40px;
+            top: 30%;
+            transform: rotate(20deg);
+        }
+        80% {
+            height: 40px;
+        }
+        100% {
+            height: 20px;
+            top: 60%;
+            transform: rotate(0deg);
+        }
+    }
+    .shadow {
+        position: absolute;
+        background-color: #ffa000;
+        width: 40px;
+        height: 50px;
+        border-radius: 100%;
+        bottom: 30%;
+        animation: shadow 1s ease-in infinite alternate;
+    }
+    @keyframes shadow {
+        0% {
+            width: 10px;
+            height: 10px;
+            opacity: 0.1;
+        }
+        100% {
+            width: 40px;
+            height: 20px;
+            opacity: 0.5;
+        }
+    }
+    p {
+        font-size: 14px;
+        color: #787878;
+        position: absolute;
+        bottom: 18%;
+    }
+    // @keyframes text {
+    //     0%,
+    //     40%,
+    //     100% {
+    //         height: 20px;
+    //         font-size: 16px;
+    //     }
+    //     50% {
+    //         height: 0px;
+    //         font-size: 14px;
+    //     }
+    // }
 }
 .button-loading {
     color: rgba(255, 255, 255, 0.4) !important;
@@ -217,6 +278,7 @@ $td-gap: 16px;
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
+    padding-bottom: 30px;
     .page_item {
         display: inline-block;
         width: 28px;
