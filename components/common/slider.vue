@@ -1,17 +1,17 @@
 <template>
   <div class="slider">
-    <a href="https://helmet.insure" class="logo"></a>
+    <a href="" class="logo"></a>
     <ul class="menu">
       <li class="menu_group menu_item">
-        <nuxt-link
-          to="/"
+        <a
+          @click="sliderClick"
           :class="
             routeObj.name === 'index'
               ? 'active'
               : routeObj.name == 'myPolicy' ||
                 routeObj.name == 'mySupply' ||
                 routeObj.name == 'myClaim'
-              ? 'active_child_one'
+              ? 'active_child'
               : ''
           "
         >
@@ -19,14 +19,21 @@
             <use xlink:href="#icon-insurance"></use>
           </svg>
           {{ $t("Table.safe") }}
-          <svg class="icon svg-icon right" aria-hidden="true">
+          <svg
+            :class="
+              !sliderFlag
+                ? 'retote icon svg-icon right'
+                : ' icon svg-icon right'
+            "
+            aria-hidden="true"
+          >
             <use xlink:href="#icon-right"></use>
           </svg>
-        </nuxt-link>
+        </a>
         <ul
           class="child_menu"
           v-if="
-            routeObj.name == 'index' ||
+            sliderFlag ||
             routeObj.name == 'myPolicy' ||
             routeObj.name == 'mySupply' ||
             routeObj.name == 'myClaim'
@@ -155,10 +162,25 @@
 import Langauage from "~/components/common/langauage.vue";
 export default {
   components: { Langauage },
-
+  data() {
+    return {
+      sliderFlag: false,
+    };
+  },
   computed: {
     routeObj() {
       return this.$route;
+    },
+  },
+  watch: {
+    $route() {
+      this.$route.path !== "/" && (this.sliderFlag = false);
+    },
+  },
+  methods: {
+    sliderClick() {
+      this.sliderFlag = !this.sliderFlag;
+      this.$router.push("/");
     },
   },
 };
@@ -171,18 +193,22 @@ export default {
     height: 24px;
   }
   .slider {
+    position: relative;
     width: 260px;
     height: calc(100vh - 50px);
     background-image: url("../../assets/img/slider/slider_logo_bg.png");
     background-repeat: no-repeat;
     background-size: 100% 135px;
-    padding: 30px 20px 0;
+    padding: 70px 20px 30px;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
   }
   .logo {
     display: block;
+    position: absolute;
+    left: 20px;
+    top: 30px;
     width: 150px;
     height: 40px;
     background-image: url("../../assets/img/slider/slider_logo.png");
@@ -196,9 +222,31 @@ export default {
       height: auto;
       position: relative;
     }
-    .right {
-      position: absolute;
-      right: 20px;
+    .arrow {
+      position: relative;
+      margin: 3px 0 0 6px;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #fff;
+      border-left: 7px solid transparent;
+      &::after {
+        content: "";
+        position: absolute;
+        top: -7px;
+        left: -5px;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #fd7e14;
+        border-left: 5px solid transparent;
+      }
+    }
+    .arrow_white {
+      border-top: 7px solid #17173a;
+      &::after {
+        content: "";
+        border-top: 5px solid #fff;
+      }
+    }
+    .arrow_rotate {
+      transform: rotate(180deg);
     }
     &_item {
       width: 100%;
@@ -214,12 +262,23 @@ export default {
         display: flex;
         align-items: center;
         padding: 0 20px;
+        position: relative;
         > .icon {
           width: 24px;
           height: 24px;
           margin-right: 16px;
           display: block;
-          fill: opacify($color: #17173a, $amount: 0.7);
+          fill: rgba(23, 23, 58, 0.7);
+        }
+        &:hover {
+          color: #17173a;
+          > .icon {
+            fill: #17173a;
+          }
+        }
+        .right {
+          position: absolute;
+          right: 20px;
         }
       }
       .child_menu {
@@ -240,7 +299,7 @@ export default {
             font-size: 14px;
             font-family: HelveticaNeue;
             color: rgba(23, 23, 58, 0.8);
-            line-height: 40px;
+            line-height: 20px;
             font-weight: normal;
             &:hover {
               color: #17173a;
@@ -271,16 +330,24 @@ export default {
       .right {
         transform: rotate(90deg);
       }
+      &:hover {
+        color: #ffffff;
+        .icon {
+          fill: #fff;
+        }
+      }
     }
-    .active_child_one {
+    .active_child {
       color: #fd7e14;
       .icon {
         fill: #fd7e14;
       }
       .right {
-        transform: rotate(90deg);
-        fill: #fd7e14 !important;
+        transform: rotate(90deg) !important;
       }
+    }
+    .retote {
+      transform: rotate(0) !important;
     }
   }
   .footer {
@@ -295,7 +362,7 @@ export default {
       a {
         .icon {
           &:hover {
-            fill: #ff9600;
+            fill: #fd7e14;
           }
         }
       }

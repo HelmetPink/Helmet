@@ -4,61 +4,63 @@
       <h3>{{ $t("Type.IssueInsurance") }}</h3>
     </div>
     <!-- pc -->
-    <div class="supply_item" v-for="item in showList" :key="item.id">
-      <section>
-        <p>
-          <span>{{ $t("Table.ID") }}:{{ item.id }}</span>
-          <span>{{ item.dueDate }}</span>
-        </p>
-        <span :class="item.type == 'Call' ? 'call_text' : 'put_text'">
-          {{ item.TypeCoin }} {{ item.type }} {{ item.outPrice }}
-          {{ item.outPriceUnit }}
-          {{ item.symbol ? "(" + item.symbol + ")" : "" }}
-          <i :class="item.type == 'Call' ? 'call_icon' : 'put_icon'"> </i>
-        </span>
-      </section>
-      <section>
-        <p>
-          <span>{{ $t("Insurance.Insurance_text11") }}: </span>
-          <span>{{ item.outPrice }} {{ item.outPriceUnit }}</span>
-        </p>
-        <p>
-          <span>{{ $t("Insurance.Insurance_text12") }}: </span>
-          <span>{{ fixD(item.price, 8) }} HELMET</span>
-        </p>
-      </section>
-      <section>
-        <p>
-          <span>{{ $t("Table.Besold") }}/{{ $t("Table.Unsold") }}:</span>
-          <span
-            >{{ item.beSold == 0 ? 0 : fixD(item.beSold, 8) }}/{{
+    <template v-if="isLogin">
+      <div class="supply_item" v-for="item in showList" :key="item.id">
+        <section>
+          <p>
+            <span>{{ $t("Table.ID") }}:{{ item.id }}</span>
+            <span>{{ item.dueDate }}</span>
+          </p>
+          <span :class="item.type == 'Call' ? 'call_text' : 'put_text'">
+            {{ item.TypeCoin }} {{ item.type }} {{ item.outPrice }}
+            {{ item.outPriceUnit }}
+            {{ item.symbol ? "(" + item.symbol + ")" : "" }}
+            <i :class="item.type == 'Call' ? 'call_icon' : 'put_icon'"> </i>
+          </span>
+        </section>
+        <section>
+          <p>
+            <span>{{ $t("Insurance.Insurance_text11") }}: </span>
+            <span>{{ item.outPrice }} {{ item.outPriceUnit }}</span>
+          </p>
+          <p>
+            <span>{{ $t("Table.PolicyPrice") }}: </span>
+            <span>{{ fixD(item.price, 8) }} HELMET</span>
+          </p>
+        </section>
+        <section>
+          <p>
+            <span>{{ $t("Table.Besold") }}/{{ $t("Table.Unsold") }}:</span>
+            <span
+              >{{ item.beSold == 0 ? 0 : fixD(item.beSold, 8) }}/{{
                 item.remain == "0"
                   ? 0
                   : fixD(item.unSold, 8),
+              }}
+            </span>
+          </p>
+          <p>
+            <span>{{ $t("Table.DAvailable") }}: </span>
+            <span>{{ fixD(item.shortBalance, 8) }} Short Token</span>
+          </p>
+        </section>
+        <section>
+          <button
+            :class="item.remain - 0 !== 0 && 'active'"
+            :style="item.remain == '0' ? 'pointer-events: none;' : ''"
+            @click="handleClickCancel(item)"
+          >
+            {{
+              item.remain == 0
+                ? $t("Insurance.Insurance_text14")
+                : $t("Insurance.Insurance_text15")
             }}
-          </span>
-        </p>
-        <p>
-          <span>{{ $t("Table.DAvailable") }}: </span>
-          <span>{{ fixD(item.shortBalance, 8) }} Short Token</span>
-        </p>
-      </section>
-      <section>
-        <button
-          :style="item.remain == '0' ? 'pointer-events: none;' : ''"
-          @click="handleClickCancel(item)"
-        >
-          {{
-            item.remain == 0
-              ? $t("Insurance.Insurance_text14")
-              : $t("Insurance.Insurance_text15")
-          }}
-        </button>
-        <button>{{ $t("Table.StakeMining") }}</button>
-      </section>
-    </div>
-
-    <div class="loading" v-if="isLoading">
+          </button>
+          <button>{{ $t("Table.StakeMining") }}</button>
+        </section>
+      </div>
+    </template>
+    <div class="loading" v-if="isLoading && isLogin">
       <img src="~/assets/img/loading.png" />
       <div class="shadow"></div>
       <p>{{ $t("Table.LoadingWallet") }}</p>
@@ -361,7 +363,7 @@ export default {
 .cancel {
   display: inline-block;
   padding: 3px 10px;
-  background: #ff9600;
+  background: #fd7e14;
   line-height: 20px;
   font-size: 14px;
   color: #fff;
@@ -383,7 +385,7 @@ export default {
         left: 0;
         height: 100%;
         width: 0px;
-        border-left: 2px solid#00b900;
+        border-left: 2px solid#28a745;
       }
     }
   }
@@ -401,13 +403,13 @@ export default {
         left: 0;
         height: 100%;
         width: 0px;
-        border-left: 2px solid#ff9600;
+        border-left: 2px solid#fd7e14;
       }
     }
   }
 }
 .call_text {
-  color: #00b900 !important;
+  color: #28a745 !important;
 }
 .put_text {
   color: #dc3545 !important;
@@ -486,7 +488,7 @@ export default {
             }
           }
           > .call_text {
-            color: #00b900;
+            color: #28a745;
           }
           > .put_text {
             color: #dc3545;
@@ -566,6 +568,10 @@ export default {
               margin-top: 6px;
             }
           }
+          .active {
+            color: #fff;
+            background: #fd7e14;
+          }
         }
       }
     }
@@ -608,11 +614,11 @@ export default {
           }
           span:nth-of-type(1) {
             font-size: 12px;
-            color: #919aa6;
+            color: rgba(23, 23, 58, 0.4);
           }
           span:nth-of-type(2) {
             font-weight: bold;
-            color: #121212;
+            color: #17173a;
           }
         }
         > p {

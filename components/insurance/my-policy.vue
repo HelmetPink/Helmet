@@ -3,54 +3,56 @@
     <div class="policy_title">
       <h3>{{ $t("Type.MyGuarantee") }}</h3>
     </div>
-    <div class="policy_item" v-for="item in showList" :key="item.id">
-      <section>
-        <p>
-          <span>{{ $t("Table.ID") }}:{{ item.id }}</span>
-          <span>{{ item.dueDate }}</span>
-        </p>
-        <span :class="item.type == 'Call' ? 'call_text' : 'put_text'">
-          {{ item.TypeCoin }} {{ item.type }} {{ item.outPrice }}
-          {{ item.outPriceUnit }}
-          {{ item.symbol ? "(" + item.symbol + ")" : "" }}
-          <i :class="item.type == 'Call' ? 'call_icon' : 'put_icon'"> </i>
-        </span>
-      </section>
-      <section>
-        <p>
-          <span>{{ $t("Insurance.Insurance_text11") }}: </span>
-          <span>{{ item.outPrice }} {{ item.outPriceUnit }}</span>
-        </p>
-        <p>
-          <span>{{ $t("Table.Position") }}: </span>
-          <span>{{ fixD(item.volume, 8) }}</span>
-        </p>
-      </section>
-      <section>
-        <p>
-          <span>{{ $t("Insurance.Insurance_text12") }}: </span>
-          <span>{{ fixD(item.price, 8) }} HELMET</span>
-        </p>
-        <p>
-          <span>{{ $t("Table.Premium") }}: </span>
-          <span>{{ fixD(item.Rent, 8) }} HELMET</span>
-        </p>
-      </section>
-      <section>
-        <button
-          :style="item.status == 'Expired' ? 'pointer-events: none;' : ''"
-          @click="toActive(item)"
-        >
-          {{
-            item.status == "Expired"
-              ? $t("Insurance.Insurance_text13")
-              : $t("Table.outSure")
-          }}
-          <i class="selectDown"></i>
-        </button>
-      </section>
-    </div>
-    <div class="loading" v-if="isLoading">
+    <template v-if="isLogin">
+      <div class="policy_item" v-for="item in showList" :key="item.id">
+        <section>
+          <p>
+            <span>{{ $t("Table.ID") }}:{{ item.id }}</span>
+            <span>{{ item.dueDate }}</span>
+          </p>
+          <span :class="item.type == 'Call' ? 'call_text' : 'put_text'">
+            {{ item.TypeCoin }} {{ item.type }} {{ item.outPrice }}
+            {{ item.outPriceUnit }}
+            {{ item.symbol ? "(" + item.symbol + ")" : "" }}
+            <i :class="item.type == 'Call' ? 'call_icon' : 'put_icon'"> </i>
+          </span>
+        </section>
+        <section>
+          <p>
+            <span>{{ $t("Insurance.Insurance_text11") }}: </span>
+            <span>{{ item.outPrice }} {{ item.outPriceUnit }}</span>
+          </p>
+          <p>
+            <span>{{ $t("Table.Position") }}: </span>
+            <span>{{ fixD(item.volume, 8) }}</span>
+          </p>
+        </section>
+        <section>
+          <p>
+            <span>{{ $t("Table.PolicyPrice") }}: </span>
+            <span>{{ fixD(item.price, 8) }} HELMET</span>
+          </p>
+          <p>
+            <span>{{ $t("Table.Premium") }}: </span>
+            <span>{{ fixD(item.Rent, 8) }} HELMET</span>
+          </p>
+        </section>
+        <section>
+          <button
+            :style="item.status == 'Expired' ? 'pointer-events: none;' : ''"
+            @click="toActive(item)"
+          >
+            {{
+              item.status == "Expired"
+                ? $t("Insurance.Insurance_text13")
+                : $t("Table.outSure")
+            }}
+            <i class="selectDown"></i>
+          </button>
+        </section>
+      </div>
+    </template>
+    <div class="loading" v-if="isLoading && isLogin">
       <img src="~/assets/img/loading.png" />
       <div class="shadow"></div>
       <p>{{ $t("Table.LoadingWallet") }}</p>
@@ -388,7 +390,7 @@ export default {
     // 行权
     toActive(item) {
       let data;
-      if (item.type == "call") {
+      if (item.type == "Call") {
         data = {
           token: getTokenName(item._underlying),
           _underlying_vol: precision.times(item._strikePrice, item.volume),
@@ -1043,7 +1045,7 @@ export default {
         left: 0;
         height: 100%;
         width: 0px;
-        border-left: 2px solid#00b900;
+        border-left: 2px solid#28a745;
       }
     }
   }
@@ -1060,13 +1062,13 @@ export default {
         left: 0;
         height: 100%;
         width: 0px;
-        border-left: 2px solid#ff9600;
+        border-left: 2px solid#fd7e14;
       }
     }
   }
 }
 .call_text {
-  color: #00b900 !important;
+  color: #28a745 !important;
 }
 .put_text {
   color: #dc3545 !important;
@@ -1143,7 +1145,7 @@ export default {
             }
           }
           > .call_text {
-            color: #00b900;
+            color: #28a745;
           }
           > .put_text {
             color: #dc3545;
@@ -1263,13 +1265,13 @@ export default {
           }
           span:nth-of-type(1) {
             font-size: 12px;
-            color: #919aa6;
+            color: rgba(23, 23, 58, 0.4);
           }
           span:nth-of-type(2) {
             display: flex;
             align-items: center;
             font-weight: bold;
-            color: #121212;
+            color: #17173a;
           }
         }
         > p {
