@@ -51,31 +51,21 @@ export default {
     },
   },
   watch: {
-    lang(newVol) {
-      // this.switchLang(newVol);
-      this.langName = this.localeList.filter(
-        (item) => item.key == newVol
-      )[0].name;
-    },
     locale: {
       handler: "watchLocale",
       immediate: true,
     },
   },
-  mounted() {
-    this.lang = window.localStorage.getItem("lang") || this.locale;
-  },
-
   methods: {
     watchLocale(newVol) {
       this.lang = newVol;
     },
     switchLang(lang) {
       this.lang = lang;
-      window.localStorage.setItem("lang", this.lang);
-      this.$store.dispatch("setLanguage", this.lang);
-      this.$i18n.locale = this.lang;
-      window.location.reload();
+      window.localStorage.setItem("lang", lang);
+      this.$store.dispatch("setLanguage", lang);
+      this.$i18n.locale = lang;
+      // window.location.reload();
     },
   },
 };
