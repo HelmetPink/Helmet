@@ -392,9 +392,21 @@ export default {
     },
     // 撤销
     handleClickCancel(data) {
-      // this.$bus.$emit("OPEN_REPRICE", data);
-      onCancel(data.id, (status) => {});
-      // RePrice(data)
+      this.$bus.$emit("OPEN_STATUS_DIALOG", {
+        title: "WARNING",
+        layout: "layout1",
+        conText: `Cancel your Policy supplying order.`,
+        activeTip: true,
+        loading: false,
+        button: true,
+        buttonText: "Confirm",
+        showDialog: true,
+      });
+      this.$bus.$on("PROCESS_ACTION", (res) => {
+        if (res) {
+          onCancel(data.id, (status) => {});
+        }
+      });
     },
     handleClickChagePage(index) {
       index = index - 1;
