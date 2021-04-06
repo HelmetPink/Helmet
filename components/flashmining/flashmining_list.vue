@@ -46,16 +46,25 @@
         <section>
           <i></i>
           <p>
-            <span v-if="typeof item.dueDate == 'object'">
-              {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b> <i>/</i
-              >{{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+            <span v-if="item.openDate == 'Mining'">
+              <span v-if="typeof item.dueDate == 'object'">
+                {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b> <i>/</i
+                >{{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+              </span>
+              <span v-else>
+                {{
+                  item.dueDate == "Expired"
+                    ? $t("Insurance.Insurance_text22")
+                    : item.dueDate
+                }}
+              </span>
             </span>
             <span v-else>
-              {{
-                item.dueDate == "Expired"
-                  ? $t("Insurance.Insurance_text22")
-                  : item.dueDate
-              }}
+              <span>
+                {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <i>/</i> {{ item.openDate.minute }}
+                <b>{{ $t("Content.MinM") }}</b>
+              </span>
             </span>
             <span>{{ $t("Table.MIningCutdown") }}</span>
           </p>
@@ -192,16 +201,25 @@
         <div>
           <i></i>
           <p>
-            <span v-if="typeof item.dueDate == 'object'">
-              {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b> <i>/</i
-              >{{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+            <span v-if="item.openDate == 'Mining'">
+              <span v-if="typeof item.dueDate == 'object'">
+                {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b> <i>/</i
+                >{{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+              </span>
+              <span v-else>
+                {{
+                  item.dueDate == "Expired"
+                    ? $t("Insurance.Insurance_text22")
+                    : item.dueDate
+                }}
+              </span>
             </span>
             <span v-else>
-              {{
-                item.dueDate == "Expired"
-                  ? $t("Insurance.Insurance_text22")
-                  : item.dueDate
-              }}
+              <span>
+                {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <i>/</i> {{ item.openDate.minute }}
+                <b>{{ $t("Content.MinM") }}</b>
+              </span>
             </span>
             <span>{{ $t("Table.MIningCutdown") }}</span>
           </p>
@@ -209,7 +227,7 @@
       </section>
       <section>
         <span>{{ item.weekly }}</span>
-        <span>{{ $t("Table.RewardsDistribution") + "(weekly)" }}</span>
+        <span>{{ $t("Table.RewardsDistribution") + "(weekly)" }} </span>
       </section>
       <section>
         <button
@@ -344,7 +362,6 @@ export default {
   },
   methods: {
     StakeMiningH5(MiningType) {
-      console.log(MiningType);
       this.activeType = "STAKE";
       this.TradeType = "STAKE";
       this.showActiveFlash = true;
@@ -359,7 +376,6 @@ export default {
       this.$bus.$emit("OPEN_WRAPER_PAFE", true);
     },
     StakeMining(MiningType) {
-      console.log(MiningType);
       this.activeType = "STAKE";
       this.showActiveFlash = true;
       this.activeFlash = MiningType;
@@ -385,56 +401,71 @@ export default {
           desc: "By hDODO-Helmet LPT",
           earn: "hTPT",
           dueDate: this.getRemainTime("2021/04/26 00:00"),
+          openDate: this.getMiningTime("2021/04/06 00:00"),
           weekly: fixD((2000000 / 21) * 7, 2) + " hTPT",
           yearEarn: apyArray["hTPT"] || "--",
+          expired: new Date("2021/04/26 00:00") * 1,
+          started: new Date("2021/04/06 00:00") * 1,
         },
         {
           miningName: "hDODO Pool",
           desc: "By hMATH-Helmet LPT",
           earn: "hDODO",
           dueDate: this.getRemainTime("2021/03/31 12:00"),
+          openDate: "Mining",
           weekly: fixD((40000 / 15) * 7, 2) + " hDODO",
           yearEarn: apyArray["hDODO"] || "--",
+          expired: new Date("2021/03/31 12:00") * 1,
         },
         {
           miningName: "hMATH Pool",
           desc: "By hAUTO-Helmet LPT",
           earn: "hMATH",
           dueDate: this.getRemainTime("2021/03/18 00:00"),
+          openDate: "Mining",
           weekly: fixD((30000 / 15) * 7, 2) + " hMATH",
           yearEarn: apyArray["hMATH"] || "--",
+          expired: new Date("2021/03/18 00:00") * 1,
         },
         {
           miningName: "hAUTO Pool",
           desc: "By BNB500-Helmet LPT",
           earn: "hAUTO",
           dueDate: this.getRemainTime("2021/03/09 00:00"),
+          openDate: "Mining",
           weekly: fixD((10 / 14) * 7, 2) + " hAUTO",
           yearEarn: apyArray["hAUTO"] || "--",
+          expired: new Date("2021/03/09 00:00") * 1,
         },
         {
           miningName: "BNB500 Pool",
           desc: "By hCTK-Helmet LPT",
           earn: "BNB500",
           dueDate: this.getRemainTime("2021/02/29 00:00"),
+          openDate: "Mining",
           weekly: fixD((1000 / 10) * 7, 2) + " BNB500",
           yearEarn: apyArray["BNB500"] || "--",
+          expired: new Date("2021/02/29 00:00") * 1,
         },
         {
           miningName: "hCTK Pool",
           desc: "By HCCT-Helmet LPT",
           earn: "hCTK",
           dueDate: this.getRemainTime("2021/02/28 00:00"),
+          openDate: "Mining",
           weekly: fixD((70000 / 21) * 7, 2) + " hCTK",
           yearEarn: apyArray["hCTK"] || "--",
+          expired: new Date("2021/02/28 00:00") * 1,
         },
         {
           miningName: "HCCT Pool",
           desc: "By LONG-Helmet LPT",
           earn: "HCCT",
           dueDate: this.getRemainTime("2021/02/13 00:00"),
+          openDate: "Mining",
           weekly: fixD(16000 * 7, 2) + " HCCT",
           yearEarn: apyArray["HCCT"] || "--",
+          expired: new Date("2021/02/13 00:00") * 1,
         },
       ];
       this.miningList = arr;
@@ -468,6 +499,32 @@ export default {
         return "Expired";
       }
     },
+    getMiningTime(time) {
+      let now = new Date() * 1;
+      let dueDate = time;
+      dueDate = new Date(dueDate);
+      let DonwTime = dueDate - now;
+      let day = Math.floor(DonwTime / (24 * 3600000));
+      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
+      let minute = Math.floor(
+        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
+      );
+      let second = Math.floor(
+        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
+      );
+      let template;
+
+      if (dueDate > now) {
+        template = {
+          day: day > 9 ? day : "0" + day,
+          hour: hour > 9 ? hour : "0" + hour,
+          minute: minute > 9 ? minute : "0" + minute,
+        };
+        return template;
+      } else {
+        return "Mining";
+      }
+    },
     getAPY() {
       this.GET_HAUTO_POOL_APY();
       this.GET_BNB500_POOL_APY();
@@ -497,8 +554,12 @@ export default {
         ),
         2
       );
-      if (this.expired) {
-        this.miningList[0].yearEarn = "--";
+
+      let expiredTime = this.miningList[0].expired;
+      let startedTime = this.miningList[0].started;
+      let nowTime = new Date() * 1;
+      if (nowTime < startedTime) {
+        this.miningList[0].yearEarn = "Infinity";
       } else {
         this.apyArray.hTPT = fixD(APY, 2);
         this.miningList[0].yearEarn = fixD(APY, 2);
@@ -524,10 +585,10 @@ export default {
         2
       );
       if (this.expired) {
-        this.miningList[0].yearEarn = "--";
+        this.miningList[1].yearEarn = "--";
       } else {
         this.apyArray.hDODO = fixD(APY, 2);
-        this.miningList[0].yearEarn = fixD(APY, 2);
+        this.miningList[1].yearEarn = fixD(APY, 2);
       }
     },
     async GET_HMATH_POOL_APY() {
@@ -550,10 +611,10 @@ export default {
         2
       );
       if (this.expired) {
-        this.miningList[1].yearEarn = "--";
+        this.miningList[2].yearEarn = "--";
       } else {
         this.apyArray.hMATH = fixD(APY, 2);
-        this.miningList[1].yearEarn = fixD(APY, 2);
+        this.miningList[2].yearEarn = fixD(APY, 2);
       }
     },
     async GET_HAUTO_POOL_APY() {
@@ -576,10 +637,10 @@ export default {
         2
       );
       if (this.expired) {
-        this.miningList[2].yearEarn = "--";
+        this.miningList[3].yearEarn = "--";
       } else {
         this.apyArray.hAUTO = fixD(APY, 2);
-        this.miningList[2].yearEarn = fixD(APY, 2);
+        this.miningList[3].yearEarn = fixD(APY, 2);
       }
     },
     async GET_BNB500_POOL_APY() {
@@ -602,10 +663,10 @@ export default {
         2
       );
       if (this.expired) {
-        this.miningList[3].yearEarn = "--";
+        this.miningList[4].yearEarn = "--";
       } else {
         this.apyArray.BNB500 = fixD(APY, 2);
-        this.miningList[3].yearEarn = fixD(APY, 2);
+        this.miningList[4].yearEarn = fixD(APY, 2);
       }
     },
     async GET_HCCT_POOL_APY() {
@@ -627,10 +688,10 @@ export default {
         2
       );
       if (this.expired) {
-        this.miningList[4].yearEarn = "--";
+        this.miningList[5].yearEarn = "--";
       } else {
         this.apyArray.HCCT = fixD(APY, 2);
-        this.miningList[4].yearEarn = fixD(APY, 2);
+        this.miningList[5].yearEarn = fixD(APY, 2);
       }
     },
     async GET_HCTK_POOL_APY() {
@@ -653,10 +714,10 @@ export default {
         2
       );
       if (this.expired) {
-        this.miningList[5].yearEarn = "--";
+        this.miningList[6].yearEarn = "--";
       } else {
         this.apyArray.HCTK = fixD(APY, 2);
-        this.miningList[5].yearEarn = fixD(APY, 2);
+        this.miningList[6].yearEarn = fixD(APY, 2);
       }
     },
   },
@@ -777,6 +838,7 @@ export default {
           display: flex;
           align-items: center;
           flex: 2;
+          min-width: 160px;
           > i {
             display: block;
             width: 30px;
@@ -1047,6 +1109,7 @@ export default {
         margin-top: 12px;
         display: flex;
         justify-content: space-between;
+
         p {
           display: flex;
           flex-direction: column;

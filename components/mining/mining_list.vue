@@ -11,7 +11,12 @@
             : 'mining_show'
         "
       >
-        <img src="" alt="" />
+        <img
+          class="combo_img"
+          src="~/assets/img/mining/combo_web.png"
+          alt=""
+          v-if="item.combo"
+        />
         <section>
           <span>{{ item.miningName }}</span>
           <!-- <i v-if="item.info"
@@ -135,6 +140,12 @@
       v-for="item in miningList"
       :key="item.earn + '1'"
     >
+      <img
+        class="combo_img"
+        src="~/assets/img/mining/combo_h5.png"
+        alt=""
+        v-if="item.combo"
+      />
       <section>
         <span>{{ item.miningName }}</span>
         <p>
@@ -183,8 +194,13 @@
               ? 'activeButton stakeMining'
               : 'stakeMining'
           "
+          style="margin-right: 10px"
         >
           {{ $t("Table.Stakeing") }}
+        </button>
+        <button @click="toCompound" v-if="item.compound">
+          <i :class="claimLoading ? 'loading_pic' : ''"></i
+          >{{ $t("Table.Compound") }}
         </button>
         <button
           @click="ClaimMiningH5(item.earn)"
@@ -195,6 +211,7 @@
               ? 'activeButton claimMining'
               : 'claimMining'
           "
+          style="margin-left: 10px"
         >
           {{ $t("Table.Claim") }}
         </button>
@@ -277,12 +294,18 @@ export default {
       showActiveMining: false,
       activeMining: "",
       TradeType: "", //H5 tradingType
+      claimLoading: false,
+      HelmetBalance: 0,
     };
   },
   mounted() {
+    this.$bus.$on("CLAIM_LOADING_HELMETPOOL", (data) => {
+      this.claimLoading = false;
+    });
     this.initMiningData();
     setTimeout(() => {
       this.getAPY();
+      this.getHelmetBalance();
     }, 1000);
     setInterval(() => {
       setTimeout(() => {
@@ -306,6 +329,14 @@ export default {
       if (newValue) {
         this.initMiningData();
       }
+    },
+    // 复投
+    toCompound() {
+      this.$bus.$emit("OPEN_COMPOUND", {
+        title: "Compound HELMET Earned",
+        number: this.HelmetBalance,
+        pool: "HELMETPOOL",
+      });
     },
     StakeMiningH5(MiningType) {
       console.log(MiningType);
@@ -334,6 +365,11 @@ export default {
     close_wraper() {
       this.$bus.$emit("OPEN_WRAPER_PAFE", false);
     },
+    async getHelmetBalance() {
+      let type = "HELMETPOOL";
+      let Helmet = await CangetPAYA(type);
+      this.HelmetBalance = Helmet;
+    },
     initMiningData() {
       let apyArray = this.apyArray;
       let arr = [
@@ -342,7 +378,7 @@ export default {
           earnNum: "two",
           earn: "helmet_cake",
           dueDate: "Ongoing",
-          como: true,
+          combo: true,
           info: true,
           earnName: "APR",
           yearEarn: apyArray["helmet_cake"] || "--",
@@ -352,7 +388,7 @@ export default {
           earn: "helmet_dodo",
           earnNum: "two",
           dueDate: this.getRemainTime("2021/04/10 00:00"),
-          como: true,
+          combo: true,
           info: true,
           earnName: "APR",
           yearEarn: apyArray["helmet_dodo"] || "--",
@@ -362,9 +398,10 @@ export default {
           earn: "helmet",
           earnNum: "one",
           dueDate: "Ongoing",
-          como: false,
+          combo: false,
           info: true,
           earnName: "APY",
+          compound: true,
           yearEarn: apyArray["helmet"] || "--",
         },
         {
@@ -372,7 +409,7 @@ export default {
           earn: "helmet_for",
           earnNum: "two",
           dueDate: this.getRemainTime("2021/03/20 00:00"),
-          como: true,
+          combo: true,
           info: true,
           earnName: "APR",
           yearEarn: apyArray["helmet_for"] || "--",
@@ -382,7 +419,7 @@ export default {
           earn: "helmet_burger",
           earnNum: "two",
           dueDate: this.getRemainTime("2021/03/07 00:00"),
-          como: true,
+          combo: true,
           info: true,
           earnName: "APR",
           yearEarn: apyArray["helmet_burger"] || "--",
@@ -587,6 +624,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 20px;
     h3 {
       font-size: 18px;
       font-family: Helvetica;
@@ -607,8 +645,16 @@ export default {
     background: #ffffff;
     display: flex;
     flex-direction: column;
+    position: relative;
     .activeMining {
       border-bottom: 1px solid #e8e8eb;
+    }
+    .combo_img {
+      position: absolute;
+      width: 156px;
+      height: 37px;
+      left: -8px;
+      top: -11px;
     }
     .mining_show {
       width: 100%;
@@ -860,8 +906,16 @@ export default {
     flex-direction: column;
     margin-bottom: 10px;
     border-radius: 5px;
+    position: relative;
     .activeMining {
       border-bottom: 1px solid #e8e8eb;
+    }
+    .combo_img {
+      position: absolute;
+      width: 156px;
+      height: 37px;
+      left: -8px;
+      top: -11px;
     }
     section {
       &:nth-of-type(1) {
@@ -895,11 +949,17 @@ export default {
           color: rgba(23, 23, 58, 0.45);
           line-height: 18px;
           font-weight: normal;
-          img {
+          .two {
             width: 35px;
             height: 20px;
           }
+          .one {
+            width: 20px;
+            height: 20px;
+          }
           > span {
+            text-align: center;
+            min-width: 60px;
             margin-left: 10px;
             padding: 4px 11px;
             background: #f8f9fa;
@@ -993,7 +1053,7 @@ export default {
           background: #fffaf3;
         }
         button {
-          min-width: 148px;
+          flex: 1;
           height: 36px;
           background: #f8f9fa;
           border-radius: 5px;
