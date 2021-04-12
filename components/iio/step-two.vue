@@ -1,6 +1,6 @@
 <template>
   <div class="stepTwo">
-    <div class="step_title">抵押 LPT 领取 iTOKEN 奖励</div>
+    <div class="step_title">{{ $t("IIO.ActionTwo", { name: "Token" }) }}</div>
     <div class="step_action">
       <label>
         <p>
@@ -40,16 +40,28 @@
       >
       <i></i>
       <p class="text">
-        <span>预计可获得： </span>
+        <span>{{ $t("IIO.Earn") }}： </span>
         <span>
           {{ showMsg.AvailableVolume }} iTOKEN
           <i class="question"></i>
         </span>
       </p>
-      <a>什么是 iTOKEN ？</a>
+      <a>{{ $t("IIO.What") }} iTOKEN ？</a>
     </div>
-    <button class="getReward" @click="getReward">
-      <i :class="claimLoading ? 'loading_pic' : ''"></i>领取奖励
+    <button v-if="getRewardFlag" class="getReward" @click="getReward">
+      <i :class="claimLoading ? 'loading_pic' : ''"></i
+      >{{ $t("IIO.GetReward") }}
+    </button>
+    <button
+      v-else
+      class="getReward"
+      style="pointer-events: none; background: #cfcfd2"
+    >
+      {{ getRewardObj.hour == "00" ? "" : getRewardObj.hour + "d" }}
+      {{ getRewardObj.hour == "00" ? "" : getRewardObj.hour + "h" }}
+      {{ getRewardObj.minute == "00" ? "" : getRewardObj.minute + "m " }}
+      {{ getRewardObj.second == "00" ? "" : getRewardObj.second + "s" }}
+      {{ $t("IIO.CanGetReward") }}
     </button>
   </div>
 </template>
@@ -62,7 +74,7 @@ import {
   toDeposite,
 } from "~/interface/deposite";
 import { fixD } from "~/assets/js/util.js";
-import { getReward3, earned3 } from "~/interface/iio.js";
+import { getReward3, earned3, applied3 } from "~/interface/iio.js";
 export default {
   data() {
     return {
@@ -75,7 +87,13 @@ export default {
       DepositeNum: "",
       stakeLoading: false,
       claimLoading: false,
-      exitLoading: false,
+      getRewardFlag: false,
+      getRewardObj: {
+        day: "00",
+        hour: "00",
+        minute: "00",
+        second: "00",
+      },
     };
   },
   mounted() {
@@ -86,17 +104,20 @@ export default {
     this.$bus.$on("CLAIM_LOADING_IIO_HELMETBNB_POOL", (data) => {
       this.claimLoading = false;
     });
-    this.$bus.$on("EXIT_LOADING_IIO_HELMETBNB_POOL", (data) => {
-      this.exitLoading = false;
-    });
     this.$bus.$on("RELOAD_DATA_IIO_HELMETBNB_POOL", () => {
       this.getBalance();
     });
     this.$bus.$on("REFRESH_MINING", (data) => {
       this.getBalance();
     });
+    this.getRewardTime();
     setTimeout(() => {
       this.getBalance();
+    }, 1000);
+    setInterval(() => {
+      setTimeout(() => {
+        this.getRewardTime();
+      });
     }, 1000);
   },
   methods: {
@@ -121,7 +142,7 @@ export default {
         2
       );
       if (DepositeVolume) {
-        this.DepositeNum = DepositeVolume;
+        this.DepositeNum = fixD(DepositeVolume, 4);
       }
     },
     // 领取奖励
@@ -133,6 +154,29 @@ export default {
       let pool_name = "IIO_HELMETBNB_POOL";
       let res = await getReward3(pool_name);
     },
+    getRewardTime() {
+      let nowTime = new Date() * 1;
+      let getTime = new Date("2021/04/08 16:20");
+      let downTime = getTime - nowTime;
+      let day = Math.floor(downTime / (24 * 3600000));
+      let hour = Math.floor((downTime - day * 24 * 3600000) / 3600000);
+      let minute = Math.floor(
+        (downTime - day * 24 * 3600000 - hour * 3600000) / 60000
+      );
+      let second = Math.floor(
+        (downTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
+      );
+      let getRewardObj = {
+        day: day > 9 ? day : "0" + day,
+        hour: hour > 9 ? hour : "0" + hour,
+        minute: minute > 9 ? minute : "0" + minute,
+        second: second > 9 ? second : "0" + second,
+      };
+      this.getRewardObj = getRewardObj;
+      if (nowTime > getTime) {
+        this.getRewardFlag = true;
+      }
+    },
     // 抵押
     toDeposite() {
       if (!this.DepositeNum) {
@@ -143,7 +187,6 @@ export default {
       }
       this.stakeLoading = true;
       let type = "IIO_HELMETBNB_POOL";
-      console.log(1);
       toDeposite(type, { amount: this.DepositeNum }, true, (status) => {});
     },
   },

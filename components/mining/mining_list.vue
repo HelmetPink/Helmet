@@ -496,18 +496,18 @@ export default {
           started: new Date("2021/04/10 00:00") * 1,
         },
         {
-          miningName: "QFEI-QSD DLP",
+          miningName: "<i>QFEI</i>-QSD DLP",
           earn: "kun",
           earnImg: true,
           earnNum: "one",
-          dueDate: this.getRemainTime("2021/05/01 00:00"),
+          dueDate: this.getRemainTime("2021/05/02 00:00"),
           openDate: this.getMiningTime("2021/04/12 00:00"),
           serialNext: true,
           info: true,
           earnName: "APR",
-          onePager: false,
+          onePager: "QFEI",
           yearEarn: apyArray["kun"] || "--",
-          expired: new Date("2021/05/01 00:00") * 1,
+          expired: new Date("2021/05/02 00:00") * 1,
           started: new Date("2021/04/12 00:00") * 1,
         },
         {
@@ -586,7 +586,7 @@ export default {
         precision.times(miningTime, bnbValue)
       );
       let cakeapy = precision.divide(
-        precision.times(cakePrice, 1480000),
+        precision.times(cakePrice, 740000),
         precision.times(
           precision.divide(bnbValue, totalHelmet),
           cakeValue,
@@ -612,11 +612,23 @@ export default {
     },
 
     async FEI_POOL_APY() {
-      let HelmetVolume = await totalSupply("FEIPOOL");
+      let lptBnbValue = await uniswap("QFEI", "QSD");
+      let DODOHELMET = lptBnbValue;
+      let allVolume = DODOHELMET * 200000;
+      //总抵押
+      let supplyVolume = await totalSupply("FEIPOOL"); //数量
+      // 总发行
+      let stakeVolue = await totalSupply("FEIPOOL_LPT"); //数量
+      // 抵押总价值
+      let lptBnbValue1 = await uniswap("FEI", "WBNB");
+      let lptHelmetValue1 = await uniswap("WBNB", "QSD");
+      let stakeValue = lptBnbValue1 * lptHelmetValue1;
       // （1+日产量/总质押量）^365
       let APY =
-        Math.pow(precision.plus(1, precision.divide(200000, HelmetVolume)), 7) *
-        100;
+        precision.divide(
+          precision.times(precision.divide(allVolume, 7), 365),
+          precision.times(stakeValue, supplyVolume)
+        ) * 100;
 
       let startedTime = this.miningList[2].started;
       let nowTime = new Date() * 1;
@@ -624,7 +636,7 @@ export default {
         this.miningList[2].yearEarn = "--";
       } else {
         this.apyArray.qfei = fixD(APY, 2);
-        this.miningList[2].yearEarn = "--";
+        this.miningList[2].yearEarn = fixD(APY, 2);
       }
     },
     async QFEI_QSD_DLP_APY() {
