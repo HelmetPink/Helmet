@@ -192,6 +192,8 @@ import {
 import precision from "~/assets/js/precision.js";
 import { fixD, addCommom, autoRounding, toRounding } from "~/assets/js/util.js";
 import countTo from "vue-count-to";
+import Message from "~/components/common/Message";
+import ClipboardJS from "clipboard";
 export default {
   props: ["activeType", "TradeType"],
   components: {
@@ -308,6 +310,23 @@ export default {
       if (newValue) {
         this.isLogin = newValue.data.isLogin;
       }
+    },
+    copyAdress(e, text) {
+      let _this = this;
+      let copys = new ClipboardJS(".copy", { text: () => text });
+      copys.on("success", function (e) {
+        Message({
+          message: "Successfully copied",
+          type: "success",
+          // duration: 0,
+        });
+        copys.destroy();
+      });
+      copys.on("error", function (e) {
+        console.error("Action:", e.action);
+        console.error("Trigger:", e.trigger);
+        copys.destroy();
+      });
     },
     async getBalance() {
       let helmetType = "HELMETMDXPOOL_LPT";
