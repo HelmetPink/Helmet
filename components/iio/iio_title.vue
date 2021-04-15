@@ -2,8 +2,8 @@
   <div class="iio_title">
     <div class="iio_title_wrap">
       <div class="iio_title_text">
-        <h3>IIO: Initial BSC Token Offerings</h3>
-        <p>Neo token sale model with European option logic.</p>
+        <h3>{{ $t("Tip.IIOTip1") }}</h3>
+        <p>{{ $t("Tip.IIOTip2") }}</p>
       </div>
     </div>
   </div>
