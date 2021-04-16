@@ -13,29 +13,42 @@
             :src="require(`~/assets/img/iio/${item.iio_img}.png`)"
             alt=""
           />
-          <h3>chainswap</h3>
+          <h3>
+            {{ item.iio_name }}<span>({{ item.swapUtil }})</span>
+          </h3>
           <a href="https://www.chainswap.exchange/" target="_blank"
-            ><span>chainswap.com</span><i></i
+            ><span>{{ item.iio_webSite }}</span
+            ><i></i
           ></a>
           <div class="text">
             <p>
               <span>{{ $t("IIO.HomeText1") }}</span
-              ><span>APR.19,9PM SGT</span>
+              ><span>{{ item.showStart }}</span>
             </p>
             <p>
               <span>{{ $t("IIO.HomeText2") }}</span
-              ><span>APR 23,9PM SGT</span>
+              ><span>{{ item.showEnd }}</span>
             </p>
             <p>
               <span>{{ $t("IIO.HomeText3") }}</span
-              ><span>100,000 TOKEN</span>
+              ><span>{{ item.swapVolume }} {{ item.swapUtil }}</span>
             </p>
             <p>
               <span>{{ $t("IIO.HomeText4") }}</span
-              ><span>1TOKEN=0.3USDT</span>
+              ><span
+                >{{ item.swapUtil }}={{ item.stakeShare
+                }}{{ item.stakeUtil }}</span
+              >
             </p>
           </div>
-          <button>Enter Pool</button>
+          <button
+            @click="toDetails(item.enterFlag)"
+            :style="
+              item.enterFlag ? '' : 'background: #d5d5db;pointer-events: none;'
+            "
+          >
+            Enter Pool
+          </button>
         </template>
         <img
           class="soon_img"
@@ -73,8 +86,19 @@ export default {
         {
           iio_name: "chainswap",
           iio_img: "iio_chainswap",
+          iio_webSite: "chainswap.com",
           coming: true,
           background: "#7A4AE3",
+          startTime: "2021/04/16 14:00",
+          endTime: "2021/04/16 19:00",
+          swapVolume: 100000,
+          swapUtil: "TOKEN",
+          stakeUtil: "USDT",
+          stakeShare: 0.3,
+          showStart: "Apr. 19th 21:00 SGT",
+          showEnd: "Apr. 23rd 21:00 SGT",
+          link: "https://www.chainswap.exchange/",
+          enterFlag: new Date() * 1 > new Date("2021/04/16 14:00") * 1,
         },
         {
           iio_name: "2",
@@ -93,6 +117,11 @@ export default {
         },
       ];
       this.iioData = iioData;
+    },
+    toDetails(flag) {
+      if (flag) {
+        this.$router.push("/IIO/Details");
+      }
     },
   },
 };
@@ -123,6 +152,9 @@ export default {
         font-weight: 500;
         color: #ffffff;
         line-height: 28px;
+        span {
+          font-size: 22px;
+        }
       }
       > a {
         display: flex;
@@ -185,13 +217,16 @@ export default {
         margin-top: 20px;
         width: 280px;
         height: 44px;
-        background: #d5d5db;
+        background: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
         font-size: 16px;
         font-family: IBMPlexSans-Bold, IBMPlexSans;
         font-weight: bold;
         color: #ffffff;
         line-height: 20px;
+        &:hover {
+          background: rgba(255, 255, 255, 0.4);
+        }
       }
       .soon_img {
         width: 100%;
@@ -271,6 +306,9 @@ export default {
         font-weight: 500;
         color: #ffffff;
         line-height: 28px;
+        span {
+          font-size: 22px;
+        }
       }
       > a {
         display: flex;
@@ -333,13 +371,16 @@ export default {
         margin-top: 20px;
         width: 280px;
         height: 44px;
-        background: #d5d5db;
+        background: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
         font-size: 16px;
         font-family: IBMPlexSans-Bold, IBMPlexSans;
         font-weight: bold;
         color: #ffffff;
         line-height: 20px;
+        &:hover {
+          background: rgba(255, 255, 255, 0.4);
+        }
       }
       .soon_img {
         width: 100%;
