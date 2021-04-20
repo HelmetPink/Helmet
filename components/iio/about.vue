@@ -42,14 +42,14 @@
           <td>
             <span>Address</span
             ><span>
-              <section>0x029A09ABE791a3Be60Aa64d569F4C34890f24097</section>
+              <section>0x3b73c1b2ea59835cbfcadade5462b6ab630d9890</section>
               <i
                 class="copy"
                 id="copy_default"
                 @click="
                   copyAdress(
                     $event,
-                    '0x029A09ABE791a3Be60Aa64d569F4C34890f24097'
+                    '0x3b73c1b2ea59835cbfcadade5462b6ab630d9890'
                   )
                 "
               ></i>
@@ -109,8 +109,8 @@
           ></path>
         </svg>
         <span>Website: </span>
-        <a href="https://www.chainswap.exchange/" target="_blank"
-          >https://www.chainswap.exchange/</a
+        <a href="https://www.chainswap.com" target="_blank"
+          >www.chainswap.com</a
         >
       </p>
       <p>
