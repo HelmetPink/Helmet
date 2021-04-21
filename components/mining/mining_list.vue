@@ -820,14 +820,18 @@ export default {
       }
     },
     async HELMET_KUN_DLP_APY() {
-      let lptQsdValue = await pancakeswap("QHELMET", "QSD");
-      let allVolume = lptQsdValue * 60000;
+      let lptBnbValue = await pancakeswap("QHELMET", "QSD");
+      let HelmetWBNBValue = await pancakeswap("HELMET", "WBNB");
+      let WBNBUSDValue = await pancakeswap("WBNB", "USDT");
+      let HelmetUsdtValue = HelmetWBNBValue * WBNBUSDValue;
+      let allVolume = lptBnbValue * 60000;
       //总抵押
       let supplyVolume = await totalSupply("QHELMETPOOL"); //数量
       // 总发行
       let stakeVolue = await totalSupply("QHELMETPOOL_LPT"); //数量
       // 抵押总价值
-      let stakeValue = await balanceOf("QSD", "QHELMETPOOL_LPT");
+      let stakeValue =
+        (await balanceOf("HELMET", "QHELMETPOOL_LPT")) * HelmetUsdtValue;
       let APY =
         precision.divide(
           precision.times(precision.divide(allVolume, 20), 365),
@@ -836,7 +840,6 @@ export default {
             supplyVolume
           )
         ) * 100;
-      console.log(lptQsdValue);
       let startedTime = this.miningList[5].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
