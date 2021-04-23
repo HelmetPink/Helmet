@@ -294,6 +294,7 @@ import { totalSupply, balanceOf } from "~/interface/deposite";
 import { fixD } from "~/assets/js/util.js";
 import precision from "~/assets/js/precision.js";
 import { pancakeswap } from "~/assets/utils/pancakeswap.js";
+import { burgerswap } from "~/assets/utils/burgerswap.js";
 import Hxburgerpool from "~/components/flashmining/hxburger.vue";
 import HtptPool from "~/components/flashmining/htpt_pool.vue";
 import HcctPool from "~/components/flashmining/hcct_pool.vue";
@@ -328,6 +329,7 @@ export default {
     this.initFlashMiningData();
     setTimeout(() => {
       this.getAPY();
+      this.swap();
     }, 1000);
     setInterval(() => {
       setTimeout(() => {
@@ -347,6 +349,9 @@ export default {
     },
   },
   methods: {
+    async swap() {
+      await burgerswap();
+    },
     hadnleShowOnePager(e, earn) {
       if (e.target.tagName === "I") {
         let Earn = earn;
@@ -545,12 +550,11 @@ export default {
       this.GET_HXBURGER_POOL_APY();
     },
     async GET_HXBURGER_POOL_APY() {
-      let HAUTOHELMET = await pancakeswap("XBURGER", "HELMET"); //Hlemt价格
+      let HAUTOHELMET = await burgerswap("XBURGER", "HELMET", 1, 18); //Hlemt价格
       let HctkVolume = await totalSupply("HXBURGERPOOL"); //数量
       let LptVolume = await totalSupply("HXBURGERPOOL_LPT"); //发行
       let HelmetValue = await balanceOf("HELMET", "HXBURGERPOOL_LPT", true);
       // APY = 年产量*helmet价格/抵押价值
-      console.log(HAUTOHELMET, HelmetValue);
       let APY = fixD(
         precision.times(
           precision.divide(
@@ -564,12 +568,13 @@ export default {
         ),
         2
       );
-      console.log(APY);
       let startedTime = this.miningList[0].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
         this.miningList[0].yearEarn = "Infinity";
       } else {
+        // this.apyArray.hxBURGER = "--";
+        // this.miningList[0].yearEarn = "--";
         this.apyArray.hxBURGER = fixD(APY, 2);
         this.miningList[0].yearEarn = fixD(APY, 2);
       }
