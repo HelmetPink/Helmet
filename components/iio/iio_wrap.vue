@@ -2,7 +2,7 @@
   <div class="iio_wrap">
     <div class="iio_project">
       <div
-        v-for="item in iioData"
+        v-for="(item, index) in iioData"
         :key="item.iio_name"
         class="iio_item"
         :style="`background:${item.background}`"
@@ -46,12 +46,12 @@
             </p>
           </div>
           <button
-            @click="toDetails"
+            @click="toDetails(index)"
             :style="
-              !item.open ? 'background: #D5D5DB;pointer-events: none' : ''
+              !item.status ? 'background: #D5D5DB;pointer-events: none' : ''
             "
           >
-            Enter Pool
+            {{ !item.status ? "Finished" : "Enter Pool" }}
           </button>
         </template>
         <img
@@ -78,31 +78,25 @@
 export default {
   data() {
     return {
-      iioData: [],
-    };
-  },
-  mounted() {
-    this.initData();
-  },
-  methods: {
-    initData() {
-      let iioData = [
+      iioData: [
         {
           iio_name: "ChainSwap",
           iio_img: "iio_chainswap",
           iio_webSite: "www.chainswap.com",
           coming: true,
           background: "#7A4AE3",
-          startTime: "2021/04/19 21:00",
-          endTime: "2021/04/23 21:00",
           swapVolume: "100,000",
           swapUtil: "TOKEN",
           stakeUtil: "BUSD",
           stakeShare: 0.3,
           showStart: "Apr. 19th 21:00 SGT",
           showEnd: "Apr. 23rd 21:00 SGT",
+          openTimeUTC: "2021/04/19 13:00 UTC",
+          closeTimeUTC: "2021/04/24 13:00 UTC",
           link: "https://www.chainswap.exchange/",
           open: true,
+          status: false,
+          sort: 0,
         },
         {
           iio_name: "BlackHole",
@@ -110,40 +104,73 @@ export default {
           iio_webSite: "blackhole.black",
           coming: true,
           background: "#33B9C2",
-          startTime: "2021/04/26 20:00",
-          endTime: "2021/04/28 20:45",
           swapVolume: "200,000",
           swapUtil: "BLACK",
           stakeUtil: "BUSD",
           stakeShare: 0.05,
           showStart: "Apr. 26th 20:00 SGT",
           showEnd: "Apr.  28th 20:45 SGT",
+          openTimeUTC: "2021/04/24 13:00 UTC",
+          closeTimeUTC: "2021/04/29 12:45 UTC",
           link: "https://www.chainswap.exchange/",
-          open: false,
+          open: true,
+          status: false,
+          sort: 0,
         },
         {
-          iio_name: "3",
+          iio_name: "2",
           iio_img: "iio2",
           coming: false,
           open: false,
+          sort: 0,
         },
         {
           iio_name: "4",
           iio_img: "iio4",
           coming: false,
           open: false,
+          sort: 0,
         },
         {
           iio_name: "5",
           iio_img: "iio5",
           coming: false,
           open: false,
+          sort: 0,
         },
-      ];
-      this.iioData = iioData;
+      ],
+    };
+  },
+  mounted() {
+    this.getStatus(this.iioData);
+  },
+  methods: {
+    toDetails(index) {
+      let name = this.iioData[index].iio_name.toLowerCase();
+      this.$router.push({
+        path: `iio/${name}`,
+      });
     },
-    toDetails() {
-      this.$router.push("/iio/details");
+    getStatus(newValue) {
+      let data = newValue || this.iioData;
+      let nowTime = Date.now();
+      data.forEach((item) => {
+        if (item.open) {
+          let startTime = Date.parse(item.openTimeUTC);
+          let endTime = Date.parse(item.closeTimeUTC);
+          if (nowTime > startTime) {
+            item.status = true;
+          }
+          if (nowTime > endTime) {
+            item.status = false;
+            item.sort = 1;
+          }
+        }
+      });
+      data = data.sort(function (a, b) {
+        return a.sort - b.sort;
+      });
+      this.iioData = data;
     },
   },
 };
