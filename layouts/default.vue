@@ -554,6 +554,7 @@ export default {
       background: #fff;
       font-size: 12px;
       color: #fd7e14;
+
       line-height: 20px;
       display: flex;
       box-shadow: 0px 1px 0px 0px #e8e8eb;
