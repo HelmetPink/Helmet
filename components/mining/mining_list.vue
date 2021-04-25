@@ -4,7 +4,7 @@
       <h3>{{ $t("Header.Mining") }}</h3>
     </div>
     <div v-for="item in miningList" :key="item.earn">
-      <div class="finshed_line finshed_pc" v-if="item.earn == 'helmet_dodo'">
+      <div class="finshed_line finshed_pc" v-if="item.earn == 'helmet_cake_v1'">
         <p></p>
         <i></i>
         <span>Finished</span>
@@ -35,13 +35,15 @@
             src="~/assets/img/mining/serial_web.png"
             alt=""
             v-if="item.serial"
-          /><img
+          />
+          <img
             class="combo_img"
             style="width: 32px; height: 32px; left: 10px"
             src="~/assets/img/mining/serialnext_web.png"
             alt=""
             v-if="item.serialNext"
-          /><img
+          />
+          <img
             class="combo_img"
             style="width: 83px; height: 28px; left: 376px"
             src="~/assets/img/mining/iiostark.png"
@@ -82,12 +84,24 @@
             <i></i>
             <p>
               <span v-if="typeof item.openDate == 'object'">
-                {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b> <i>/</i
-                >{{ item.openDate.minute }}<b>{{ $t("Content.MinM") }}</b>
+                {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <i>/</i>
+                {{ item.openDate.minute }}<b>{{ $t("Content.MinM") }}</b>
+                <i>/</i>
               </span>
               <span v-else-if="typeof item.dueDate == 'object'">
-                {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b> <i>/</i
-                >{{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <template v-if="item.dueDate.hour != '00'">
+                  {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b>
+                  <i>/</i>
+                </template>
+                <template v-if="item.dueDate.minute != '00'">
+                  {{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                  <i>/</i>
+                </template>
+                <template v-if="item.dueDate.day == '00'">
+                  {{ item.dueDate.minute }}<b>{{ $t("Content.MinM") }}</b>
+                  <i>/</i>
+                </template>
               </span>
               <span v-else>
                 {{ item.dueDate }}
@@ -195,7 +209,7 @@
       </div>
     </div>
     <div v-for="item in miningList" :key="item.earn + '1'">
-      <div class="finshed_line finshed_h5" v-if="item.earn == 'helmet_dodo'">
+      <div class="finshed_line finshed_h5" v-if="item.earn == 'helmet_cake_v1'">
         <p></p>
         <i></i>
         <span>Finished</span>
@@ -263,12 +277,24 @@
             <i></i>
             <p>
               <span v-if="typeof item.openDate == 'object'">
-                {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b> <i>/</i
-                >{{ item.openDate.minute }}<b>{{ $t("Content.MinM") }}</b>
+                {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <i>/</i>
+                {{ item.openDate.minute }}<b>{{ $t("Content.MinM") }}</b>
+                <i>/</i>
               </span>
               <span v-else-if="typeof item.dueDate == 'object'">
-                {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b> <i>/</i
-                >{{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <template v-if="item.dueDate.hour != '00'">
+                  {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b>
+                  <i>/</i>
+                </template>
+                <template v-if="item.dueDate.minute != '00'">
+                  {{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                  <i>/</i>
+                </template>
+                <template v-if="item.dueDate.day == '00'">
+                  {{ item.dueDate.minute }}<b>{{ $t("Content.MinM") }}</b>
+                  <i>/</i>
+                </template>
               </span>
               <span v-else>
                 {{ item.dueDate }}
@@ -530,20 +556,7 @@ export default {
       let apyArray = this.apyArray;
       let arr = [
         {
-          miningName: "HELMET-BNB LP <i class='v1'></i>",
-          earnNum: "two",
-          earn: "helmet_cake_v1",
-          earnImg: true,
-          dueDate: "Ongoing",
-          openDate: "Mining",
-          combo: true,
-          info: true,
-          earnName: "APR",
-          onePager: false,
-          yearEarn: apyArray["helmet_cake_v1"] || "--",
-        },
-        {
-          miningName: "HELMET-BNB LP <i class='v2'></i>",
+          miningName: "HELMET-BNB&nbsp;LP <i class='v2'></i>",
           earnNum: "two",
           earn: "helmet_cake_v2",
           earnImg: true,
@@ -551,12 +564,13 @@ export default {
           openDate: "Mining",
           combo: true,
           info: true,
+          iio: true,
           earnName: "APR",
           onePager: false,
           yearEarn: apyArray["helmet_cake_v2"] || "--",
         },
         {
-          miningName: "HELMET-BNB MLP",
+          miningName: "HELMET-BNB&nbsp;MLP",
           earnNum: "two",
           earn: "bhelmet_mdx",
           earnImg: true,
@@ -571,7 +585,7 @@ export default {
           started: new Date("2021/04/15 00:00") * 1,
         },
         {
-          miningName: "HELMET POOL",
+          miningName: "HELMET&nbsp;POOL",
           earn: "helmet",
           earnImg: true,
           earnNum: "one",
@@ -586,7 +600,7 @@ export default {
           yearEarn: apyArray["helmet"] || "--",
         },
         {
-          miningName: "FEI(BSC) POOL",
+          miningName: "FEI(BSC)&nbsp;POOL",
           earn: "QFEI",
           earnImg: false,
           earnNum: "one",
@@ -601,7 +615,7 @@ export default {
           started: new Date("2021/04/10 00:00") * 1,
         },
         {
-          miningName: "<i>QFEI</i>-QSD DLP",
+          miningName: "<i>QFEI</i>-QSD&nbsp;DLP",
           earn: "kun",
           earnImg: true,
           earnNum: "one",
@@ -616,7 +630,7 @@ export default {
           started: new Date("2021/04/12 00:00") * 1,
         },
         {
-          miningName: "HELMET-KUN DLP",
+          miningName: "HELMET-KUN&nbsp;DLP",
           earn: "QHELMET",
           earnImg: false,
           earnNum: "one",
@@ -631,7 +645,21 @@ export default {
           yearEarn: apyArray["qhelmet"] || "--",
         },
         {
-          miningName: "HELMET-<i>hDODO</i> DLP",
+          miningName: "HELMET-BNB&nbsp;LP <i class='v1'></i>",
+          earnNum: "two",
+          earn: "helmet_cake_v1",
+          earnImg: true,
+          dueDate: this.getRemainTime("2021/04/25 17:00"),
+          openDate: "Mining",
+          combo: true,
+          info: true,
+          earnName: "APR",
+          onePager: false,
+          yearEarn: apyArray["helmet_cake_v1"] || "--",
+          expired: new Date("2021/04/25 17:00") * 1,
+        },
+        {
+          miningName: "HELMET-<i>hDODO</i>&nbsp;DLP",
           earn: "helmet_dodo",
           earnImg: true,
           earnNum: "two",
@@ -645,7 +673,7 @@ export default {
         },
 
         {
-          miningName: "HELMET-<i>hFOR</i> LP",
+          miningName: "HELMET-<i>hFOR</i>&nbsp;LP",
           earn: "helmet_for",
           earnImg: true,
           earnNum: "two",
@@ -658,7 +686,7 @@ export default {
           yearEarn: apyArray["helmet_for"] || "--",
         },
         {
-          miningName: "HELMET-<i>hBURGER</i> LP",
+          miningName: "HELMET-<i>hBURGER</i>&nbsp;LP",
           earn: "helmet_burger",
           earnImg: true,
           earnNum: "two",
@@ -686,40 +714,7 @@ export default {
       this.HELMET_hBURGER_LP_APY();
       this.HELMET_MDX_LP_APY();
     },
-    async HELMET_BNB_LP_V1_APY() {
-      this.helmetPrice = this.indexArray[1]["HELMET"];
-      let cakePrice = this.$store.state.CAKE_BUSD;
-      let bnbPrice = this.$store.state.BNB_BUSD;
-      // 总LPT
-      let totalHelmet = await totalSupply("HELMETBNB_LPT");
-      let HelmetAllowance = await getAllHelmet("HELMET", "FARM", "HELMETBNB");
-      let helmetReward = await Rewards("HELMETBNB", "0");
-      // BNB总价值
-      let bnbValue = (await balanceOf("WBNB", "HELMETBNB_LPT")) * 2;
-      // BNB总价值不翻倍
-      let cakeValue = await balanceOf("HELMETBNB_LPT", "CAKEHELMET", true);
-      let miningTime = (await RewardsDuration("HELMETBNB")) / 86400;
-      let dayHelmet = totalHelmet;
-      let helmetapy = precision.divide(
-        precision.times(
-          this.helmetPrice,
-          precision.minus(HelmetAllowance, helmetReward),
-          365
-        ),
-        precision.times(miningTime, bnbValue)
-      );
-      let cakeapy = precision.divide(
-        precision.times(cakePrice, 1200000),
-        precision.times(
-          precision.divide(bnbValue, totalHelmet),
-          cakeValue,
-          bnbPrice
-        )
-      );
-      let APY = helmetapy * 100;
-      this.apyArray.helmet_cake_v1 = fixD(APY, 2);
-      this.miningList[0].yearEarn = fixD(APY, 2);
-    },
+
     async HELMET_BNB_LP_V2_APY() {
       this.helmetPrice = this.indexArray[1]["HELMET"];
       let cakePrice = this.$store.state.CAKE_BUSD;
@@ -742,15 +737,13 @@ export default {
         ),
         precision.times(miningTime, bnbValue)
       );
-      console.log(bnbValue);
       let cakeapy = precision.divide(
         precision.times(precision.divide(cakePrice, bnbPrice), 1200000),
         precision.times(precision.divide(bnbValue, totalHelmet), cakeValue)
       );
-      console.log(helmetapy);
       let APY = (cakeapy + helmetapy) * 100;
       this.apyArray.helmet_cake = fixD(APY, 2);
-      this.miningList[1].yearEarn = fixD(APY, 2);
+      this.miningList[0].yearEarn = fixD(APY, 2);
     },
     async HELMET_MDX_LP_APY() {
       let lptBnbValue = await pancakeswap("BHELMET", "HELMET");
@@ -787,10 +780,10 @@ export default {
       let startedTime = this.miningList[1].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
-        this.miningList[2].yearEarn = "--";
+        this.miningList[1].yearEarn = "--";
       } else {
         this.apyArray.qfei = fixD(APY, 2);
-        this.miningList[2].yearEarn = fixD(APY, 2);
+        this.miningList[1].yearEarn = fixD(APY, 2);
       }
     },
     async HELMET_POOL_APY() {
@@ -803,7 +796,7 @@ export default {
         ) * 100;
 
       this.apyArray.helmet = fixD(APY, 2);
-      this.miningList[3].yearEarn = fixD(APY, 2);
+      this.miningList[2].yearEarn = fixD(APY, 2);
     },
 
     async FEI_POOL_APY() {
@@ -828,10 +821,10 @@ export default {
       let startedTime = this.miningList[3].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
-        this.miningList[4].yearEarn = "--";
+        this.miningList[3].yearEarn = "--";
       } else {
         this.apyArray.qfei = fixD(APY, 2);
-        this.miningList[4].yearEarn = fixD(APY, 2);
+        this.miningList[3].yearEarn = fixD(APY, 2);
       }
     },
     async QFEI_QSD_DLP_APY() {
@@ -856,7 +849,7 @@ export default {
       let startedTime = this.miningList[4].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
-        this.miningList[5].yearEarn = "Infinity";
+        this.miningList[4].yearEarn = "Infinity";
       } else {
         this.apyArray.qfei = fixD(APY, 2);
         this.miningList[5].yearEarn = fixD(APY, 2);
@@ -886,11 +879,45 @@ export default {
       let startedTime = this.miningList[5].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
-        this.miningList[6].yearEarn = "Infinity";
+        this.miningList[5].yearEarn = "Infinity";
       } else {
         this.apyArray.qhelmet = fixD(APY, 2);
-        this.miningList[6].yearEarn = fixD(APY, 2);
+        this.miningList[5].yearEarn = fixD(APY, 2);
       }
+    },
+    async HELMET_BNB_LP_V1_APY() {
+      this.helmetPrice = this.indexArray[1]["HELMET"];
+      let cakePrice = this.$store.state.CAKE_BUSD;
+      let bnbPrice = this.$store.state.BNB_BUSD;
+      // 总LPT
+      let totalHelmet = await totalSupply("HELMETBNB_LPT");
+      let HelmetAllowance = await getAllHelmet("HELMET", "FARM", "HELMETBNB");
+      let helmetReward = await Rewards("HELMETBNB", "0");
+      // BNB总价值
+      let bnbValue = (await balanceOf("WBNB", "HELMETBNB_LPT")) * 2;
+      // BNB总价值不翻倍
+      let cakeValue = await balanceOf("HELMETBNB_LPT", "CAKEHELMET", true);
+      let miningTime = (await RewardsDuration("HELMETBNB")) / 86400;
+      let dayHelmet = totalHelmet;
+      let helmetapy = precision.divide(
+        precision.times(
+          this.helmetPrice,
+          precision.minus(HelmetAllowance, helmetReward),
+          365
+        ),
+        precision.times(miningTime, bnbValue)
+      );
+      let cakeapy = precision.divide(
+        precision.times(cakePrice, 1200000),
+        precision.times(
+          precision.divide(bnbValue, totalHelmet),
+          cakeValue,
+          bnbPrice
+        )
+      );
+      let APY = helmetapy * 100;
+      this.apyArray.helmet_cake_v1 = fixD(APY, 2);
+      this.miningList[6].yearEarn = fixD(APY, 2);
     },
     async HELMET_hDODO_DLP_APY() {
       let lptBnbValue = await pancakeswap("DODO", "WBNB");
@@ -986,7 +1013,7 @@ export default {
     getMiningTime(time) {
       let now = new Date() * 1;
       let dueDate = time;
-      dueDate = new Date(dueDate);
+      dueDate = Date.parse(dueDate + " UTC +8");
       let DonwTime = dueDate - now;
       let day = Math.floor(DonwTime / (24 * 3600000));
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
@@ -1011,7 +1038,7 @@ export default {
     getRemainTime(time) {
       let now = new Date() * 1;
       let dueDate = time;
-      dueDate = new Date(dueDate);
+      dueDate = Date.parse(dueDate + " UTC +8");
       let DonwTime = dueDate - now;
       let day = Math.floor(DonwTime / (24 * 3600000));
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
@@ -1250,6 +1277,9 @@ export default {
                   font-weight: bold;
                   color: #cfcfd2;
                   margin: 0 2px;
+                  &:last-of-type {
+                    display: none;
+                  }
                 }
               }
               &:nth-of-type(2) {
@@ -1526,6 +1556,9 @@ export default {
                   font-weight: bold;
                   color: #cfcfd2;
                   margin: 0 2px;
+                  &:last-of-type {
+                    display: none;
+                  }
                 }
               }
               &:nth-of-type(2) {
