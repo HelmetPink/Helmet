@@ -90,11 +90,11 @@
                 <i>/</i>
               </span>
               <span v-else-if="typeof item.dueDate == 'object'">
-                <template v-if="item.dueDate.hour != '00'">
+                <template v-if="item.dueDate.day != '00'">
                   {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b>
                   <i>/</i>
                 </template>
-                <template v-if="item.dueDate.minute != '00'">
+                <template>
                   {{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
                   <i>/</i>
                 </template>
@@ -283,11 +283,11 @@
                 <i>/</i>
               </span>
               <span v-else-if="typeof item.dueDate == 'object'">
-                <template v-if="item.dueDate.hour != '00'">
+                <template v-if="item.dueDate.day != '00'">
                   {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b>
                   <i>/</i>
                 </template>
-                <template v-if="item.dueDate.minute != '00'">
+                <template>
                   {{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
                   <i>/</i>
                 </template>
@@ -429,6 +429,7 @@ import QfeiQsdPool from "~/components/mining/qfei_qsd_pool.vue";
 import HelmetHelmetPool from "~/components/mining/helmet_helmet_pool.vue";
 import HelmetBurgerPool from "~/components/mining/helmet_burger_pool.vue";
 import HelmetDodoPool from "~/components/mining/helmet_dodo_pool.vue";
+import moment from "moment";
 
 export default {
   components: {
@@ -852,7 +853,7 @@ export default {
         this.miningList[4].yearEarn = "Infinity";
       } else {
         this.apyArray.qfei = fixD(APY, 2);
-        this.miningList[5].yearEarn = fixD(APY, 2);
+        this.miningList[4].yearEarn = fixD(APY, 2);
       }
     },
     async HELMET_KUN_DLP_APY() {
@@ -861,6 +862,7 @@ export default {
       let WBNBUSDValue = await pancakeswap("WBNB", "USDT");
       let HelmetUsdtValue = HelmetWBNBValue * WBNBUSDValue;
       let allVolume = lptBnbValue * 60000;
+      console.log(lptBnbValue);
       //总抵押
       let supplyVolume = await totalSupply("QHELMETPOOL"); //数量
       // 总发行
@@ -1013,7 +1015,7 @@ export default {
     getMiningTime(time) {
       let now = new Date() * 1;
       let dueDate = time;
-      dueDate = Date.parse(dueDate + " UTC +8");
+      dueDate = new Date(moment(dueDate + " UTC+8")) * 1;
       let DonwTime = dueDate - now;
       let day = Math.floor(DonwTime / (24 * 3600000));
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
@@ -1038,7 +1040,7 @@ export default {
     getRemainTime(time) {
       let now = new Date() * 1;
       let dueDate = time;
-      dueDate = Date.parse(dueDate + " UTC +8");
+      dueDate = new Date(moment(dueDate + " UTC+8")) * 1;
       let DonwTime = dueDate - now;
       let day = Math.floor(DonwTime / (24 * 3600000));
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
@@ -1061,7 +1063,7 @@ export default {
         template = {
           day: "00",
           hour: "00",
-          MINUTE: "00",
+          minute: "00",
         };
         return "Finished";
       }

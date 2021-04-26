@@ -76,6 +76,7 @@ import { onExercise } from "~/interface/order.js";
 import precision from "~/assets/js/precision.js";
 import Information from "./Iio_information.js";
 import { applied3 } from "~/interface/iio.js";
+import moment from "moment";
 
 export default {
   data() {
@@ -143,9 +144,9 @@ export default {
       this.swapAssets = AvailableVolume * 0.3;
     },
     getRewardTime() {
-      let nowTime = Date.now();
-      let startTime = Date.parse(this.About.Time2UTC);
-      let endTime = Date.parse(this.About.Time3UTC);
+      let nowTime = new Date();
+      let startTime = new Date(moment(this.About.Time2UTC)) * 1;
+      let endTime = new Date(moment(this.About.Time3UTC)) * 1;
       let downTime = startTime - nowTime;
       let day = Math.floor(downTime / (24 * 3600000));
       let hour = Math.floor((downTime - day * 24 * 3600000) / 3600000);
@@ -173,12 +174,15 @@ export default {
     },
     async swapActive() {
       let data = {
-        token: getTokenName("0xe9e7cea3dedca5984780bafc599bd69add087d56"),
-        _underlying_vol: precision.times(0.3, this.AvailableVolume),
+        token: getTokenName(this.About.Underlying),
+        _underlying_vol: precision.times(
+          this.About.ActivePrice,
+          this.AvailableVolume
+        ),
         vol: this.AvailableVolume,
-        long: "0x029A09ABE791a3Be60Aa64d569F4C34890f24097", //奖励地址
-        _underlying: getTokenName("0xe9e7cea3dedca5984780bafc599bd69add087d56"),
-        _collateral: getTokenName("0x3b73c1b2ea59835cbfcadade5462b6ab630d9890"),
+        long: this.About.LongAdress, //奖励地址
+        _underlying: getTokenName(this.About.Underlying),
+        _collateral: getTokenName(this.About.Collateral),
         settleToken: getTokenName("0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8"),
         flag: true,
         approveAddress1: "FACTORY",
@@ -186,6 +190,7 @@ export default {
         unit: "",
         showVolume: this.AvailableVolume,
       };
+      console.log(data);
       this.$bus.$emit("OPEN_STATUS_DIALOG", {
         title: "WARNING",
         layout: "layout1",
