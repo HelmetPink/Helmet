@@ -83,7 +83,7 @@
         <div class="menu_item">
           <nuxt-link
             to="/mining"
-            :class="routeObj.name == 'mining' ? 'active' : ''"
+            :class="routeObj.name === 'mining' ? 'active' : ''"
           >
             <svg class="icon svg-icon" aria-hidden="true">
               <use xlink:href="#icon-mining1"></use>
@@ -95,7 +95,7 @@
         <div class="menu_item">
           <nuxt-link
             to="/flashmining"
-            :class="routeObj.name == 'flashmining' ? 'active' : ''"
+            :class="routeObj.name === 'flashmining' ? 'active' : ''"
           >
             <svg class="icon svg-icon" aria-hidden="true">
               <use xlink:href="#icon-flashmining"></use>
@@ -107,7 +107,7 @@
         <div class="menu_item">
           <nuxt-link
             to="/burnbox"
-            :class="routeObj.name.includes('burnbox') ? 'active' : ''"
+            :class="routeObj.name === 'burnbox' ? 'active' : ''"
           >
             <svg class="icon svg-icon" aria-hidden="true">
               <use xlink:href="#icon-burnbox"></use>
@@ -135,10 +135,7 @@
           </nuxt-link>
         </div>
         <div class="menu_item">
-          <nuxt-link
-            to="/nft"
-            :class="routeObj.name.includes('nft') ? 'active' : ''"
-          >
+          <nuxt-link to="/nft" :class="routeObj.name === 'nft' ? 'active' : ''">
             <svg class="icon svg-icon" aria-hidden="true">
               <use xlink:href="#icon-nft"></use>
             </svg>
@@ -423,7 +420,6 @@ export default {
           height: 30px;
           position: absolute;
           left: 0;
-          z-index: 1;
           top: 0;
         }
         > .icon {
