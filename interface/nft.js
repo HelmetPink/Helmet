@@ -1,4 +1,4 @@
-import { NFT, expERC20, Deposite } from './index';
+import { NFT, expERC20, Deposite, NFTusers } from './index';
 import {
     getAddress,
     getContract,
@@ -33,6 +33,20 @@ export const CardFilter = (address) => {
             return '';
     }
 };
+export const usersCount = async (type) => {
+    const charID = 56;
+    let CardAdress = type;
+    if (type.indexOf('0x') === -1) {
+        CardAdress = getContract(type, charID);
+    }
+    const contract = await NFTusers(CardAdress);
+    return contract.methods
+        .usersCount()
+        .call()
+        .then((res) => {
+            return res;
+        });
+};
 export const bet = async (ContractType, ContractCost, callBack) => {
     const charID = 56;
     let ContractAdress;
@@ -55,6 +69,9 @@ export const bet = async (ContractType, ContractCost, callBack) => {
                 conTit: 'Please Confirm the transaction in your wallet',
                 conText: `<p>You will approve helmet to pixel puzzle </p>`,
             });
+        }
+        if (res == 'success') {
+            bus.$emit('CLOSE_STATUS_DIALOG');
         }
     });
     const IIOContract = await NFT(ContractAdress);
@@ -98,6 +115,9 @@ export const bet10 = async (ContractType, ContractCost, callBack) => {
                 conTit: 'Please Confirm the transaction in your wallet',
                 conText: `<p>You will approve helmet to pixel puzzle </p>`,
             });
+        }
+        if (res == 'success') {
+            bus.$emit('CLOSE_STATUS_DIALOG');
         }
     });
     const IIOContract = await NFT(ContractAdress);
