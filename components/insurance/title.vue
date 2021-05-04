@@ -1,10 +1,6 @@
 <template>
   <div class="swiper-container">
     <div class="swiper-wrapper">
-      <div class="swiper-slide nft">
-        <div></div>
-      </div>
-      <div class="swiper-slide four">
       <div class="swiper-slide lev">
         <div></div>
       </div>
