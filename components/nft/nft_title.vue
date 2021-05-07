@@ -1,6 +1,6 @@
 <template>
   <div class="nft_title">
-    <div class="nft_name">pixel puzzle</div>
+    <div class="nft_name">Pixel Pzzle</div>
     <div class="nft_title_wrap">
       <div class="left">
         <div class="nft_earn">
@@ -8,14 +8,14 @@
           <p>
             <span>{{ $t("NFT.RewardVolume") }}(HELMET)</span>
             <span>
-              {{ addCommom(Number(RewardPoll) + 100000) }}
+              {{ addCommom(Number(RewardPoll)) }}
             </span>
           </p>
         </div>
         <div class="nft_user">
           <i></i>
           <p>
-            <span>参与人数</span>
+            <span>{{ $t("NFT.UsersCount") }}</span>
             <span>
               {{ addCommom(usersCount) }}
             </span>
@@ -159,7 +159,7 @@ export default {
     },
     async getRewardNumber() {
       let num = await getBalance("NFT_COST", "NFT_POOL");
-      this.RewardPoll = addCommom(num, 0);
+      this.RewardPoll = Number(num) + 100000;
     },
     async getUserCount() {
       let res = await usersCount("NFT_POOL");
@@ -167,7 +167,7 @@ export default {
     },
     getRemainTime() {
       let now = new Date() * 1;
-      let dueDate = new Date(moment("2021/05/10 00:00 UTC+8")) * 1;
+      let dueDate = new Date(moment("2021/05/15 00:00 UTC+8")) * 1;
       let DonwTime = dueDate - now;
       let day = Math.floor(DonwTime / (24 * 3600000));
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);

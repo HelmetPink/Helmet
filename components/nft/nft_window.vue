@@ -5,7 +5,7 @@
       <div class="nft_window_bg">
         <div class="nft_share" v-if="action == 'share'">
           <div>
-            {{ $t("NFT.Text1", { card_Name: card_Name }) }}
+            {{ $t("NFT.Text1", { card_Name: card_Name, num: RewardPoll }) }}
             <a href="https://app.helmet.insure/#/nft"
               >https://app.helmet.insure/#/nft</a
             >
@@ -32,7 +32,7 @@
               :class="checkFlag ? 'checktrue checkbox' : 'checkfalse checkbox'"
             ></i>
             <p>
-              {{ $t("NFT.Text1", { card_Name: card_Name }) }}
+              {{ $t("NFT.Text2", { card_Name: card_Name }) }}
             </p>
           </div>
           <div class="button">
@@ -56,12 +56,15 @@ import ClipboardJS from "clipboard";
 import Message from "~/components/common/Message";
 import { getContract } from "~/assets/utils/address-pool.js";
 import { NFTContract } from "~/interface/index";
+import { tokenOfOwnerByIndex, transferFrom } from "~/interface/nft.js";
+import { getBalance } from "~/interface/nft.js";
 export default {
   data() {
     return {
+      RewardPoll: "0",
       card_Name: "",
       action: "",
-      checkFlag: false,
+      checkFlag: true,
       windowFlag: false,
       ContractName: "",
       getContract,
@@ -75,6 +78,9 @@ export default {
       this.action = data.action;
       this.ContractName = data.ContractName;
     });
+    setTimeout(() => {
+      this.getRewardNumber();
+    }, 1000);
   },
   methods: {
     copyAdress(e, text) {
@@ -95,19 +101,37 @@ export default {
       });
     },
     handleCheck() {
-      this.checkFlag = !this.checkFlag;
+      // this.checkFlag = !this.checkFlag;
     },
     closeWindow() {
       this.$bus.$emit("NFT_WINDOW_STATUS", { flag: false });
     },
+    async getRewardNumber() {
+      let num = await getBalance("NFT_COST", "NFT_POOL");
+      this.RewardPoll = Number(num) + 100000;
+    },
     async Send() {
-      const MyContract = await NFTContract(
-        "0xBcE765FB9497942Fe854188E79A056bAaEe5c7AC"
-      );
-      // tokenOfOwnerByIndex
-      await MyContract.methods
-        .transferFrom(window.CURRENTADDRESS, this.ToAdress, "1")
-        .send({ from: window.CURRENTADDRESS });
+      if (!this.checkFlag) {
+        return;
+      }
+      let TokenID = await tokenOfOwnerByIndex(`NFT_${this.ContractName}`);
+      if (TokenID) {
+        await transferFrom(
+          `NFT_${this.ContractName}`,
+          this.ToAdress,
+          TokenID,
+          (res) => {
+            if (res.status == "send_success") {
+              this.$bus.$on("GET_CARD_BALANCE", () => {
+                this.getRewardNumber();
+                this.getNeedCliam();
+                this.getNeedCliam10();
+                this.getUserCount();
+              });
+            }
+          }
+        );
+      }
     },
   },
 };
@@ -183,7 +207,6 @@ export default {
     }
     span {
       margin-top: 15px;
-      width: 24px;
       height: 12px;
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -217,6 +240,7 @@ export default {
       border: 2px solid #fd7e14;
       background: transparent;
       padding-left: 12px;
+      padding-right: 12px;
       font-size: 14px;
       color: rgba(23, 23, 58, 0.7);
     }
@@ -286,6 +310,7 @@ export default {
     align-items: center;
     justify-content: center;
     padding-bottom: 40px;
+
     p {
       display: flex;
       flex-direction: column;
@@ -369,7 +394,6 @@ export default {
     }
     span {
       margin-top: 15px;
-      width: 24px;
       height: 12px;
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -402,7 +426,6 @@ export default {
     }
     span {
       margin-top: 15px;
-      width: 24px;
       height: 12px;
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -420,7 +443,6 @@ export default {
     display: flex;
     flex-direction: column;
     label {
-      width: 70px;
       height: 14px;
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -474,8 +496,8 @@ export default {
       button {
         margin: 0 15px;
         &:nth-of-type(1) {
-          width: 32px;
-          height: 16px;
+          width: 77px;
+          height: 32px;
           font-size: 16px;
           font-family: PingFangSC-Regular, PingFang SC;
           font-weight: 400;
@@ -505,12 +527,13 @@ export default {
     align-items: center;
     justify-content: center;
     padding-bottom: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
     p {
       display: flex;
       flex-direction: column;
-      width: 339px;
       height: 42px;
-      font-size: 15px;
+      font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #d47a52;
