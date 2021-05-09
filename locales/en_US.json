@@ -220,8 +220,8 @@
     "unSwap": "Insufficient Card",
     "Show": "Check",
     "Suprice": "Unbelievable",
-    "open": "Scoop the jackpot",
-    "getReward": "Claim",
+    "open": "Claim Cards",
+    "getReward": "Confirm",
     "OpenOne": "Check my card",
     "OpenTen": "Check my 10 cards",
     "Text1": " Do you have {card_Name} NFT Card? Join in #Helmet Gacha Game and scroop {num} Helmet jackpot; Click here:",
@@ -232,7 +232,9 @@
     "Send": "Donate",
     "RewardTime": "Game Countdown",
     "RewardVolume": "Progressive Slot",
-    "UsersCount": "Players"
+    "UsersCount": "Players",
+    "NFT_TIP1": "The more Dora cards you have, the more rewards you will get from Prize Pool.",
+    "NFT_TIP2": "Please 'claim your cards' in 5min otherwise you will lose them."
   },
   "Tip": {
     "Dpr": "Daily percentage of yield, DPR= daily yield / staking volume",

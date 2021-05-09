@@ -6,22 +6,30 @@
       </div>
       <div :class="`nft_dialog_bg ${nft_action}`">
         <div :class="`card_wrap ${nft_action}_wrap`">
-          <div
-            class="card_item"
-            v-for="(item, index) in nft_data"
-            :key="index"
-            :style="rotate ? ' animation: cardItem 2s linear 0s infinite;' : ''"
-          >
-            <span>{{ CardFilter(item) }}</span>
-            <img
-              :src="
-                require(`~/assets/img/nft/have_${
-                  CardFilter(item) || 'mysterious'
-                }.png`)
+          <div class="card_scroll">
+            <div
+              class="card_item"
+              v-for="(item, index) in nft_data"
+              :key="index"
+              :style="
+                rotate ? ' animation: cardItem 2s linear 0s infinite;' : ''
               "
-              alt=""
-            />
+            >
+              <span>{{ CardFilter(item) }}</span>
+              <img
+                :src="
+                  require(`~/assets/img/nft/have_${
+                    CardFilter(item) || 'mysterious'
+                  }.png`)
+                "
+                alt=""
+              />
+            </div>
           </div>
+        </div>
+        <div class="nft_dialog_warning">
+          <img src="~/assets/img/nft/warning.png" alt="" />
+          <p>{{ $t("NFT.NFT_TIP2") }}</p>
         </div>
         <div class="button">
           <button @click="handleClaim(nft_action)" v-if="status == 'dataFail'">
@@ -131,6 +139,7 @@ export default {
 }
 @media screen and (min-width: 750px) {
   .nft_dialog_mask {
+    overflow: hidden;
     width: 100%;
     height: 100%;
     position: fixed;
@@ -207,7 +216,7 @@ export default {
     }
     .bet {
       width: 97%;
-      height: 244px;
+      height: 284px;
       background-image: url("../../assets/img/nft/dialog_bg_one.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
@@ -219,7 +228,7 @@ export default {
     }
     .bet10 {
       width: 543px;
-      height: 363px;
+      height: 403px;
       background-image: url("../../assets/img/nft/dialog_bg_ten.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
@@ -227,15 +236,23 @@ export default {
       flex-direction: column;
       .button {
         height: 52px;
+        button {
+          margin-top: 20px;
+        }
       }
     }
     .bet_wrap {
       width: 100%;
-      height: 100%;
+      height: 66%;
       display: flex;
       align-items: center;
       justify-content: center;
-      > .card_item {
+      .card_scroll {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card_item {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -257,13 +274,20 @@ export default {
     }
     .bet10_wrap {
       width: 100%;
-      height: 100%;
+      height: 77%;
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      padding: 35px 23px 15px 23px;
-      flex: 1;
-      > .card_item {
+      .card_scroll {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        justify-content: space-between;
+        padding: 35px 23px 15px 23px;
+      }
+      .card_item {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -284,6 +308,24 @@ export default {
       }
     }
   }
+  .nft_dialog_warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    img {
+      width: 34px;
+      height: 34px;
+    }
+    p {
+      margin-left: 8px;
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #eb2719;
+      line-height: 20px;
+    }
+  }
 }
 @media screen and (max-width: 750px) {
   .nft_dialog_mask {
@@ -299,6 +341,7 @@ export default {
     min-width: 320px;
     min-height: 300px;
     width: 95%;
+    max-height: 510px;
     background: linear-gradient(180deg, #716a88 0%, #84787b 100%);
     box-shadow: 0px 1px 3px 0px rgba(165, 165, 165, 0.5),
       0px 0px 3px 0px rgba(239, 239, 239, 0.5);
@@ -364,7 +407,7 @@ export default {
     }
     .bet {
       width: 95%;
-      height: 244px;
+      height: 284px;
       background-image: url("../../assets/img/nft/dialog_bg_one.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
@@ -378,20 +421,29 @@ export default {
       width: 95%;
       background-image: url("../../assets/img/nft/dialog_bg_ten.png");
       background-repeat: no-repeat;
-      background-size: 100% 100%;
+      background-size: 100% 480px;
       display: flex;
       flex-direction: column;
+      height: 600px;
       .button {
         height: 52px;
       }
     }
     .bet_wrap {
       width: 100%;
-      height: 100%;
+      height: 66%;
       display: flex;
       align-items: center;
       justify-content: center;
-      > .card_item {
+      .card_scroll {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+      }
+      .card_item {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -413,14 +465,24 @@ export default {
     }
     .bet10_wrap {
       width: 100%;
-      height: 100%;
+      height: 385px;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      padding: 35px 23px 15px 23px;
-      flex: 1;
-      > .card_item {
+      overflow: hidden;
+      .card_scroll {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        padding: 35px 23px 15px 23px;
+        overflow-y: scroll;
+        margin-top: 35px;
+        padding-top: 0;
+      }
+      .card_item {
         margin: 2px;
         display: flex;
         flex-direction: column;
@@ -440,6 +502,25 @@ export default {
           margin-top: 5px;
         }
       }
+    }
+  }
+  .nft_dialog_warning {
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    img {
+      width: 34px;
+      height: 34px;
+    }
+    p {
+      margin-left: 8px;
+      font-size: 14px;
+      font-family: PingFangSC-Semibold, PingFang SC;
+      font-weight: 600;
+      color: #eb2719;
+      line-height: 20px;
     }
   }
 }

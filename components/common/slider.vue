@@ -89,7 +89,7 @@
               <use xlink:href="#icon-mining1"></use>
             </svg>
             {{ $t("Header.Mining") }}
-            <i class="num">5</i>
+            <i class="num">6</i>
           </nuxt-link>
         </div>
         <div class="menu_item">
@@ -131,11 +131,18 @@
               <use xlink:href="#icon-iio"></use>
             </svg>
             {{ $t("Header.IIO") }}
-            <i class="num">1</i>
+            <!-- <i class="num">1</i> -->
           </nuxt-link>
         </div>
         <div class="menu_item">
           <nuxt-link to="/nft" :class="routeObj.name === 'nft' ? 'active' : ''">
+            <svg class="hot" aria-hidden="true">
+              <use
+                :href="`#icon-${
+                  routeObj.name.includes('nft') ? 'new1' : 'new'
+                }`"
+              ></use>
+            </svg>
             <svg class="icon svg-icon" aria-hidden="true">
               <use xlink:href="#icon-nft"></use>
             </svg>
