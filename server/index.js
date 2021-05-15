@@ -10,7 +10,7 @@ config.dev = app.env !== 'production';
 
 async function start() {
     // Instantiate nuxt.js
-    const host = process.env.HOST || '0.0.0.0';
+    const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || 8080;
 
     const nuxt = new Nuxt(config);
