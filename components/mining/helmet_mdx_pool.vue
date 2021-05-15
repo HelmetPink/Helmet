@@ -32,6 +32,9 @@
         <button
           @click="toDeposite"
           :class="stakeLoading ? 'disable b_button' : 'b_button'"
+          :style="
+            expired ? 'background: #ccc !important; pointer-events: none' : ''
+          "
         >
           <i :class="stakeLoading ? 'loading_pic' : ''"></i
           >{{ $t("Table.ConfirmDeposit") }}
@@ -76,7 +79,7 @@
           >
         </section>
       </div>
-      <div class="ContractAddress">
+      <!-- <div class="ContractAddress">
         <span>BHELMET {{ $t("Table.ContractAddress") }}</span>
         <p>
           0x15DA1D8e207AB1e1Bc7FD1cca52a55a598518672
@@ -88,7 +91,7 @@
             "
           ></i>
         </p>
-      </div>
+      </div> -->
     </div>
     <i></i>
     <div class="withdraw" v-if="TradeType == 'CLAIM' || TradeType == 'ALL'">
@@ -129,7 +132,7 @@
           >{{ $t("Table.ConfirmWithdraw") }} &
           {{ $t("Table.ClaimRewards") }}
         </button>
-        <p>
+        <!-- <p>
           <span
             ><i @click="hadnleShowOnePager($event, 'BHELMET')">BHELMET</i>
             {{ $t("Table.HELMETRewards") }}：</span
@@ -145,7 +148,7 @@
             <span v-else>--</span>
             BHELMET</span
           >
-        </p>
+        </p> -->
         <p>
           <span>MDX {{ $t("Table.HELMETRewards") }}：</span>
           <span>
@@ -165,6 +168,9 @@
         <button
           @click="toClaim"
           :class="claimLoading ? 'disable o_button' : 'o_button'"
+          :style="
+            expired ? 'background: #ccc !important; pointer-events: none' : ''
+          "
         >
           <i :class="claimLoading ? 'loading_pic' : ''"></i
           >{{ $t("Table.ClaimAllRewards") }}
@@ -252,9 +258,16 @@ export default {
       helmetapy: 0,
       cakeapy: 0,
       isLogin: false,
+      expired: false,
     };
   },
   mounted() {
+    setInterval(() => {
+      setTimeout(() => {
+        // this.getDownTime();
+      });
+      clearTimeout();
+    }, 1000);
     this.$bus.$on("DEPOSITE_LOADING_HELMETMDXPOOL", (data) => {
       this.stakeLoading = data.status;
       this.DepositeNum = "";
@@ -334,22 +347,34 @@ export default {
         this.isLogin = newValue.data.isLogin;
       }
     },
-    copyAdress(e, text) {
-      let _this = this;
-      let copys = new ClipboardJS(".copy", { text: () => text });
-      copys.on("success", function (e) {
-        Message({
-          message: "Successfully copied",
-          type: "success",
-          // duration: 0,
-        });
-        copys.destroy();
-      });
-      copys.on("error", function (e) {
-        console.error("Action:", e.action);
-        console.error("Trigger:", e.trigger);
-        copys.destroy();
-      });
+    getDownTime() {
+      let now = new Date() * 1;
+      let dueDate = this.list.dueDate;
+      dueDate = new Date(dueDate);
+      let DonwTime = dueDate - now;
+      let day = Math.floor(DonwTime / (24 * 3600000));
+      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
+      let minute = Math.floor(
+        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
+      );
+      let second = Math.floor(
+        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
+      );
+      let template;
+
+      if (dueDate > now) {
+        template = {
+          day: day > 9 ? day : "0" + day,
+          hour: hour > 9 ? hour : "0" + hour,
+        };
+      } else {
+        template = {
+          day: "00",
+          hour: "00",
+        };
+        this.expired = true;
+      }
+      this.list.DownTime = template;
     },
     async getBalance() {
       let helmetType = "HELMETMDXPOOL_LPT";

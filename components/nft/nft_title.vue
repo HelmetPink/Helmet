@@ -8,7 +8,7 @@
           <p>
             <span>{{ $t("NFT.RewardVolume") }}(HELMET)</span>
             <span>
-              {{ addCommom(Number(RewardPoll)) }}
+              {{ addCommom(245343, 0) }}
             </span>
           </p>
         </div>
@@ -73,7 +73,7 @@
       </button>
     </div>
     <div class="card_button" v-else>
-      <button class="one" @click="handleClickReward">领取</button>
+      <button class="one" @click="handleClickReward">{{ $t("NFT.getReward") }}</button>
     </div>
     <div class="card_tips">
       <img src="~/assets/img/nft/home_tip.png" alt="" />
@@ -88,6 +88,7 @@ import { getBalance, totalSupply, balanceOf, redeem } from "~/interface/nft.js";
 import { addCommom } from "~/assets/js/util.js";
 import moment from "moment";
 import NFTCARD from "~/components/nft/nft_card";
+import { fixD } from "~/assets/js/util.js";
 import {
   bet,
   bet10,
@@ -197,7 +198,7 @@ export default {
     },
     async getRewardNumber() {
       let num = await getBalance("NFT_COST", "NFT_POOL");
-      this.RewardPoll = Number(num);
+      this.RewardPoll = fixD(Number(num), 0);
     },
     async getUserCount() {
       let res = await usersCount("NFT_POOL");

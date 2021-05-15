@@ -176,7 +176,7 @@
             :TradeType="'ALL'"
           />
           <HelmetMdxPool
-            v-if="activeMining == 'bhelmet_mdx' && showActiveMining"
+            v-if="activeMining == 'mdx' && showActiveMining"
             :activeType="activeType"
             :TradeType="'ALL'"
           />
@@ -398,7 +398,7 @@
           :TradeType="activeType"
         />
         <HelmetMdxPool
-          v-if="activeMining == 'bhelmet_mdx'"
+          v-if="activeMining == 'mdx'"
           :activeType="activeType"
           :TradeType="activeType"
         />
@@ -501,7 +501,7 @@ export default {
     return {
       apyArray: {
         helmet_cake_v2: 0,
-        bhelmet_mdx: 0,
+        mdx: 0,
         bhelmet_dodo: 0,
         helmet: 0,
         QFEI: 0,
@@ -640,18 +640,20 @@ export default {
         },
         {
           miningName: "HELMET-BNB&nbsp;MLP",
-          earnNum: "two",
-          earn: "bhelmet_mdx",
+          earnNum: "one",
+          earn: "mdx",
           earnImg: true,
-          openDate: this.getMiningTime("2021/04/15 00:00"),
-          dueDate: this.getRemainTime("2021/05/15 00:00"),
-          combo: true,
+          // openDate: this.getMiningTime("2021/04/15 00:00"),
+          // dueDate: this.getRemainTime("2021/05/15 00:00"),
+          dueDate: "Ongoing",
+          openDate: "Mining",
+          combo: false,
           info: true,
           earnName: "APR",
           onePager: false,
-          yearEarn: apyArray["bhelmet_mdx"] || "--",
-          started: new Date("2021/04/15 00:00") * 1,
-          expired: new Date("2021/05/15 00:00") * 1,
+          yearEarn: apyArray["mdx"] || "--",
+          // started: new Date("2021/04/15 00:00") * 1,
+          // expired: new Date("2021/05/15 00:00") * 1,
         },
         {
           miningName: "HELMET-BNB&nbsp;DLP",
@@ -700,6 +702,7 @@ export default {
           started: new Date("2021/05/02 12:00") * 1,
           expired: new Date("2021/05/22 00:00") * 1,
         },
+
         {
           miningName: "FEI(BSC)&nbsp;POOL",
           earn: "QFEI",
@@ -878,13 +881,13 @@ export default {
             supplyVolume
           )
         ) * 100;
-      let APY = helmetAPY + mdxAPY;
+      let APY = mdxAPY;
       let startedTime = this.miningList[1].started;
       let nowTime = new Date() * 1;
       if (nowTime < startedTime) {
-        this.apyArray.bhelmet_mdx = "--";
+        this.apyArray.mdx = "--";
       } else {
-        this.apyArray.bhelmet_mdx = fixD(APY, 2);
+        this.apyArray.mdx = fixD(APY, 2);
       }
     },
     async BHELMET_DODO_LP_APY() {
@@ -973,6 +976,7 @@ export default {
         // this.apyArray.bhelmet_xburger = "--";
       }
     },
+
     async FEI_POOL_APY() {
       let lptBnbValue = await pancakeswap("QFEI", "QSD");
       let DODOHELMET = lptBnbValue;
