@@ -238,18 +238,56 @@ export default {
           sort: 0,
         },
         {
-          iio_name: "2",
-          iio_img: "iio2",
-          coming: false,
-          open: false,
+          iio_name: "CryptoTycoon",
+          iio_img: "iio_ctt",
+          iio_webSite: "cryptotycoon.finance",
+          coming: true,
+          background: "#FA6400",
+          swapVolume: "1,500",
+          swapUtil: "CTT",
+          stakeUtil: "BUSD",
+          stakeShare: 30,
+          showStart: "May. 23rd 21:00 SGT",
+          showEnd: "May. 25th 21:00 SGT",
+          warnupTimeUTC: "2021/05/21 21:00 UTC+8",
+          distributingTimeUTC: "2021/05/23 21:00 UTC+8", //showStart
+          activatingTimeUTC: "2021/05/25 21:00 UTC+8", //showEnd
+          finishedTimeUTC: "2021/05/26 21:00 UTC+8",
+          link: "https://cryptotycoon.finance/",
+          enterbutton: false,
+          open: true,
           sort: 0,
+          active_page: 2,
+          expired_burnt: "0",
+          expired_stake: "0",
+          expired_premium: "0",
+          expired_activating: "0",
         },
         {
-          iio_name: "5",
-          iio_img: "iio5",
-          coming: false,
-          open: false,
+          iio_name: "CoinWind",
+          iio_img: "iio_cow",
+          iio_webSite: "www.coinwind.com",
+          coming: true,
+          background: "#08063D",
+          swapVolume: "100,000",
+          swapUtil: "COW",
+          stakeUtil: "BUSD",
+          stakeShare: 0.5,
+          showStart: "May. 23rd 21:00 SGT",
+          showEnd: "May. 25th 21:00 SGT",
+          warnupTimeUTC: "2021/05/21 21:00 UTC+8",
+          distributingTimeUTC: "2021/05/23 21:00 UTC+8", //showStart
+          activatingTimeUTC: "2021/05/25 21:00 UTC+8", //showEnd
+          finishedTimeUTC: "2021/05/26 21:00 UTC+8",
+          link: "https://www.coinwind.com",
+          enterbutton: false,
+          open: true,
           sort: 0,
+          active_page: 2,
+          expired_burnt: "0",
+          expired_stake: "0",
+          expired_premium: "0",
+          expired_activating: "0",
         },
         {
           iio_name: "WMASS",
@@ -294,26 +332,31 @@ export default {
       let data = newValue || this.iioData;
       let nowTime = moment.now();
       data.forEach((item) => {
+        item.sort = 4;
         if (item.open) {
           let warnup = new Date(moment(item.warnupTimeUTC)) * 1;
           let distributing = new Date(moment(item.distributingTimeUTC)) * 1;
           let activating = new Date(moment(item.activatingTimeUTC)) * 1;
           let finished = new Date(moment(item.finishedTimeUTC)) * 1;
-          if (nowTime < warnup) {
-            item.status = "warmup";
-          }
-          if (nowTime > warnup && nowTime < distributing) {
-            item.status = "warmup";
-          }
           if (nowTime > distributing && nowTime < activating) {
             item.status = "distributing";
+            item.sort = 1;
           }
           if (nowTime > activating && nowTime < finished) {
             item.status = "activating";
+            item.sort = 2;
+          }
+          if (nowTime < warnup) {
+            item.status = "warmup";
+            item.sort = 3;
+          }
+          if (nowTime > warnup && nowTime < distributing) {
+            item.status = "warmup";
+            item.sort = 3;
           }
           if (nowTime > finished) {
             item.status = "finished";
-            item.sort = 1;
+            item.sort = 5;
             item.active_page = 1;
           }
         }
