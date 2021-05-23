@@ -254,7 +254,7 @@ export default {
           activatingTimeUTC: "2021/05/25 21:00 UTC+8", //showEnd
           finishedTimeUTC: "2021/05/26 21:00 UTC+8",
           link: "https://cryptotycoon.finance/",
-          enterbutton: false,
+          enterbutton: true,
           open: true,
           sort: 0,
           active_page: 2,
@@ -274,13 +274,13 @@ export default {
           stakeUtil: "BUSD",
           stakeShare: 0.5,
           showStart: "May. 23rd 21:00 SGT",
-          showEnd: "May. 25th 21:00 SGT",
+          showEnd: "May. 25th 22:00 SGT",
           warnupTimeUTC: "2021/05/21 21:00 UTC+8",
           distributingTimeUTC: "2021/05/23 21:00 UTC+8", //showStart
-          activatingTimeUTC: "2021/05/25 21:00 UTC+8", //showEnd
-          finishedTimeUTC: "2021/05/26 21:00 UTC+8",
+          activatingTimeUTC: "2021/05/25 22:00 UTC+8", //showEnd
+          finishedTimeUTC: "2021/05/26 22:00 UTC+8",
           link: "https://www.coinwind.com",
-          enterbutton: false,
+          enterbutton: true,
           open: true,
           sort: 0,
           active_page: 2,
