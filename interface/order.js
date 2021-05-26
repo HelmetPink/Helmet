@@ -15,6 +15,7 @@ import bus from '~/assets/js/bus';
 import Notification from '~/components/common/Notification';
 import Message from '~/components/common/Message';
 import { getExerciseList } from '~/interface/event.js';
+import BigNumber from 'bignumber.js';
 const netObj = {
     1: '',
     3: 'ropsten.',
@@ -272,7 +273,6 @@ export const buyInsuranceBuy = async (_data, callBack) => {
     // data.pay = toWei(pay, _data.settleToken);
 
     const Contract = await expERC20(data.settleToken);
-    console.log(data);
     try {
         // 一键判断是否需要授权，给予无限授权
         await oneKeyArrpove(Contract, 'ORDER', data.payPrice, callBack);
@@ -331,110 +331,14 @@ export const buyInsuranceBuy = async (_data, callBack) => {
             });
     } catch (error) {}
 };
-export const getSellLog = async (callback) => {
-    Order().then((contract) => {
-        contract.getPastEvents(
-            'Sell',
-            {
-                fromBlock: 500000,
-                toBlock: 505000,
-            },
-            (error, events) => {
-                callback(error, events);
-            }
-        );
-    });
-};
 
-export const getRePrice = async (callback) => {
-    Order().then((contract) => {
-        contract.getPastEvents(
-            'Reprice',
-            {
-                fromBlock: 500000,
-                toBlock: 505000,
-            },
-            (error, events) => {
-                callback(error, events);
-            }
-        );
-    });
-};
-export const getTransfer = async (callback) => {
-    expERC20('0x17934fef9fc93128858e9945261524ab0581612e').then((contract) => {
-        contract.getPastEvents(
-            'Transfer',
-            {
-                fromBlock: 500000,
-                toBlock: 505000,
-            },
-            (error, events) => {
-                callback(error, events);
-            }
-        );
-    });
-};
-export const getOptionCreatedLog = async (callback) => {
-    return Factory().then((contract) => {
-        contract.getPastEvents(
-            'OptionCreated',
-            {
-                fromBlock: 500000,
-                toBlock: 505000,
-            },
-            (error, events) => {
-                callback(error, events);
-            }
-        );
-    });
-};
 
-export const getBuyLog = async (callback) => {
-    Order().then((contract) => {
-        contract.getPastEvents(
-            'Buy',
-            {
-                fromBlock: 500000,
-                toBlock: 505000,
-            },
-            (error, events) => {
-                callback(error, events);
-            }
-        );
-    });
-};
+
+
 
 export const getExercise = async (buyer) => {
     let list = await getExerciseList();
     list = list.filter((item) => buyer == item.returnValues.buyer);
-    return list;
-};
-
-export const getMint = async (callback) => {
-    Factory().then((contract) => {
-        contract.getPastEvents(
-            'Mint',
-            {
-                fromBlock: 500000,
-                toBlock: 505000,
-            },
-            (error, events) => {
-                // callback(error, events);
-            }
-        );
-    });
-};
-
-export const getWaive = async (buyer) => {
-    const contract = await Order();
-    if (!buyer) {
-        return [];
-    }
-    const list = await contract.getPastEvents('Waive', {
-        filter: { buyer: buyer },
-        fromBlock: 500000,
-        toBlock: 505000,
-    });
     return list;
 };
 
@@ -651,10 +555,13 @@ export const onExercise = async (data, callBack, flag) => {
         order = await TokenOrder(data.long);
         long = await expERC20(data.long);
         if (data.unit) {
-            value = fixD(data.vol * Math.pow(10, data.unit));
+            value = BigNumber(
+                (data.vol * Math.pow(10, data.unit)).toString()
+            ).toFixed(18);
         } else {
-            value = toWei(data.vol, data.token);
+            value = toWei(fixD(data.vol, 12), data.token);
         }
+
         // 一键判断是否需要授权，给予无限授权
         if (data.approveAddress1) {
             await oneKeyArrpove(
@@ -690,7 +597,6 @@ export const onExercise = async (data, callBack, flag) => {
             }
         });
     }
-    console.log(value, '########');
     // 一键判断是否需要授权，给予无限授权
     order.methods
         .exercise(data.flag ? value : data.bidID)
@@ -868,36 +774,5 @@ export const onWaive = async (data) => {
         })
         .on('error', (err, receipt) => {
             bus.$emit('ONWAIVE_END', data.bidID);
-        });
-};
-
-export const RePrice = async (data) => {
-    const charID = window.chainID;
-    let askID = data.id;
-    let price;
-    let premiumFix = getStrikePriceFix(data._collateral, data._underlying);
-    let premiumUnit = getWeiWithFix(premiumFix);
-    price = window.WEB3.utils.toWei(String(data.price), premiumUnit);
-    data.price = price;
-    const order = await Order();
-    if (!window.CURRENTADDRESS) {
-        return;
-    }
-    order.methods
-        .reprice(askID, price)
-        .send({ from: window.CURRENTADDRESS })
-        .on('transactionHash', (hash) => {
-            bus.$emit('CLONE_REPRICE');
-        })
-        .on('receipt', function(receipt) {
-            setTimeout(() => {
-                bus.$emit('REFRESH_ALL_DATA');
-            }, 1000);
-
-            //onReceiptChange(receipt);
-        })
-        .on('error', (err, receipt) => {
-            bus.$emit('CLONE_REPRICE');
-            //onReceiptChange(receipt);
         });
 };
