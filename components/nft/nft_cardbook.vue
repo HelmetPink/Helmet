@@ -141,11 +141,14 @@ export default {
   },
   mounted() {
     this.dataInit();
-    setTimeout(() => {
+    let timer = setTimeout(() => {
       this.getCardBalance();
       this.getComposeEnable();
       clearTimeout();
     }, 1000);
+    this.$once("hook:beforeDestroy", () => {
+      clearTimeout(timer);
+    });
     this.$bus.$on("GET_CARD_BALANCE", () => {
       this.getCardBalance();
       this.getComposeEnable();

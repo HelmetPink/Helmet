@@ -165,8 +165,8 @@ export default {
     this.$store.commit("SET_CHAINID", window.chainID);
     this.getUserInfo();
     // 获取映射
-    // this.$store.dispatch("setAllMap");
-    // console.log(1);
+    this.getBalance();
+    this.getIndexPirce();
     this.monitorNetWorkChange();
     this.mointorAccountChange();
     // 显示状态弹框
@@ -175,21 +175,11 @@ export default {
       this.openStatusDialog();
       window.statusDialog = true;
     });
-
     // 关闭状态弹框
     this.$bus.$on("CLOSE_STATUS_DIALOG", (data) => {
       this.closeStatusDialog();
       window.statusDialog = false;
     });
-    if (window.chainID == 56) {
-      this.getBannerData();
-      setTimeout(() => {
-        this.getBalance();
-      }, 500);
-    }
-    if (window.chainID == 56) {
-      this.getIndexPirce();
-    }
     // 刷新所有数据
     this.$bus.$on("REFRESH_ALL_DATA", (data) => {
       this.refreshAllData();
@@ -240,12 +230,11 @@ export default {
       this.$emit("close");
     },
     async getBannerData() {
-      setTimeout(() => {
-        this.$store.dispatch("getTotalHelmet"); //获取 Helmet 总量
-        this.$store.dispatch("getBalanceMine"); //获取 Helmet 矿山余额
-        this.$store.dispatch("getClaimAbleHelmet"); //获取 所有待结算 Helmet
-        this.$store.dispatch("getValidBorrowing"); //获取 有效成交
-      }, 2000);
+      console.log(1);
+      this.$store.dispatch("getTotalHelmet"); //获取 Helmet 总量
+      this.$store.dispatch("getBalanceMine"); //获取 Helmet 矿山余额
+      this.$store.dispatch("getClaimAbleHelmet"); //获取 所有待结算 Helmet
+      this.$store.dispatch("getValidBorrowing"); //获取 有效成交
     },
     openStatusDialog() {
       this.showStatusDialog = true;
@@ -280,9 +269,7 @@ export default {
       } else {
         if (this.times < 10) {
           this.times = this.times + 1;
-          setTimeout(() => {
-            this.monitorNetWorkChange();
-          }, 1000);
+          this.monitorNetWorkChange();
         }
       }
     },
@@ -291,15 +278,13 @@ export default {
         ethereum.on("accountsChanged", async (account) => {
           let userInfo = await mateMaskInfo(account[0], "MetaMask");
           this.$store.dispatch("setUserInfo", userInfo);
-          setTimeout(() => {
-            this.getBannerData();
-            this.getBalance();
-            this.getIndexPirce();
-            this.$bus.$emit("REFRESH_ALL_DATA");
-            this.$bus.$emit("REFRESH_MINING");
-            this.$bus.$emit("GET_CARD_BALANCE");
-            this.$bus.$emit("NFT_WINDOW_STATUS");
-          }, 200);
+          this.getBannerData();
+          this.getBalance();
+          this.getIndexPirce();
+          this.$bus.$emit("REFRESH_ALL_DATA");
+          this.$bus.$emit("REFRESH_MINING");
+          this.$bus.$emit("GET_CARD_BALANCE");
+          this.$bus.$emit("NFT_WINDOW_STATUS");
         });
       }
     },
@@ -309,9 +294,7 @@ export default {
           .request({ method: "eth_requestAccounts" })
           .then(async (account) => {
             window.localStorage.setItem("currentType", "MetaMask");
-            // setTimeout(() => {
-            //     window.location.reload()
-            // }, 500)
+
             let userInfo = await mateMaskInfo(account[0], "MetaMask");
             this.$store.dispatch("setUserInfo", userInfo);
             this.$bus.$emit("REFRESH_ALL_DATA");

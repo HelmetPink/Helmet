@@ -4,6 +4,7 @@ import { PairContract, SwapContract } from '~/interface/index.js';
 import { toWei, fromWei } from '~/assets/utils/web3-fun.js';
 import bus from '~/assets/js/bus';
 import Message from '~/components/common/Message';
+import { web3 } from '~/assets/utils/web3-obj.js';
 export const SwapHelmet = async (amount, token1, token2, callback) => {
     let TOKEN1 = new Token(
         token1.chainId,
@@ -71,7 +72,6 @@ export const SwapHelmet = async (amount, token1, token2, callback) => {
                 }
             });
     } catch (error) {
-        console.log(error, '###');
         const PairAdress = Pair.getAddress(TOKEN1, BNBTOKEN);
         const PairContracts = await PairContract(PairAdress);
         const SwapContracts = await SwapContract(RouterAdress);
@@ -102,13 +102,6 @@ export const SwapHelmet = async (amount, token1, token2, callback) => {
                         )
                         .call()
                         .then((res1) => {
-                            console.log(
-                                BigNumber(
-                                    (
-                                        res1 / Math.pow(10, BNBTOKEN.decimals)
-                                    ).toString()
-                                ).toFixed(18)
-                            );
                             let amount = BigNumber(
                                 (
                                     res1 / Math.pow(10, BNBTOKEN.decimals)
@@ -133,7 +126,6 @@ export const SwapHelmet = async (amount, token1, token2, callback) => {
                                     symbol: 'Helmet',
                                 },
                                 (result) => {
-                                    console.log(result);
                                     callback({
                                         amount: result.amount,
                                         router: true,
@@ -157,12 +149,14 @@ export const SwapBNBforTokens = async (
               '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
               '0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8',
           ]
-        : [
-              '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-              '0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8',
-          ];
+        : [activeData.address, '0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8'];
     let deadline = parseInt(Date.now() + 60 * 20);
-    let swapExactETHForTokens = toWei(SwapNumber);
+    let swapExactETHForTokens =
+        activeData.decimals == 18
+            ? toWei(SwapNumber)
+            : BigNumber(
+                  (SwapNumber * Math.pow(10, activeData.decimals)).toString()
+              ).toFixed();
     let amountOutMin = toWei(MinReward);
     let to = window.CURRENTADDRESS;
     let RouterAdress = '0x10ed43c718714eb63d5aa57b78b54704e256024e';
@@ -212,13 +206,16 @@ export const SwapTokensforTokens = async (
               '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
               '0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8',
           ]
-        : [
-              '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-              '0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8',
-          ];
+        : [activeData.address, '0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8'];
     let deadline = parseInt(Date.now() + 60 * 20);
-    let swapExactTokensForTokens = toWei(SwapNumber);
+    let swapExactTokensForTokens =
+        activeData.decimals == 18
+            ? toWei(SwapNumber)
+            : BigNumber(
+                  (SwapNumber * Math.pow(10, activeData.decimals)).toString()
+              ).toFixed();
     let amountOutMin = toWei(MinReward);
+
     let to = window.CURRENTADDRESS;
     let RouterAdress = '0x10ed43c718714eb63d5aa57b78b54704e256024e';
     const SwapContracts = await SwapContract(RouterAdress);
@@ -260,21 +257,27 @@ export const SwapTokensforTokens = async (
         })
         .on('error', function(error) {
             callback({ status: 'swap_error' });
+            bus.$emit('CLOSE_STATUS_DIALOG');
         });
 };
 export const allowance = async (TokenAdress) => {
     let RouterAdress = '0x10ed43c718714eb63d5aa57b78b54704e256024e';
     const ApproveContracts = await PairContract(TokenAdress);
-    return ApproveContracts.methods
-        .allowance(window.CURRENTADDRESS, RouterAdress)
-        .call()
-        .then((res) => {
-            if (res > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        });
+    if (!process.client) {
+        return ApproveContracts.methods
+            .allowance(
+                window.CURRENTADDRESS,
+                RouterAdress
+            )
+            .call()
+            .then((res) => {
+                if (res > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+    }
 };
 export const approve = async (data, callback) => {
     let RouterAdress = '0x10ed43c718714eb63d5aa57b78b54704e256024e';
@@ -317,6 +320,7 @@ export const approve = async (data, callback) => {
             });
     } catch (error) {
         console.log(error);
+        bus.$emit('CLOSE_STATUS_DIALOG');
     }
 };
 export const BalanceOf = async (data) => {
@@ -327,13 +331,12 @@ export const BalanceOf = async (data) => {
         .then((res) => {
             let balance;
             if (data.decimals != 18) {
-                balance = rBigNumber(
+                balance = BigNumber(
                     res / Math.pow(10, data.decimals)
                 ).toFixed();
             } else {
                 balance = fromWei(res);
             }
-            console.log(balance);
             return balance;
         });
 };

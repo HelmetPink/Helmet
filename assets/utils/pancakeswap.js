@@ -1,9 +1,12 @@
 import { Token, Route, Pair, TokenAmount } from '@pancakeswap-libs/sdk-v2';
 import { PairContract } from '~/interface/index.js';
 import { getAddress, getWei_2 } from './address-pool';
+import { web3 } from '~/assets/utils/web3-obj.js';
 export const pancakeswap = async (token1, token2) => {
-    const address1 = getAddress(token1, window.chainID);
-    const address2 = getAddress(token2, window.chainID);
+    const charID = window.chainID || 56;
+
+    const address1 = getAddress(token1, charID);
+    const address2 = getAddress(token2, charID);
     const TOKEN1 = new Token(
         window.chainID,
         address1,
@@ -18,6 +21,7 @@ export const pancakeswap = async (token1, token2) => {
         token2,
         token2
     );
+    const WEB3 = await web3();
     try {
         // 获取交易对地址
         const address = Pair.getAddress(TOKEN1, TOKEN2);

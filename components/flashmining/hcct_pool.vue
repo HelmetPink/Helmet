@@ -268,12 +268,14 @@ export default {
     };
   },
   mounted() {
-    setInterval(() => {
-      setTimeout(() => {
+    if (!this.expired) {
+      let timer = setInterval(() => {
         this.getDownTime();
+      }, 1000);
+      this.$once("hook:beforeDestroy", () => {
+        clearInterval(timer);
       });
-      clearTimeout();
-    }, 1000);
+    }
     this.$bus.$on("DEPOSITE_LOADING_HCCTPOOL", (data) => {
       this.stakeLoading = data.status;
       this.DepositeNum = "";
@@ -290,10 +292,7 @@ export default {
     this.$bus.$on("REFRESH_MINING", (data) => {
       this.getBalance();
     });
-    setTimeout(() => {
-      this.getBalance();
-      clearTimeout();
-    }, 1000);
+    this.getBalance();
   },
   watch: {
     userInfo: {

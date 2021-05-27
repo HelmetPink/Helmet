@@ -70,7 +70,7 @@ export default {
   mounted() {
     let name = this.$route.params.id;
     this.About = Information[name];
-    setTimeout(() => {
+    let timer1 = setTimeout(() => {
       this.getPassPortPrice();
       clearTimeout();
     }, 1000);
@@ -83,12 +83,13 @@ export default {
       this.buyLoading = false;
     });
     this.getRewardTime();
-    setInterval(() => {
-      setTimeout(() => {
-        this.getRewardTime();
-      });
-      clearTimeout();
+    let timer2 = setInterval(() => {
+      this.getRewardTime();
     }, 1000);
+    this.$once("hook:beforeDestroy", () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    });
   },
   watch: {
     iioType: {

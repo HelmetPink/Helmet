@@ -262,12 +262,6 @@ export default {
     };
   },
   mounted() {
-    setInterval(() => {
-      setTimeout(() => {
-        // this.getDownTime();
-      });
-      clearTimeout();
-    }, 1000);
     this.$bus.$on("DEPOSITE_LOADING_HELMETMDXPOOL", (data) => {
       this.stakeLoading = data.status;
       this.DepositeNum = "";
@@ -284,10 +278,7 @@ export default {
     this.$bus.$on("REFRESH_MINING", (data) => {
       this.getBalance();
     });
-    setTimeout(() => {
-      this.getBalance();
-      clearTimeout();
-    }, 1000);
+    this.getBalance();
   },
   watch: {
     userInfo: {

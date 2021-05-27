@@ -61,16 +61,13 @@ export default {
     this.$bus.$on("RELOAD_DATA_AIRDROP", () => {
       this.getBalance();
     });
-    setInterval(() => {
-      setTimeout(() => {
-        this.getBalance();
-      }, 1000);
-      clearTimeout();
-    });
-    setTimeout(() => {
+    let timer = setTimeout(() => {
       this.getBalance();
       clearTimeout();
     }, 1000);
+    this.$once("hook:beforeDestroy", () => {
+      clearTimeout(timer);
+    });
     this.$bus.$on("AIRDROP_DIALOG", (res) => {
       this.airdrop = res;
     });

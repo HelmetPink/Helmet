@@ -122,7 +122,7 @@ export default {
     };
   },
   mounted() {
-    setTimeout(() => {
+    let timer1 = setTimeout(() => {
       this.getNeedCliam();
       this.getNeedCliam10();
       this.getDoraBalance();
@@ -139,11 +139,12 @@ export default {
       this.getDoraBalance();
     });
     this.getRemainTime();
-    setInterval(() => {
-      setTimeout(() => {
-        this.getRemainTime();
-      }, 1000);
-      clearTimeout();
+    let timer2 = setInterval(() => {
+      this.getRemainTime();
+    });
+    this.$once("hook:beforeDestroy", () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
     });
   },
   methods: {

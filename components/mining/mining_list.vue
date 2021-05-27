@@ -605,17 +605,14 @@ export default {
       this.claimLoading = false;
     });
     this.initMiningData();
-    setTimeout(() => {
+    this.getAPY();
+    this.getHelmetBalance();
+    let timer = setInterval(() => {
       this.getAPY();
-      this.getHelmetBalance();
-      clearTimeout();
-    }, 1000);
-    setInterval(() => {
-      setTimeout(() => {
-        this.getAPY();
-      });
-      clearTimeout();
     }, 20000);
+    this.$once("hook:beforeDestroy", () => {
+      clearTimeout(timer);
+    });
     let flag = navigator.userAgent.match(
       /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i
     );

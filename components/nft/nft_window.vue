@@ -78,10 +78,13 @@ export default {
       this.action = data.action;
       this.ContractName = data.ContractName;
     });
-    setTimeout(() => {
+    let timer = setTimeout(() => {
       this.getRewardNumber();
       clearTimeout();
     }, 1000);
+    this.$once("hook:beforeDestroy", () => {
+      clearTimeout(timer);
+    });
   },
   methods: {
     copyAdress(e, text) {

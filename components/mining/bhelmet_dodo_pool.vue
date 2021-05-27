@@ -271,10 +271,7 @@ export default {
     this.$bus.$on("REFRESH_MINING", (data) => {
       this.getBalance();
     });
-    setTimeout(() => {
-      this.getBalance();
-      clearTimeout();
-    }, 1000);
+    this.getBalance();
   },
   watch: {
     userInfo: {

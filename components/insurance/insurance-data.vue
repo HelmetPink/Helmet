@@ -133,7 +133,7 @@ export default {
       }
     },
     async getBannerData() {
-      setTimeout(() => {
+      let timer = setTimeout(() => {
         this.$store.dispatch("getTotalHelmet"); //获取 Helmet 总量
         this.$store.dispatch("getBalanceMine"); //获取 Helmet 矿山余额
         this.$store.dispatch("getClaimAbleHelmet"); //获取 所有待结算 Helmet
@@ -141,6 +141,9 @@ export default {
         this.getPrice();
         clearTimeout();
       }, 2000);
+      this.$once("hook:beforeDestroy", () => {
+        clearTimeout(timer);
+      });
     },
     getPrice() {
       this.helmetPrice = toRounding(

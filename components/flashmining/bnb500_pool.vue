@@ -273,13 +273,14 @@ export default {
     };
   },
   mounted() {
-    setInterval(() => {
-      setTimeout(() => {
-        this.getMiningTime();
+    if (!this.expired) {
+      let timer = setInterval(() => {
         this.getDownTime();
+      }, 1000);
+      this.$once("hook:beforeDestroy", () => {
+        clearInterval(timer);
       });
-      clearTimeout();
-    }, 1000);
+    }
     this.$bus.$on("DEPOSITE_LOADING_BNB500POOL", (data) => {
       this.stakeLoading = data.status;
       this.DepositeNum = "";
@@ -296,10 +297,7 @@ export default {
     this.$bus.$on("REFRESH_MINING", (data) => {
       this.getBalance();
     });
-    setTimeout(() => {
-      this.getBalance();
-      clearTimeout();
-    }, 1000);
+    this.getBalance();
   },
   watch: {
     userInfo: {
@@ -377,35 +375,6 @@ export default {
         this.actionType = "withdraw";
       }
       this.list.DownTime = template;
-    },
-    getMiningTime() {
-      let now = new Date() * 1;
-      let dueDate = "2021/02/19 00:00";
-      dueDate = new Date(dueDate);
-      let DonwTime = dueDate - now;
-      let day = Math.floor(DonwTime / (24 * 3600000));
-      let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
-      let minute = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
-      );
-      let template = {};
-      if (dueDate < now) {
-        template = {
-          hour: "00",
-          minute: "00",
-          second: "00",
-        };
-      } else {
-        template = {
-          hour: hour > 9 ? hour : "0" + hour,
-          minute: minute > 9 ? minute : "0" + minute,
-          second: second > 9 ? second : "0" + second,
-        };
-      }
-      this.MingTime = template;
     },
     async getBalance() {
       let helmetType = "BNB500POOL_LPT";
