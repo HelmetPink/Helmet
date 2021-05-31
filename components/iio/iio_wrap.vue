@@ -237,7 +237,7 @@ export default {
           expired_activating: "86.67%",
         },
         {
-          iio_name: "Paul Protocol",
+          iio_name: "PaulProtocol",
           iio_img: "iio_paul",
           iio_webSite: "paulprotocol.io",
           coming: true,
@@ -247,13 +247,13 @@ export default {
           stakeUtil: "BUSD",
           stakeShare: 0.002,
           showStart: "May. 30th 21:00 SGT",
-          showEnd: "June. 01st 22:00 SGT",
+          showEnd: "June. 02nd 21:00 SGT",
           warnupTimeUTC: "2021/05/25 21:00 UTC+8",
           distributingTimeUTC: "2021/05/30 21:00 UTC+8", //showStart
-          activatingTimeUTC: "2021/06/01 22:00 UTC+8", //showEnd
-          finishedTimeUTC: "2021/06/02 22:00 UTC+8",
+          activatingTimeUTC: "2021/06/02 21:00 UTC+8", //showEnd
+          finishedTimeUTC: "2021/06/03 21:00 UTC+8",
           link: "https://www.paulprotocol.io",
-          enterbutton: false,
+          enterbutton: true,
           open: true,
           sort: 0,
           active_page: 2,
@@ -283,10 +283,10 @@ export default {
           open: true,
           sort: 0,
           active_page: 2,
-          expired_burnt: "0",
-          expired_stake: "0",
-          expired_premium: "0",
-          expired_activating: "0",
+          expired_burnt: "584",
+          expired_stake: "9,043,142.79",
+          expired_premium: "93.17%",
+          expired_activating: "83.55%",
         },
         {
           iio_name: "CoinWind",
@@ -309,10 +309,10 @@ export default {
           open: true,
           sort: 0,
           active_page: 2,
-          expired_burnt: "0",
-          expired_stake: "0",
-          expired_premium: "0",
-          expired_activating: "0",
+          expired_burnt: "491",
+          expired_stake: "9,498,855.80",
+          expired_premium: "211.84%",
+          expired_activating: "85.5%",
         },
         {
           iio_name: "WMASS",
@@ -382,14 +382,7 @@ export default {
           if (nowTime > finished) {
             item.status = "finished";
             item.sort = 5;
-            if (
-              item.iio_name == "CryptoTycoon" ||
-              item.iio_name == "CoinWind"
-            ) {
-              item.active_page = 2;
-            } else {
-              item.active_page = 1;
-            }
+            item.active_page = 1;
           }
         }
       });

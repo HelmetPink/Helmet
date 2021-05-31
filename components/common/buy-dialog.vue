@@ -56,7 +56,7 @@
         <p>{{ toRounding(HelmetReward, 8) }}HELMET</p>
       </div>
       <p>
-        <span>Price</span
+        <span>{{ $t("SwapHelmet.Price") }}</span
         ><span
           >1HELMET={{ toRounding(HelmetPrice, 8) }}{{ activeData.symbol }}</span
         >
@@ -70,7 +70,10 @@
       </p>
       <p>
         <span>{{ $t("SwapHelmet.Fee") }}</span
-        ><span>{{ toRounding(HelmetFee, 8) }}{{ activeData.symbol }}</span>
+        ><span
+          >{{ BigNumber(toRounding(HelmetFee, 8).toString()).toFixed()
+          }}{{ activeData.symbol }}</span
+        >
       </p>
       <span>
         <a
@@ -82,7 +85,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import tokenList from "~/assets/utils/tokenlist.json";
 import VueLazyload from "vue-lazyload";
@@ -126,6 +128,7 @@ export default {
       Balance: 0,
       autoRounding,
       toRounding,
+      BigNumber,
       SwapRouter: false,
       ApprovedStatus: false,
     };
@@ -280,7 +283,7 @@ export default {
               ? BigNumber(
                   this.swapNumber * (0.0025 + (1 - 0.0025) * 0.0025).toString()
                 ).toFixed()
-              : BigNumber((this.swapNumber * 0.0025).toString()).toFixed();
+              : BigNumber(this.swapNumber).times(0.0025).toFixed();
           }
         );
       } else {
