@@ -303,6 +303,7 @@ export default {
         showDialog: true,
       };
       let data = item;
+      console.log(data, data.longBalance);
       if (data.longBalance != 0) {
         object.conText = `<p>Settlement ${addCommom(data.longBalance)} ${
           data._collateral
@@ -398,7 +399,9 @@ export default {
       span {
         font-size: 14px;
         font-family: PingFangSC-Regular, PingFang SC;
-        color: rgba(23, 23, 58, 0.5);
+        @include themeify {
+          color: darken($color: themed("color-17173a"), $amount: 50%);
+        }
         line-height: 14px;
         margin-top: 16px;
         &:nth-of-type(1) {
@@ -420,7 +423,9 @@ export default {
       height: 90px;
       margin-top: 10px;
       display: flex;
-      background: #ffffff;
+      @include themeify {
+        background: themed("color-ffffff");
+      }
       box-shadow: 0px 4px 8px 0px rgba(155, 155, 155, 0.02);
       border-radius: 5px;
       align-items: center;
@@ -465,7 +470,9 @@ export default {
             font-size: 14px;
             font-family: IBMPlexSans-Bold, IBMPlexSans;
             font-weight: bold;
-            color: #17173a;
+            @include themeify {
+              color: themed("color-17173a");
+            }
             line-height: 14px;
           }
         }
@@ -476,9 +483,16 @@ export default {
           button {
             padding: 0 20px;
             height: 32px;
-            background: #17173a;
+            @include themeify {
+              color: themed("black_button_text");
+              background: themed("black_button");
+            }
             border-radius: 3px;
-            color: #fff;
+            &:hover {
+              @include themeify {
+                background: themed("black_button_hover");
+              }
+            }
           }
         }
       }
@@ -518,7 +532,9 @@ export default {
       margin-top: 10px;
       display: flex;
       flex-direction: column;
-      background: #ffffff;
+      @include themeify {
+        background: themed("color-ffffff");
+      }
       box-shadow: 0px 4px 8px 0px rgba(155, 155, 155, 0.02);
       border-radius: 5px;
       padding: 20px 16px;
@@ -566,7 +582,9 @@ export default {
             &:nth-of-type(1) {
               font-size: 14px;
               font-family: PingFangSC-Regular, PingFang SC;
-              color: rgba(23, 23, 58, 0.5);
+              @include themeify {
+                color: darken($color: themed("color-17173a"), $amount: 50%);
+              }
               line-height: 14px;
             }
             &:nth-of-type(2) {
@@ -574,7 +592,9 @@ export default {
               font-size: 14px;
               font-family: IBMPlexSans-Bold, IBMPlexSans;
               font-weight: 500;
-              color: #17173a;
+              @include themeify {
+                color: themed("color-17173a");
+              }
               line-height: 14px;
             }
           }
@@ -585,9 +605,17 @@ export default {
           button {
             width: 100%;
             height: 40px;
-            background: #17173a;
+            @include themeify {
+              color: themed("black_button_text");
+              background: themed("black_button");
+            }
             border-radius: 3px;
             color: #fff;
+            &:hover {
+              @include themeify {
+                background: themed("black_button_hover");
+              }
+            }
           }
         }
       }
