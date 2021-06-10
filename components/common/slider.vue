@@ -104,7 +104,7 @@
               <use xlink:href="#icon-flashmining"></use>
             </svg>
             {{ $t("Header.FlashMining") }}
-            <!-- <i class="num">1</i> -->
+            <i class="num">1</i>
           </nuxt-link>
         </div>
         <div class="menu_item">
@@ -135,7 +135,7 @@
               <use xlink:href="#icon-iio"></use>
             </svg>
             {{ $t("Header.IIO") }}
-            <i class="num">1</i>
+            <!-- <i class="num">1</i> -->
           </nuxt-link>
         </div>
         <div class="menu_item">
