@@ -167,7 +167,6 @@ export default {
       }
     },
     async getBalance() {
-      console.log(1);
       let Name = this.iioType.toUpperCase();
       let reward_name = `IIO_HELMETBNB_${Name}`;
       let lpt_name = "IIO_HELMETBNB_POOL_LPT";

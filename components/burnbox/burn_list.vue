@@ -3,275 +3,255 @@
     <div class="burn_title">
       <h3>{{ $t("Table.BurnMining") }}</h3>
     </div>
-    <div class="burn_item" v-for="item in burnList" :key="item.burnName">
+    <div class="burn_pc_wrap">
+      <div class="burn_item" v-for="item in burnList" :key="item.POOL_NAME">
+        <div class="burn_show">
+          <img
+            :src="
+              require(`~/assets/img/burnmining/${
+                item.MING_TIME == 'Expired'
+                  ? 'expired_' + item.TOKEN_NAME
+                  : item.TOKEN_NAME
+              }.png`)
+            "
+            alt=""
+          />
+          <!-- td1 -->
+          <section>
+            <span
+              class="onePager"
+              v-html="item.POOL_NAME"
+              @click="hadnleShowOnePager($event, item.TOKEN_NAME)"
+            ></span>
+          </section>
+          <!-- td2 -->
+          <section>
+            <p>
+              {{ $t("Table.EarnList") }}
+              <span>{{ item.REWARD_NAME }} </span>
+            </p>
+          </section>
+          <!-- td3 -->
+          <section>
+            <i></i>
+            <p>
+              <span v-if="typeof item.OPEN_TIME == 'object'">
+                {{ item.OPEN_TIME.hour }}<b>{{ $t("Content.HourM") }}</b>
+                <i>/</i>
+                {{ item.OPEN_TIME.minute }}<b>{{ $t("Content.MinM") }}</b>
+                <i>/</i>
+              </span>
+              <span v-else-if="typeof item.MING_TIME == 'object'">
+                <template v-if="item.MING_TIME.day != '00'">
+                  {{ item.MING_TIME.day }}<b>{{ $t("Content.DayM") }}</b>
+                  <i>/</i>
+                </template>
+                <template>
+                  {{ item.MING_TIME.hour }}<b>{{ $t("Content.HourM") }}</b>
+                  <i>/</i>
+                </template>
+                <template v-if="item.MING_TIME.day == '00'">
+                  {{ item.MING_TIME.minute }}<b>{{ $t("Content.MinM") }}</b>
+                  <i>/</i>
+                </template>
+              </span>
+              <span v-else>
+                {{ item.MING_TIME }}
+              </span>
+              <span>{{ $t("Table.MIningCutdown") }}</span>
+            </p>
+          </section>
+          <!-- td4 -->
+          <section>
+            <span>{{ item.TOTAL_BONUS + " " + item.REWARD_NAME }}</span>
+            <span>{{ $t("Table.Bonus") }}</span>
+          </section>
+          <!-- td5 -->
+          <section>
+            <button
+              @click="HandleClickAction(item, 'STAKE')"
+              :class="
+                activeBurn == item.TOKEN_NAME &&
+                showActiveBurn &&
+                activeType == 'STAKE'
+                  ? 'activeButton stakeFlash'
+                  : 'stakeFlash'
+              "
+            >
+              {{ $t("Table.Burn") }}
+              <i class="selectDown"></i>
+            </button>
+            <button
+              @click="HandleClickAction(item, 'CLAIM')"
+              :class="
+                activeBurn == item.icon &&
+                showActiveBurn &&
+                activeType == 'CLAIM'
+                  ? 'activeButton claimFlash'
+                  : 'claimFlash'
+              "
+            >
+              {{ $t("Table.ReceiveAward") }}
+              <i class="selectDown"></i>
+            </button>
+          </section>
+        </div>
+        <div
+          class="burn_detail"
+          v-if="showActiveBurn && activeBurn == item.TOKEN_NAME"
+        >
+          <svg class="close" aria-hidden="true" @click="showActiveBurn = false">
+            <use xlink:href="#icon-close"></use>
+          </svg>
+          <POOL
+            :activeData="activeData"
+            :activeFlag="activeFlag"
+            :activeType="activeType"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="burn_h5_wrap">
       <div
-        :class="
-          activeBurn == item.icon && showActiveBurn
-            ? 'activeBurn burn_show'
-            : 'burn_show'
-        "
+        class="burn_item_h5"
+        v-for="item in burnList"
+        :key="item.POOL_NAME + item.TOKEN_NAME"
       >
-        <img
-          v-if="item.dueDate == 'Expired'"
-          :src="require(`~/assets/img/burnmining/expired_${item.icon}.png`)"
-          alt=""
-        />
-        <img
-          v-else
-          :src="require(`~/assets/img/burnmining/${item.icon}.png`)"
-          alt=""
-        />
         <section>
-          <span
-            class="onePager"
-            v-html="item.burnName"
-            @click="hadnleShowOnePager($event, item.icon)"
-          ></span>
+          <img
+            :src="
+              require(`~/assets/img/burnmining/${
+                item.MING_TIME == 'Expired'
+                  ? 'expired_' + item.TOKEN_NAME
+                  : item.TOKEN_NAME
+              }.png`)
+            "
+            alt=""
+          />
+          <div>
+            <span
+              class="onePager"
+              v-html="item.POOL_NAME"
+              @click="hadnleShowOnePager($event, item.TOKEN_NAME)"
+            ></span>
+            <p>
+              {{ $t("Table.EarnList") }}
+              <span>{{ item.TOKEN_NAME }} </span>
+            </p>
+          </div>
         </section>
         <section>
           <p>
-            {{ $t("Table.EarnList") }}
-            <span>{{ item.earn }} </span>
+            <span>{{ item.TOTAL_BONUS + " " + item.TOKEN_NAME }}</span>
+            <span>{{ $t("Table.Bonus") }}</span>
           </p>
-        </section>
-        <section>
-          <i></i>
-          <p>
-            <span v-if="typeof item.openDate == 'object'">
-              {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b>
-              <i>/</i>
-              {{ item.openDate.minute }}<b>{{ $t("Content.MinM") }}</b>
-              <i>/</i>
-            </span>
-            <span v-else-if="typeof item.dueDate == 'object'">
-              <template v-if="item.dueDate.day != '00'">
-                {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b>
+          <div>
+            <i></i>
+            <p>
+              <span v-if="typeof item.OPEN_TIME == 'object'">
+                {{ item.OPEN_TIME.hour }}<b>{{ $t("Content.HourM") }}</b>
                 <i>/</i>
-              </template>
-              <template>
-                {{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
+                {{ item.OPEN_TIME.minute }}<b>{{ $t("Content.MinM") }}</b>
                 <i>/</i>
-              </template>
-              <template v-if="item.dueDate.day == '00'">
-                {{ item.dueDate.minute }}<b>{{ $t("Content.MinM") }}</b>
-                <i>/</i>
-              </template>
-            </span>
-            <span v-else>
-              {{ item.dueDate }}
-            </span>
-            <span>{{ $t("Table.MIningCutdown") }}</span>
-          </p>
-        </section>
-        <section>
-          <span>{{ item.bonus + " " + item.earn }}</span>
-          <span>{{ $t("Table.Bonus") }}</span>
+              </span>
+              <span v-else-if="typeof item.MING_TIME == 'object'">
+                <template v-if="item.MING_TIME.day != '00'">
+                  {{ item.MING_TIME.day }}<b>{{ $t("Content.DayM") }}</b>
+                  <i>/</i>
+                </template>
+                <template>
+                  {{ item.MING_TIME.hour }}<b>{{ $t("Content.HourM") }}</b>
+                  <i>/</i>
+                </template>
+                <template v-if="item.MING_TIME.day == '00'">
+                  {{ item.MING_TIME.minute }}<b>{{ $t("Content.MinM") }}</b>
+                  <i>/</i>
+                </template>
+              </span>
+              <span v-else>
+                {{ item.MING_TIME }}
+              </span>
+              <span>{{ $t("Table.MIningCutdown") }}</span>
+            </p>
+          </div>
         </section>
         <section>
           <button
-            @click="StakeMining(item.icon)"
+            @click="HandleClickAction(item, 'STAKE', true)"
             :class="
-              activeBurn == item.icon && showActiveBurn && activeType == 'STAKE'
+              activeBurn == item.TOKEN_NAME &&
+              showActiveBurn &&
+              activeType == 'STAKE'
                 ? 'activeButton stakeFlash'
                 : 'stakeFlash'
             "
           >
             {{ $t("Table.Burn") }}
-            <i class="selectDown"></i>
           </button>
           <button
-            @click="ClaimMining(item.icon)"
+            @click="HandleClickAction(item, 'CLAIM', true)"
             :class="
-              activeBurn == item.icon && showActiveBurn && activeType == 'CLAIM'
+              activeBurn == item.TOKEN_NAME &&
+              showActiveBurn &&
+              activeType == 'CLAIM'
                 ? 'activeButton claimFlash'
                 : 'claimFlash'
             "
           >
             {{ $t("Table.ReceiveAward") }}
-            <i class="selectDown"></i>
           </button>
         </section>
-      </div>
-      <div class="burn_detail" v-if="showActiveBurn && activeBurn == item.icon">
-        <svg class="close" aria-hidden="true" @click="showActiveBurn = false">
-          <use xlink:href="#icon-close"></use>
-        </svg>
-        <HFORBURN
-          v-if="activeBurn == 'hFOR'"
-          :activeType="activeType"
-          :TradeType="'ALL'"
-        />
-        <HAUTOBURN
-          v-if="activeBurn == 'hAUTO' && showActiveBurn"
-          :activeType="activeType"
-          :TradeType="'ALL'"
-        />
-        <BNB500BURN
-          v-if="activeBurn == 'BNB500' && showActiveBurn"
-          :activeType="activeType"
-          :TradeType="'ALL'"
-        />
-        <HCTKBURN
-          v-if="activeBurn == 'hCTK' && showActiveBurn"
-          :activeType="activeType"
-          :TradeType="'ALL'"
-        />
-        <HCCTBURN
-          v-if="activeBurn == 'HCCT' && showActiveBurn"
-          :activeType="activeType"
-          :TradeType="'ALL'"
-        />
+        <div
+          class="wraper_title"
+          v-if="showActiveBurn && activeBurn == item.TOKEN_NAME"
+        >
+          <PHeader></PHeader>
+          <div class="wraper">
+            <div class="wraper_header">
+              <h3 class="">
+                {{
+                  activeType == "STAKE" ? $t("Table.Burn") : $t("Table.Bonus")
+                }}
+              </h3>
+              <svg
+                class="close"
+                aria-hidden="true"
+                @click="showActiveBurn = false"
+              >
+                <use xlink:href="#icon-close"></use>
+              </svg>
+            </div>
+            <POOL
+              :activeData="activeData"
+              :activeFlag="activeFlag"
+              :activeType="activeType"
+            />
+          </div>
+        </div>
       </div>
     </div>
-    <div
-      class="burn_item_h5"
-      v-for="item in burnList"
-      :key="item.burnName + item.icon"
-    >
-      <section>
-        <img
-          v-if="item.dueDate == 'Expired'"
-          :src="require(`~/assets/img/burnmining/expired_${item.icon}.png`)"
-          alt=""
-        />
-        <img
-          v-else
-          :src="require(`~/assets/img/burnmining/${item.icon}.png`)"
-          alt=""
-        />
-        <div>
-          <span
-            class="onePager"
-            v-html="item.burnName"
-            @click="hadnleShowOnePager($event, item.icon)"
-          ></span>
-          <p>
-            {{ $t("Table.EarnList") }}
-
-            <span>{{ item.earn }} </span>
-          </p>
-        </div>
-      </section>
-      <section>
-        <p>
-          <span>{{ item.bonus + " " + item.earn }}</span>
-          <span>{{ $t("Table.Bonus") }}</span>
-        </p>
-        <div>
-          <i></i>
-          <p>
-            <span v-if="typeof item.openDate == 'object'">
-              {{ item.openDate.hour }}<b>{{ $t("Content.HourM") }}</b>
-              <i>/</i>
-              {{ item.openDate.minute }}<b>{{ $t("Content.MinM") }}</b>
-              <i>/</i>
-            </span>
-            <span v-else-if="typeof item.dueDate == 'object'">
-              <template v-if="item.dueDate.day != '00'">
-                {{ item.dueDate.day }}<b>{{ $t("Content.DayM") }}</b>
-                <i>/</i>
-              </template>
-              <template>
-                {{ item.dueDate.hour }}<b>{{ $t("Content.HourM") }}</b>
-                <i>/</i>
-              </template>
-              <template v-if="item.dueDate.day == '00'">
-                {{ item.dueDate.minute }}<b>{{ $t("Content.MinM") }}</b>
-                <i>/</i>
-              </template>
-            </span>
-            <span v-else>
-              {{ item.dueDate }}
-            </span>
-            <span>{{ $t("Table.MIningCutdown") }}</span>
-          </p>
-        </div>
-      </section>
-      <section>
-        <button
-          @click="StakeMiningH5(item.icon)"
-          :class="
-            activeBurn == item.icon && showActiveBurn && activeType == 'STAKE'
-              ? 'activeButton stakeFlash'
-              : 'stakeFlash'
-          "
-        >
-          {{ $t("Table.Burn") }}
-        </button>
-        <button
-          @click="ClaimMiningH5(item.icon)"
-          :class="
-            activeBurn == item.icon && showActiveBurn && activeType == 'CLAIM'
-              ? 'activeButton claimFlash'
-              : 'claimFlash'
-          "
-        >
-          {{ $t("Table.ReceiveAward") }}
-        </button>
-      </section>
-    </div>
-    <Wraper>
-      <div class="wraper_title">
-        <h3 class="">
-          {{ activeType == "STAKE" ? $t("Table.Burn") : $t("Table.Bonus") }}
-        </h3>
-        <svg class="icon close" aria-hidden="true" @click="close_wraper">
-          <use xlink:href="#icon-close"></use>
-        </svg>
-      </div>
-      <HFORBURN
-        v-if="activeBurn == 'hFOR'"
-        :activeType="activeType"
-        :TradeType="activeType"
-      />
-      <HAUTOBURN
-        v-if="activeBurn == 'hAUTO'"
-        :activeType="activeType"
-        :TradeType="activeType"
-      />
-      <BNB500BURN
-        v-if="activeBurn == 'BNB500'"
-        :activeType="activeType"
-        :TradeType="activeType"
-      />
-      <HCTKBURN
-        v-if="activeBurn == 'hCTK'"
-        :activeType="activeType"
-        :TradeType="activeType"
-      />
-      <HCCTBURN
-        v-if="activeBurn == 'HCCT'"
-        :activeType="activeType"
-        :TradeType="activeType"
-      />
-    </Wraper>
   </div>
 </template>
 
 <script>
 import Wraper from "~/components/common/wraper.vue";
-import HCCTBURN from "~/components/burnbox/hcct_burn.vue";
-import HCTKBURN from "~/components/burnbox/hctk_burn.vue";
-import HAUTOBURN from "~/components/burnbox/hauto_burn.vue";
-import BNB500BURN from "~/components/burnbox/bnb500_burn.vue";
-import HFORBURN from "~/components/burnbox/hfor_burn.vue";
+import PHeader from "~/components/common/header.vue";
+import POOL from "./pool.vue";
 import moment from "moment";
 export default {
   components: {
     Wraper,
-    HCCTBURN,
-    HCTKBURN,
-    HAUTOBURN,
-    BNB500BURN,
-    HFORBURN,
+    POOL,
+    PHeader,
   },
   data() {
     return {
       burnList: [],
       showActiveBurn: false,
-      activeBurn: "",
       activeType: "",
-      TradeType: "",
+      activeData: {},
+      activeBurn: "",
+      activeFlag: "",
     };
   },
   mounted() {
@@ -290,30 +270,12 @@ export default {
         return;
       }
     },
-    StakeMiningH5(MiningType) {
-      this.activeType = "STAKE";
+    HandleClickAction(PoolData, Action, Flag = false) {
       this.showActiveBurn = true;
-      this.Trade = "STAKE";
-      this.activeBurn = MiningType;
-      this.$bus.$emit("OPEN_WRAPER_PAFE", true);
-    },
-    ClaimMiningH5(MiningType) {
-      this.activeType = "CLAIM";
-      this.showActiveBurn = true;
-      this.Trade = "CLAIM";
-      this.activeBurn = MiningType;
-      this.$bus.$emit("OPEN_WRAPER_PAFE", true);
-    },
-    StakeMining(MiningType) {
-      console.log(MiningType);
-      this.activeType = "STAKE";
-      this.showActiveBurn = true;
-      this.activeBurn = MiningType;
-    },
-    ClaimMining(MiningType) {
-      this.activeType = "CLAIM";
-      this.showActiveBurn = true;
-      this.activeBurn = MiningType;
+      this.activeData = PoolData;
+      this.activeType = Action;
+      this.activeFlag = Flag;
+      this.activeBurn = PoolData.TOKEN_NAME;
     },
     close_wraper() {
       this.$bus.$emit("OPEN_WRAPER_PAFE", false);
@@ -321,44 +283,84 @@ export default {
     initBurnBox() {
       let arr = [
         {
-          burnName: "<i>hFOR</i>&nbsp;Burning&nbsp;Box",
-          earn: "SHIBh",
-          bonus: 15000000000,
-          dueDate: this.getRemainTime("2021/05/28 00:00"),
-          openDate: this.getMiningTime("2021/05/13 14:00"),
-          icon: "hFOR",
+          POOL_NAME: "<i>hFOR</i>&nbsp;Burning&nbsp;Box",
+          REWARD_NAME: "SHIBh",
+          TOTAL_BONUS: 15000000000,
+          START_TIME: "2021/05/13 00:00 UTC+8",
+          END_TIME: "2021/05/28 00:00 UTC+8",
+          OPEN_TIME: this.getMiningTime("2021/05/13 14:00"),
+          MING_TIME: this.getRemainTime("2021/05/28 00:00"),
+          TOKEN_NAME: "hFOR",
+          STAKE_ADDRESS: "0xb779F208f8d662558dF8E2b6bFE3b6305CC13389",
+          STAKE_DECIMALS: 18,
+          REWARD_DECIMALS: 12,
+          POOL_ADDRESS: "0x494DEdee44af333628BBC8B860dfE7576E78d878",
+          ONELPT_ADDRESS: "0xb779F208f8d662558dF8E2b6bFE3b6305CC13389",
+          REWARD_ADDRESS: "0x224b33139a377a62d4BaD3D58cEDb7807AE228eB",
         },
         {
-          burnName: "<i>hAUTO</i>&nbsp;Burning&nbsp;Box",
-          earn: "hTPT",
-          bonus: 1000000,
-          dueDate: this.getRemainTime("2021/04/12 00:00"),
-          openDate: this.getMiningTime("2021/04/05 00:00"),
-          icon: "hAUTO",
+          POOL_NAME: "<i>hAUTO</i>&nbsp;Burning&nbsp;Box",
+          REWARD_NAME: "hTPT",
+          TOTAL_BONUS: 1000000,
+          START_TIME: "2021/04/05 00:00 UTC+8",
+          END_TIME: "2021/04/12 00:00 UTC+8",
+          OPEN_TIME: this.getMiningTime("2021/04/05 00:00"),
+          MING_TIME: this.getRemainTime("2021/04/12 00:00"),
+          TOKEN_NAME: "hAUTO",
+          STAKE_ADDRESS: "0xfeF73F4eeE23E78Ee14b6D2B6108359E8fbe6112",
+          STAKE_DECIMALS: 18,
+          REWARD_DECIMALS: 4,
+          POOL_ADDRESS: "0x32eBB78cb307D00Ebb19EF22A40F0C449925Da86",
+          ONELPT_ADDRESS: "0xfeF73F4eeE23E78Ee14b6D2B6108359E8fbe6112",
+          REWARD_ADDRESS: "0x412B6d4C3ca1F0a9322053490E49Bafb0D57dD7c",
         },
         {
-          burnName: "<i>BNB500</i>&nbsp;Burning&nbsp;Box",
-          earn: "hTPT",
-          bonus: 1000000,
-          dueDate: this.getRemainTime("2021/04/12 00:00"),
-          openDate: this.getMiningTime("2021/04/05 00:00"),
-          icon: "BNB500",
+          POOL_NAME: "<i>BNB500</i>&nbsp;Burning&nbsp;Box",
+          REWARD_NAME: "hTPT",
+          TOTAL_BONUS: 1000000,
+          START_TIME: "2021/04/05 00:00 UTC+8",
+          END_TIME: "2021/04/12 00:00 UTC+8",
+          OPEN_TIME: this.getMiningTime("2021/04/05 00:00"),
+          MING_TIME: this.getRemainTime("2021/04/12 00:00"),
+          TOKEN_NAME: "BNB500",
+          STAKE_ADDRESS: "0xe204c4c21c6ed90e37cb06cb94436614f3208d58",
+          STAKE_DECIMALS: 18,
+          REWARD_DECIMALS: 4,
+          POOL_ADDRESS: "0x42401De1BA3339dE146b481C1C0A72469fBf4DB9",
+          ONELPT_ADDRESS: "0x936909e72951A19a5e1d75A109B0D34f06f39838",
+          REWARD_ADDRESS: "0xfeD2e6A6105E48A781D0808E69460bd5bA32D3D3",
         },
         {
-          burnName: "<i>hCTK</i>&nbsp;Burning&nbsp;Box",
-          earn: "hDODO",
-          bonus: 10000,
-          dueDate: this.getRemainTime("2021/03/23 00:00"),
-          openDate: this.getMiningTime("2021/03/16 00:00"),
-          icon: "hCTK",
+          POOL_NAME: "<i>hCTK</i>&nbsp;Burning&nbsp;Box",
+          REWARD_NAME: "hDODO",
+          TOTAL_BONUS: 10000,
+          START_TIME: "2021/03/16 00:00 UTC+8",
+          END_TIME: "2021/03/23 00:00 UTC+8",
+          OPEN_TIME: this.getMiningTime("2021/03/16 00:00"),
+          MING_TIME: this.getRemainTime("2021/03/23 00:00"),
+          TOKEN_NAME: "hCTK",
+          STAKE_ADDRESS: "0x936909e72951A19a5e1d75A109B0D34f06f39838",
+          STAKE_DECIMALS: 6,
+          REWARD_DECIMALS: 18,
+          POOL_ADDRESS: "0x6cDCD70F96C415dcA390e310127A7cac74BAa293",
+          ONELPT_ADDRESS: "0x936909e72951A19a5e1d75A109B0D34f06f39838",
+          REWARD_ADDRESS: "0xfeD2e6A6105E48A781D0808E69460bd5bA32D3D3",
         },
         {
-          burnName: "<i>HCCT</i>&nbsp;Burning&nbsp;Box",
-          earn: "HCCTII",
-          bonus: 100000,
-          dueDate: this.getRemainTime("2021/03/19 00:00"),
-          openDate: this.getMiningTime("2021/03/12 00:00"),
-          icon: "HCCT",
+          POOL_NAME: "<i>HCCT</i>&nbsp;Burning&nbsp;Box",
+          REWARD_NAME: "HCCTII",
+          TOTAL_BONUS: 100000,
+          START_TIME: "2021/03/12 00:00 UTC+8",
+          END_TIME: "2021/03/19 00:00 UTC+8",
+          OPEN_TIME: this.getMiningTime("2021/03/12 00:00"),
+          MING_TIME: this.getRemainTime("2021/03/19 00:00"),
+          TOKEN_NAME: "HCCT",
+          STAKE_ADDRESS: "0xf1be411556e638790dcdecd5b0f8f6d778f2dfd5",
+          STAKE_DECIMALS: 18,
+          REWARD_DECIMALS: 18,
+          POOL_ADDRESS: "0x88a97a7dA82655C3Ee72A078a5cD853C7db4ad9B",
+          ONELPT_ADDRESS: "0xf1be411556e638790dcdecd5b0f8f6d778f2dfd5",
+          REWARD_ADDRESS: "0x9065fcbb5f73b908ac4b05bdb81601eec2065522",
         },
       ];
       this.burnList = arr;
@@ -372,9 +374,6 @@ export default {
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
       let minute = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
       let template;
       if (dueDate > now) {
@@ -397,9 +396,6 @@ export default {
       let hour = Math.floor((DonwTime - day * 24 * 3600000) / 3600000);
       let minute = Math.floor(
         (DonwTime - day * 24 * 3600000 - hour * 3600000) / 60000
-      );
-      let second = Math.floor(
-        (DonwTime - day * 24 * 3600000 - hour * 3600000 - minute * 60000) / 1000
       );
       let template;
 
@@ -701,7 +697,6 @@ export default {
     }
   }
 }
-
 @media screen and (max-width: 750px) {
   .icon {
     width: 20px;
@@ -733,7 +728,6 @@ export default {
         border: 1px solid themed("color-e8e8eb");
       }
     }
-
     section {
       &:nth-of-type(1) {
         display: flex;
@@ -1039,17 +1033,29 @@ export default {
     }
   }
   .wraper_title {
-    height: 44px;
-    line-height: 44px;
-    padding: 0 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .close {
-      width: 24px;
-      height: 24px;
-      fill: #ccc;
-      cursor: pointer;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    background: #f8f9fa;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    .wraper {
+      flex: 1;
+      overflow-y: scroll;
+      .wraper_header {
+        height: 44px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .close {
+        width: 24px;
+        height: 24px;
+        fill: #ccc;
+        cursor: pointer;
+      }
     }
   }
 }

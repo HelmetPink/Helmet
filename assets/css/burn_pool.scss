@@ -40,12 +40,15 @@
         padding: 40px 0;
         display: flex;
         justify-content: space-evenly;
+        @include themeify {
+            border-top: 1px solid themed('insure_button_border');
+        }
         > i {
             display: block;
             width: 1px;
             height: auto;
             @include themeify {
-                background: themed('color-e8e8eb');
+                background: themed('insure_button_border');
             }
         }
         .process {
