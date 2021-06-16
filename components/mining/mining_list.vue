@@ -359,19 +359,8 @@
 </template>
 
 <script>
-import {
-  totalSupply,
-  balanceOf,
-  getAllHelmet,
-  Rewards,
-  RewardsDuration,
-  CangetPAYA,
-} from "~/interface/deposite";
+import { Earned } from "~/interface/read_contract.js";
 import Wraper from "~/components/common/wraper.vue";
-import precision from "~/assets/js/precision.js";
-import { pancakeswap } from "~/assets/utils/pancakeswap.js";
-import { burgerswaptoken } from "~/assets/utils/burgerswap.js";
-import { dodoswap } from "~/assets/utils/dodoswap.js";
 import { fixD } from "~/assets/js/util.js";
 import POOL from "./pool.vue";
 import moment from "moment";
@@ -448,7 +437,7 @@ export default {
       this.$bus.$emit("OPEN_COMPOUND", {
         title: "Compound HELMET Earned",
         number: this.HelmetBalance,
-        pool: "HELMETPOOL",
+        poolAddress: "0x279a073c491c873df040b05cc846a3c47252b52c",
       });
     },
     HandleClickAction(PoolData, Action, Flag = false) {
@@ -459,8 +448,10 @@ export default {
       this.activeMining = PoolData.REWARD_NAME;
     },
     async getHelmetBalance() {
-      let type = "HELMETPOOL";
-      let Helmet = await CangetPAYA(type);
+      let Helmet = await Earned(
+        "0x279a073c491c873df040b05cc846a3c47252b52c",
+        18
+      );
       this.HelmetBalance = Helmet;
     },
     initMiningData() {
@@ -564,7 +555,7 @@ export default {
           REWARD_YEAR: "Infinity",
         },
         {
-          POOL_NAME: "HELMET-hWINGS&nbsp;LP",
+          POOL_NAME: "HELMET-<i>hWINGS</i>&nbsp;LP",
           STAKE_SYMBOL: "HELMET-hWINGS MLP",
           REARD_VOLUME: "two",
           REWARD_NAME: "helmet_wings",
@@ -584,7 +575,7 @@ export default {
           REWARD2_ADDRESS: "0x0487b824c8261462f88940f97053e65bdb498446",
           REWARD1_VOLUME: 30000,
           REWARD2_VOLUME: 4500,
-          LEFTTTOKEN: {
+          LEFTTOKEN: {
             ADDTOKEN_SYMBOL: "hWINGS",
             ADDTOKEN_ADDRESS: "0x34508EA9ec327ff3b98A2F10eEDc2950875bf026",
             ADDTOKEN_DECIMALS: 18,
@@ -642,6 +633,7 @@ export default {
           SWAP_TYPE: "DODO",
           JUMP1_TEXT:
             "<a href=https://app.dodoex.io/liquidity?poolAddress=0x80B5abD78878B709F58b46e94CF6A194A9A65234' target='_blank'>From <i class='dodo'></i>Get HELMET-BNB DLP</a>",
+          REWARD_YEAR: "Infinity",
         },
 
         {
@@ -683,6 +675,7 @@ export default {
           SWAP_TYPE: "BURGER",
           JUMP1_TEXT:
             "<a href='https://burgerswap.org/trade/pool?from=0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8&to=0xCa7597633927A98B800738eD5CD2933a74a80e8c' target='_blank' >From <i class='burger'></i>Get HELMET-hxBURGER BLP</a>",
+          REWARD_YEAR: "Infinity",
         },
 
         {
@@ -720,6 +713,7 @@ export default {
           SWAP_TYPE: "DODO",
           JUMP1_TEXT:
             "<a href='https://www.chainswap.exchange/' target='_blank'>Swap FEI(ETH) to BSC By <i class='chainswap'></i> ChainSwap</a>",
+          REWARD_YEAR: "Infinity",
         },
         {
           POOL_NAME: "<i>QFEI</i>-QSD&nbsp;DLP",
@@ -757,6 +751,7 @@ export default {
             "<a href='https://app.dodoex.io/liquidity?poolAddress=0x14616328f4Ce3082187B4f1Ee4863DA5516B178A' target='_blank' >From <i class='dodo'></i>Get QFEI-QSD DLP</a>",
           JUMP2_TEXT:
             " <a href='https://bsc.qian.finance/chemix/' target='_blank'>&nbsp;Or From <i class='qian'></i> Mint QSD</a>",
+          REWARD_YEAR: "Infinity",
         },
         {
           POOL_NAME: "HELMET-KUN&nbsp;DLP",
@@ -793,6 +788,7 @@ export default {
           SWAP_TYPE: "DODO",
           JUMP1_TEXT:
             "<a href='https://app.dodoex.io/liquidity?poolAddress=0xd7eed218538b3fa3e20d24f43100790f0d03538a' target='_blank' >From <i class='dodo'></i>Get HELMET-KUN DLP</a>",
+          REWARD_YEAR: "Infinity",
         },
         {
           POOL_NAME: `HELMET-BNB&nbsp;LP <i class=v1_${this.storeThemes}></i>`,
@@ -830,6 +826,7 @@ export default {
           SWAP_TYPE: "PANCAKEV1",
           JUMP1_TEXT:
             "<a href='https://v1exchange.pancakeswap.finance/#/add/BNB/0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8' target='_blank' >From <i class='pancake'></i>Get HELMET-BNB LPT(V1 Old)</a>",
+          REWARD_YEAR: "Infinity",
         },
         {
           POOL_NAME: "HELMET-<i>hDODO</i>&nbsp;DLP",
@@ -869,6 +866,7 @@ export default {
           SWAP_TYPE: "DODO",
           JUMP1_TEXT:
             "<a href='https://app.dodoex.io/liquidity?poolAddress=0x7f6ea24c10e32c8a5fd1c9b2c1239340671460cc' target='_blank' >From <i class='dodo'></i>Get HELMET-hDODO DLP</a>",
+          REWARD_YEAR: "Infinity",
         },
         {
           POOL_NAME: "HELMET-<i>hFOR</i>&nbsp;LP",
@@ -908,6 +906,7 @@ export default {
           SWAP_TYPE: "PANCAKEV1",
           JUMP1_TEXT:
             "<a href='https://exchange.pancakeswap.finance/#/add/0xb779F208f8d662558dF8E2b6bFE3b6305CC13389/0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8' target='_blank' >From <i class='pancake'></i>Get HELMET-hFOR LPT</a>",
+          REWARD_YEAR: "Infinity",
         },
         {
           POOL_NAME: "HELMET-<i>hBURGER</i>&nbsp;LP",
@@ -947,6 +946,7 @@ export default {
           SWAP_TYPE: "PANCAKEV1",
           JUMP1_TEXT:
             "<a href='https://burgerswap.org/trade/pool?from=0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8&to=0xCa7597633927A98B800738eD5CD2933a74a80e8c' target='_blank' >From <i class='burger'></i>Get HELMET-hxBURGER BLP</a>",
+          REWARD_YEAR: "Infinity",
         },
       ];
       this.miningList = arr;
@@ -959,7 +959,7 @@ export default {
         let res = await GetPoolAPR(item);
         item.REWARD_YEAR = res;
       }
-      this.$forceUpdate();
+      // this.$forceUpdate();
     },
     getMiningTime(time) {
       let now = new Date() * 1;
@@ -1328,7 +1328,7 @@ export default {
               padding: 0px 9px;
               height: 36px;
               border: 2px solid #fd7e14 !important;
-              color: #fd7e14;
+              color: #fd7e14 !important;
               i {
                 border-right: 5px solid transparent;
                 border-top: 6px solid #fd7e14 !important;
@@ -1598,7 +1598,9 @@ export default {
     width: 100%;
     height: 100vh;
     position: fixed;
-    background: #f8f9fa;
+    @include themeify {
+      background: themed("color-f8f9fa");
+    }
     top: 0;
     left: 0;
     z-index: 99;
