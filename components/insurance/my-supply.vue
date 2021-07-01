@@ -31,7 +31,7 @@
         <section>
           <p>
             <span>{{ $t("Table.Besold") }}:</span>
-            <span>{{ item.beSold == 0 ? 0 : fixD(item.beSold, 8) }} </span>
+            <span>{{ fixD(item.beSold, 8) }} </span>
           </p>
           <p>
             <span>{{ $t("Table.Unsold") }}: </span>
@@ -229,15 +229,20 @@ export default {
         this.showList = list.slice(0, this.limit);
       }
     },
-    async getList() {
+    getList() {
       this.isLoading = true;
-      let CurrentAccount = await getAccounts();
-      getInsuranceList().then((res) => {
+      getInsuranceList().then(async (res) => {
+        let CurrentAccount = await getAccounts();
         let ReturnList = res.data.data.options;
+        let FixListPush = [];
         let FixList = [];
         let nowDate = parseInt(moment.now() / 1000);
         ReturnList = ReturnList.filter((item) => {
-          if (item.asks.length > 0 && item.strikePrice.length > 2) {
+          if (
+            item.asks.length > 0 &&
+            item.strikePrice.length > 2 &&
+            Number(item.expiry) + 5814000 > nowDate
+          ) {
             return item;
           }
         });
@@ -345,23 +350,32 @@ export default {
               );
               item.unSold =
                 Remain / this.strikePriceArray[1][ResultItem.underlying_symbol];
-              item.beSold = item.show_volume - Remain;
+              // item.beSold = item.show_volume - Remain;
+              item.beSold = fixD(
+                (Volume - Remain) /
+                  this.strikePriceArray[1][ResultItem.underlying_symbol],
+                8
+              );
             }
             if (item.expiry < nowDate) {
               item.status = "dated";
             }
             Object.assign(item, ResultItem);
             if (item.seller.toLowerCase() == CurrentAccount.toLowerCase()) {
-              FixList.push(item);
+              FixListPush.push(item);
+              FixListPush = FixListPush.sort(function (a, b) {
+                return Number(b.expiry) - Number(a.expiry);
+              });
+              FixListPush = FixListPush.sort(function (a, b) {
+                return b.askID - a.askID;
+              });
+              FixListPush = FixListPush.sort(function (a, b) {
+                return a.sort - b.sort;
+              });
             }
-            FixList = FixList.sort(function (a, b) {
-              return b.askID - a.askID;
-            });
-            FixList = FixList.sort(function (a, b) {
-              return a.sort - b.sort;
-            });
           });
         });
+        FixList = FixListPush;
         this.FilterList = FixList;
         this.isLoading = false;
       });
@@ -417,7 +431,6 @@ export default {
       this.$bus.$on("PROCESS_ACTION", (res) => {
         if (res) {
           Cancel(data.askID, (status) => {
-            console.log(status);
             if (status == "success") {
               this.getList();
             }
@@ -436,7 +449,6 @@ export default {
       );
       this.showList = list;
     },
-
     toMining() {
       // this.$router.push("/mining");
     },
