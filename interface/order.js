@@ -111,7 +111,6 @@ export const onIssueSell = async (data_, callBack) => {
                         // duration: 0,
                     });
                 }
-                bus.$emit('REFRESH_ALL_DATA');
                 bus.$emit('REFRESH_BALANCE');
             })
             .on('error', function(error, receipt) {
@@ -216,7 +215,6 @@ export const onIssueSellOnETH = async (data_, callBack) => {
                         type: 'success',
                     });
                 }
-                bus.$emit('REFRESH_ALL_DATA');
                 bus.$emit('REFRESH_BALANCE');
             })
             .on('error', function(error, receipt) {
@@ -309,7 +307,6 @@ export const buyInsuranceBuy = async (_data, callBack) => {
                         type: 'success',
                     });
                 }
-                bus.$emit('REFRESH_ALL_DATA');
                 bus.$emit('REFRESH_BALANCE');
             })
             .on('error', function(error, receipt) {
@@ -503,10 +500,11 @@ export const MyPayaso = async (address1) => {
             return window.WEB3.utils.fromWei(res, getWei(tocurrcy));
         });
 };
-export const onExercise = async (data, flag, callBack) => {
+export const onExercise = async (data, flag, callback) => {
     if (JSON.stringify(data) === '{}') {
         return false;
     }
+    console.log(data);
     bus.$emit('ONEXERCISE_PENDING', data.bidID);
     const charID = window.chainID;
     let adress = getAddress(data.token, charID);
@@ -571,10 +569,11 @@ export const onExercise = async (data, flag, callBack) => {
                 layout: 'layout2',
                 loading: true,
                 conTit: 'Please Confirm the transaction in your wallet',
-                conText: `<p>You will swap<span> ${fixD(data.buyVolume, 8)} ${
+                conText: `<p>You will swap<span> ${fixD(
+                    data.show_strikePrice,
+                    8
+                )} ${data.token}</span> to <span> ${fixD(data.buyVolume, 8)} ${
                     data.totoken
-                }</span> to <span> ${fixD(data.show_strikePrice, 8)} ${
-                    data.token
                 }</span></p>`,
             });
         })
@@ -687,7 +686,6 @@ export const onCancel = async (askID, callBack) => {
                 buttonText: 'Confirm',
                 showDialog: false,
             });
-            bus.$emit('REFRESH_ALL_DATA');
         })
         .on('error', (err, receipt) => {
             callBack('failed');
@@ -720,7 +718,6 @@ export const onWaive = async (data) => {
         .send({ from: window.CURRENTADDRESS })
         .on('transactionHash', (hash) => {})
         .on('receipt', function(receipt) {
-            bus.$emit('REFRESH_ALL_DATA');
             bus.$emit('ONWAIVE_END', data.bidID);
         })
         .on('error', (err, receipt) => {
