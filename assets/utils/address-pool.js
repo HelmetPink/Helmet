@@ -9,17 +9,19 @@ import IPancakePair from "~/abi/IPancakePair.json";
 import ERC20 from "~/abi/ERC20_abi.json";
 
 const selectNetwork = (charID) => {
-  switch (charID) {
-    case 1:
-      return "Main";
-    case 3:
-      return "Ropsten";
-    case 56:
-      return "BSC";
-    default:
-      // return 'Ropsten';
-      return "Rinkeby";
-  }
+    switch (charID) {
+        case 1:
+            return 'Main';
+        case 3:
+            return 'Ropsten';
+        case 56:
+            return 'BSC';
+        case 137:
+            return 'MATIC';
+        default:
+            // return 'Ropsten';
+            return 'BSC';
+    }
 };
 
 // 获取地址

@@ -136,16 +136,8 @@ export default {
     },
   },
   watch: {
-    longMapAndSellMap: {
-      handler: "longMapAndSellMapWatch",
-      immediate: true,
-    },
-    aboutInfoSell: {
-      handler: "aboutInfoSellWatch",
-      immediate: true,
-    },
     ChainID(newValue) {
-      if (newValue == 56) {
+      if (newValue == 56 || newValue == 137) {
         this.closeNetWorkTip();
       } else {
         this.showNetWorkTip();
@@ -253,22 +245,11 @@ export default {
     closeRiskWarning() {
       this.showRiskWarning = false;
     },
-    longMapAndSellMapWatch(newValue) {
-      if (newValue) {
-        this.$store.dispatch("mapAbountInfoSell");
-      }
-    },
-    aboutInfoSellWatch(newValue) {
-      if (newValue) {
-        this.$store.dispatch("mapAboutInfoBuy");
-      }
-    },
     monitorNetWorkChange() {
       if (window.ethereum) {
         ethereum.on("chainChanged", (chainID) => {
           window.chainID = chainID;
           this.$store.commit("SET_CHAINID", chainID);
-          window.location.reload();
         });
       } else {
         if (this.times < 10) {

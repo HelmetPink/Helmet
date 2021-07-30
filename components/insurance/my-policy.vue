@@ -222,7 +222,6 @@ export default {
     getList() {
       this.isLoading = true;
       getInsuranceList().then(async (res) => {
-        console.log(res);
         let CurrentAccount = await getAccounts();
         let ReturnList = res.data.data.options;
         let FixList = [];
@@ -541,9 +540,10 @@ export default {
       this.$bus.$emit("OPEN_STATUS_DIALOG", {
         title: "WARNING",
         layout: "layout1",
-        conText: `<p>you will swap<span> ${fixD(data.show_strikePrice, 8)} ${
-          data.token
-        }</span> to <span> ${fixD(data.buyVolume, 8)} ${
+        conText: `<p>you will swap<span> ${fixD(
+          data.show_strikePrice * data.buyVolume,
+          8
+        )} ${data.token}</span> to <span> ${fixD(data.buyVolume, 8)} ${
           data.totoken
         }</span></p>`,
         activeTip: true,
