@@ -1,216 +1,45 @@
 import Axios from "axios";
-import factory_abi from "~/abi/factory_abi.json";
-import order_abi from "~/abi/order_abi.json";
+import FactoryABI from "~/abi/FactoryABI.json";
+import OrderABI from "~/abi/OrderABI.json";
 import moment from "moment";
 import BigNumber from "bignumber.js";
 import qs from "qs";
-export const decodeLogs = function(event, log) {
-  return window.WEB3.eth.abi.decodeLog(
-    event.inputs,
-    log.data,
-    log.topics.slice(1)
-  );
-};
-// 获取long, Sell, Buy映射
-export const getLongList = async function(callback) {
-  // let ContractAddress = getContract();
-  let EventABI = factory_abi.abi;
-  let EventObject = EventABI.filter((item) => {
-    return item.name == "OptionCreated" && item.type == "event";
-  })[0];
 
-  let topic0 = window.WEB3.eth.abi.encodeEventSignature(EventObject);
-  Axios({
-    method: "get",
-    url: "https://api.helmet.insure/contract/logs",
-    params: {
-      contract: "0x021297e233550eDBa8e6487EB7c6696cFBB63b88",
-      include_data: true,
-      topic0,
-    },
-    headers: {
-      Authorization: "Bearer e5fa8358-42f3-4fa1-918d-2a972f4c5de0",
-    },
-  }).then((res) => {
-    let data = res.data.data;
-    data.forEach((item) => {
-      let returnValues = decodeLogs(EventObject, {
-        data: item.data,
-        topics: item.topics,
-      });
-      item.returnValues = returnValues;
-    });
-    callback(data);
-  });
-};
-// 创建Sell 映射对象
-export const getSellList = async function(callback) {
-  // let ContractAddress = getContract();
-  let EventABI = order_abi.abi;
-  let EventObject = EventABI.filter((item) => {
-    return item.name == "Sell" && item.type == "event";
-  })[0];
-
-  let topic0 = window.WEB3.eth.abi.encodeEventSignature(EventObject);
-  Axios({
-    method: "get",
-    url: "https://api.helmet.insure/contract/logs",
-    params: {
-      contract: "0x4c899b7C39ded9a06a5db387f0b0722a18B8d70d",
-      include_data: true,
-      topic0,
-    },
-    headers: {
-      Authorization: "Bearer e5fa8358-42f3-4fa1-918d-2a972f4c5de0",
-    },
-  }).then((res) => {
-    let data = res.data.data;
-    data.forEach((item) => {
-      let returnValues = decodeLogs(EventObject, {
-        data: item.data,
-        topics: item.topics,
-      });
-      item.returnValues = returnValues;
-    });
-
-    callback(data);
-  });
-};
-// 创建Buy 映射对象
-export const getBuyList = async function(callback) {
-  // let ContractAddress = getContract();
-  let EventABI = order_abi.abi;
-  let EventObject = EventABI.filter((item) => {
-    return item.name == "Buy" && item.type == "event";
-  })[0];
-
-  let topic0 = window.WEB3.eth.abi.encodeEventSignature(EventObject);
-  Axios({
-    method: "get",
-    url: "https://api.helmet.insure/contract/logs",
-    params: {
-      contract: "0x4c899b7C39ded9a06a5db387f0b0722a18B8d70d",
-      include_data: true,
-      topic0,
-    },
-    headers: {
-      Authorization: "Bearer e5fa8358-42f3-4fa1-918d-2a972f4c5de0",
-    },
-  }).then((res) => {
-    let data = res.data.data;
-    data.forEach((item) => {
-      let returnValues = decodeLogs(EventObject, {
-        data: item.data,
-        topics: item.topics,
-      });
-      item.returnValues = returnValues;
-    });
-
-    callback(data);
-  });
-};
-// 创建修改价格 映射对象
-export const getRePriceList = async function(callback) {
-  // let ContractAddress = getContract();
-  let EventABI = order_abi.abi;
-  let EventObject = EventABI.filter((item) => {
-    return item.name == "Reprice" && item.type == "event";
-  })[0];
-
-  let topic0 = window.WEB3.eth.abi.encodeEventSignature(EventObject);
-  Axios({
-    method: "get",
-    url: "https://api.helmet.insure/contract/logs",
-    params: {
-      contract: "0x4c899b7C39ded9a06a5db387f0b0722a18B8d70d",
-      include_data: true,
-      topic0,
-    },
-    headers: {
-      Authorization: "Bearer e5fa8358-42f3-4fa1-918d-2a972f4c5de0",
-    },
-  }).then((res) => {
-    let data = res.data.data;
-    data.forEach((item) => {
-      let returnValues = decodeLogs(EventObject, {
-        data: item.data,
-        topics: item.topics,
-      });
-      item.returnValues = returnValues;
-    });
-
-    callback(data);
-  });
-};
-//获取 mint
-export const getMintList = async function(callback) {
-  // let ContractAddress = getContract();
-  let EventABI = order_abi.abi;
-  let EventObject = EventABI.filter((item) => {
-    return item.name == "Reprice" && item.type == "event";
-  })[0];
-
-  let topic0 = window.WEB3.eth.abi.encodeEventSignature(EventObject);
-  Axios({
-    method: "get",
-    url: "https://api.helmet.insure/contract/logs",
-    params: {
-      contract: "0x021297e233550eDBa8e6487EB7c6696cFBB63b88",
-      include_data: true,
-      topic0,
-    },
-    headers: {
-      Authorization: "Bearer e5fa8358-42f3-4fa1-918d-2a972f4c5de0",
-    },
-  }).then((res) => {
-    let data = res.data.data;
-    data.forEach((item) => {
-      let returnValues = decodeLogs(EventObject, {
-        data: item.data,
-        topics: item.topics,
-      });
-      item.returnValues = returnValues;
-    });
-    callback(data);
-  });
-};
-//获取 mint
-export const getExerciseList = async function() {
-  // let ContractAddress = getContract();
-  let EventABI = order_abi.abi;
-  let EventObject = EventABI.filter((item) => {
-    return item.name == "Exercise" && item.type == "event";
-  })[0];
-
-  let topic0 = window.WEB3.eth.abi.encodeEventSignature(EventObject);
+export const getInsuranceStatus = () => {
   return Axios({
-    method: "get",
-    url: "https://api.helmet.insure/contract/logs",
-    params: {
-      contract: "0x4C899b7C39dED9A06A5db387f0b0722a18B8d70D",
-      include_data: true,
-      topic0,
-    },
-    headers: {
-      Authorization: "Bearer e5fa8358-42f3-4fa1-918d-2a972f4c5de0",
+    method: "post",
+    url: "https://api.thegraph.com/index-node/graphql",
+    data: {
+      query: `{
+        indexingStatusForCurrentVersion(subgraphName: "app-helmet-insure/helmet-insure") {
+            synced
+            health
+            fatalError {
+                message
+                block {
+                    number
+                    hash
+                }
+                handler
+            }
+            chains {
+                chainHeadBlock {
+                    number
+                }
+                latestBlock {
+                    number
+                }
+            }
+        }
+    }`,
     },
   }).then((res) => {
-    let data = res.data.data;
-    data.forEach((item) => {
-      let returnValues = decodeLogs(EventObject, {
-        data: item.data,
-        topics: item.topics,
-      });
-      item.returnValues = returnValues;
-    });
-    return data;
+    let Status = res.data.data.indexingStatusForCurrentVersion.health;
+    return Status;
   });
 };
-//get Insurance
-export const getInsuranceList = async function() {
-  let rightTime = parseInt(moment.now());
-  let leftTime = parseInt(moment.now()) - 518400000;
-  console.log(rightTime, leftTime);
+
+const getGraphList1 = async function() {
   return Axios({
     method: "post",
     url:
@@ -226,7 +55,7 @@ export const getInsuranceList = async function() {
                   expiry
                   long
                   short
-                  asks {
+                  asks(first:1000) {
                     askID
                     seller
                     volume
@@ -247,6 +76,52 @@ export const getInsuranceList = async function() {
     },
   });
 };
+const getGraphList2 = async function() {
+  return Axios({
+    method: "post",
+    url: "https://graph.helmet.insure/subgraphs/name/helmet/insure",
+    data: {
+      query: `{
+                options(first:1000) {
+                  id
+                  creator
+                  collateral 
+                  underlying
+                  strikePrice
+                  expiry
+                  long
+                  short
+                  asks(first:1000) {
+                    askID
+                    seller
+                    volume
+                    settleToken
+                    price
+                    isCancel
+                    binds {
+                      bidID
+                      askID
+                      buyer
+                      volume
+                      amount
+                    }
+                  }
+                }
+              }
+              `,
+    },
+  });
+};
+//get Insurance
+export const getInsuranceList = async function() {
+  let Status = await getInsuranceStatus();
+  console.log("The Graph is " + Status);
+  if (Status === "healthy") {
+    return getGraphList1();
+  } else {
+    return getGraphList2();
+  }
+};
 export const getLongType = async function() {
   let rightTime = parseInt(moment.now());
   let leftTime = parseInt(moment.now()) - 518400000;
@@ -266,7 +141,7 @@ export const getLongType = async function() {
                   expiry
                   long
                   short
-                  asks {
+                  asks(first:1000) {
                     askID
                     seller
                     volume
@@ -319,5 +194,18 @@ export const getLongTokenValue = (data) => {
     let filterData = data.filter((item) => item.id === "437")[0];
     let TVLS = filterData.chainTvls.Binance;
     return TVLS;
+  });
+};
+export const getTokenPrice = (data) => {
+  let HelmetAddress = "0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8".toUpperCase();
+  if (data.fromTokenAddress.toUpperCase() === HelmetAddress) {
+    data.protocols = "PANCAKESWAP_V2";
+  }
+  return Axios({
+    method: "get",
+    url: "https://api.1inch.exchange/v3.0/56/quote",
+    params: { ...data },
+  }).then((res) => {
+    return res;
   });
 };

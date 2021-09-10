@@ -1,7 +1,7 @@
-import MiningABI from "~/abi/deposite_abi.json";
+import MiningABI from "~/abi/MiningABI.json";
 import ApproveABI from "~/abi/IPancakePair.json";
 import CompoundABI from "~/abi/helmet_abi.json";
-import OrderABI from "~/abi/order_abi.json";
+import OrderABI from "~/abi/OrderABI.json";
 import ChainSwapABI from "~/abi/ChainSwap.json";
 import BurnSwapABI from "~/abi/BurnSwap.json";
 import MigrationABI from "~/abi/Migration.json";
@@ -26,7 +26,7 @@ export const Stake = async (
   { ContractAddress, DepositeVolume, Decimals },
   callback
 ) => {
-  let Contracts = await Web3Contract(MiningABI.abi, ContractAddress);
+  let Contracts = await Web3Contract(MiningABI, ContractAddress);
   let Account = await getAccounts();
   let DecimalsUnit = getDecimals(Decimals);
   if (DecimalsUnit) {
@@ -70,8 +70,56 @@ export const Stake = async (
       });
   } catch (error) {}
 };
-export const GetReward = async (ContractAddress, callback) => {
+export const StakeAndComound = async (
+  { ContractAddress, DepositeVolume, Decimals },
+  callback
+) => {
   let Contracts = await Web3Contract(MiningABI.abi, ContractAddress);
+  let Account = await getAccounts();
+  let DecimalsUnit = getDecimals(Decimals);
+  if (DecimalsUnit) {
+    DepositeVolume = toWei(DepositeVolume, DecimalsUnit);
+  } else {
+    let powNumber = new BigNumber(10).pow(Decimals).toString();
+    DepositeVolume = new BigNumber(DepositeVolume).times(powNumber).toString();
+  }
+  console.log(DepositeVolume);
+  try {
+    Contracts.methods
+      .stakeAndCompound(DepositeVolume)
+      .send({ from: Account })
+      .on("transactionHash", (hash) => {
+        bus.$emit("CLOSE_STATUS_DIALOG");
+        bus.$emit("OPEN_STATUS_DIALOG", {
+          title: "Waiting For Confirmation",
+          layout: "layout2",
+          loading: true,
+          buttonText: "Confirm",
+          conTit: "Please Confirm the transaction in your wallet",
+          conText: `<a href="https://bscscan.com/tx/${hash}" target="_blank">View on BscScan</a>`,
+        });
+      })
+      .on("receipt", (receipt) => {
+        bus.$emit("CLOSE_STATUS_DIALOG");
+        bus.$emit("OPEN_STATUS_DIALOG", {
+          title: "Transation submitted",
+          layout: "layout2",
+          buttonText: "Confirm",
+          conText: `<a href="https://bscscan.com/tx/${receipt.transactionHash}" target="_blank">View on BscScan</a>`,
+          button: true,
+          buttonText: "Confirm",
+          showDialog: false,
+        });
+        callback("success");
+      })
+      .on("error", (error) => {
+        bus.$emit("CLOSE_STATUS_DIALOG");
+        callback("error");
+      });
+  } catch (error) {}
+};
+export const GetReward = async (ContractAddress, callback) => {
+  let Contracts = await Web3Contract(MiningABI, ContractAddress);
   let Account = await getAccounts();
   try {
     Contracts.methods
@@ -146,7 +194,7 @@ export const GetReward3 = async (ContractAddress, RewardAddress, callback) => {
   } catch (error) {}
 };
 export const GetDoubleReward = async (ContractAddress, callback) => {
-  let Contracts = await Web3Contract(MiningABI.abi, ContractAddress);
+  let Contracts = await Web3Contract(MiningABI, ContractAddress);
   let Account = await getAccounts();
   try {
     Contracts.methods
@@ -183,7 +231,7 @@ export const GetDoubleReward = async (ContractAddress, callback) => {
   } catch (error) {}
 };
 export const Exit = async (ContractAddress, callback) => {
-  let Contracts = await Web3Contract(MiningABI.abi, ContractAddress);
+  let Contracts = await Web3Contract(MiningABI, ContractAddress);
   let Account = await getAccounts();
   try {
     Contracts.methods
@@ -306,7 +354,7 @@ export const Approve = async (
   }
 };
 export const Buy = async (data, callback) => {
-  let Contracts = await Web3Contract(OrderABI.abi, OrderContractAddress);
+  let Contracts = await Web3Contract(OrderABI, OrderContractAddress);
   let Account = await getAccounts();
   let SubmitVolume = TokenNameToWei(data.buyNum, data.currentInsurance);
   let AskID = data.askID;
@@ -357,7 +405,7 @@ export const Cancel = async (askID, callBack) => {
   if (!askID) {
     return;
   }
-  let Contracts = await Web3Contract(OrderABI.abi, OrderContractAddress);
+  let Contracts = await Web3Contract(OrderABI, OrderContractAddress);
   let Account = await getAccounts();
   if (!window.CURRENTADDRESS) {
     return;
