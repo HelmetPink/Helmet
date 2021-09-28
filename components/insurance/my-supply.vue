@@ -48,11 +48,14 @@
         </section>
         <section class="supply_item_action_web WEB">
           <button
-            v-if="item.Status === 'Nomal'"
-            class="nomal"
+            v-if="item.Status === 'Normal'"
+            class="normal"
             @click="handleClickCancel(item)"
           >
             {{ $t("Insurance.Insurance_text15") }}
+          </button>
+          <button v-if="item.Status === 'Cancel'" class="sold">
+            {{ $t("Insurance.Insurance_text25") }}
           </button>
           <button v-if="item.Status === 'Sold'" class="sold">
             {{ $t("Insurance.Insurance_text14") }}
@@ -96,8 +99,8 @@
         </section>
         <section class="supply_item_action_h5 H5">
           <button
-            v-if="item.Status === 'Nomal'"
-            class="nomal"
+            v-if="item.Status === 'Normal'"
+            class="normal"
             @click="handleClickCancel(item)"
           >
             {{ $t("Insurance.Insurance_text15") }}
@@ -145,9 +148,9 @@ import { getContract } from "../../web3/index.js";
 import moment from "moment";
 import NoData from "./no-data.vue";
 import Loading from "./loading.vue";
-import { fromWei } from "~/interface/index.js";
+import { fromWei } from "~/web3/index.js";
 import { getCurrentInsurance } from "~/config/insurance.js";
-import OrderABI from "../../abi/OrderABI.json";
+import OrderABI from "~/web3/abis/OrderABI.json";
 import WaitingConfirmationDialog from "~/components/dialogs/waiting-confirmation-dialog.vue";
 import SuccessConfirmationDialog from "~/components/dialogs/success-confirmation-dialog.vue";
 const OrderAddress = "0x4C899b7C39dED9A06A5db387f0b0722a18B8d70D";
@@ -175,20 +178,25 @@ export default {
     };
   },
   computed: {
-    userInfo() {
+    CurrentAccount() {
       return this.$store.state.userInfo;
     },
   },
   watch: {
-    userInfo: {
-      handler: "userInfoWatch",
+    CurrentAccount: {
+      handler: "reloadData",
       immediate: true,
     },
   },
-  mounted() {
-    this.getPolicysList();
-  },
   methods: {
+    reloadData(Value) {
+      if (Value) {
+        console.log(Value);
+        this.isLogin = Value.isLogin;
+        this.isLoading = true;
+        this.getPolicysList();
+      }
+    },
     waitingClose() {
       this.WaitingVisible = false;
     },
@@ -205,16 +213,11 @@ export default {
         this.MaxNumber = (value - 1) * this.PageSize + this.PageSize;
       }
     },
-    userInfoWatch(newValue) {
-      if (newValue) {
-        this.isLogin = newValue.data.isLogin;
-      }
-    },
     getPolicysList() {
       getInsuranceList().then((res) => {
         let nowDate = parseInt(moment.now() / 1000);
         if (res && res.data.data.options) {
-          let Account = window.CURRENTADDRESS;
+          let Account = this.CurrentAccount.account;
           const ReturnList = res.data.data.options;
           const FixListPush = [];
           const FilterList = ReturnList.filter(
@@ -242,14 +245,16 @@ export default {
                 StrikePrice,
                 CallToken,
                 PutToken,
+                LastPriceDecimals,
               } = CurrentInsurance;
               const ResultItem = {
                 Type,
                 Expiry: item.expiry,
-                ShowExpiry,
+                ShowExpiry: moment(new Date(item.expiry * 1000)).format(
+                  "YYYY/MM/DD HH:mm:ss"
+                ),
                 Long: item.long,
                 Short: item.short,
-                ShowStrikePrice: StrikePrice,
                 StrikePrice: item.strikePrice,
                 CollateralAddress: item.collateral,
                 CollateralSymbol,
@@ -301,6 +306,9 @@ export default {
                 }
                 const AllItem = Object.assign(ResultItemAsk, ResultItem);
                 if (AllItem.Type === "Put") {
+                  AllItem.ShowStrikePrice = Number(
+                    1 / fromWei(ResultItem.StrikePrice, StrikePriceDecimals)
+                  ).toFixed(LastPriceDecimals);
                   AllItem.ShowBeSold = Number(
                     AllItem.ShowBeSold /
                       (1 / fromWei(ResultItem.StrikePrice, StrikePriceDecimals))
@@ -310,20 +318,24 @@ export default {
                       (1 / fromWei(ResultItem.StrikePrice, StrikePriceDecimals))
                   ).toFixed(8);
                 } else {
+                  AllItem.ShowStrikePrice = fromWei(
+                    ResultItem.StrikePrice,
+                    StrikePriceDecimals
+                  );
                   AllItem.ShowBeSold = Number(AllItem.ShowBeSold).toFixed(8);
                   AllItem.ShowUnSold = Number(AllItem.ShowUnSold).toFixed(8);
                 }
-                AllItem.Status = "Nomal";
+                AllItem.Status = "Normal";
                 AllItem.Sort = 1;
-                if (AllItem.isCancel && Number(AllItem.ShowBeSold) === 0) {
+                if (AllItem.IsCancel && Number(AllItem.ShowBeSold) === 0) {
                   AllItem.Status = "Hidden";
                   AllItem.Sort = 4;
                 }
-                if (AllItem.isCancel && Number(AllItem.ShowBeSold) > 0) {
+                if (AllItem.IsCancel && Number(AllItem.ShowBeSold) > 0) {
                   AllItem.Status = "Cancel";
                   AllItem.Sort = 2;
                 }
-                if (!AllItem.isCancel && Number(AllItem.ShowUnSold) === 0) {
+                if (!AllItem.IsCancel && Number(AllItem.ShowUnSold) === 0) {
                   AllItem.Status = "Sold";
                   AllItem.Sort = 3;
                 }
@@ -336,16 +348,19 @@ export default {
               });
             }
           });
-          const FixList = FixListPush.sort((a, b) => a.Sort - b.Sort);
+          let FixList = FixListPush.sort(
+            (a, b) => Number(b.AskID) - Number(a.AskID)
+          );
+          console.log(FixList);
+          FixList = FixList.sort((a, b) => a.Sort - b.Sort);
           this.PolicyList = FixList;
           this.isLoading = false;
         }
       });
     },
-    // 撤销
     handleClickCancel(data) {
       const Contracts = getContract(OrderABI, OrderAddress);
-      const Account = window.CURRENTADDRESS;
+      const Account = this.CurrentAccount.account;
       Contracts.methods
         .cancel(data.AskID)
         .send({ from: Account })
@@ -358,10 +373,10 @@ export default {
             this.SuccessHash = receipt.transactionHash;
             this.WaitingVisible = false;
             this.SuccessVisible = true;
-            getPolicysList();
+            this.getPolicysList();
           }
         })
-        .on("error", function (ereor) {
+        .on("error", (ereor) => {
           this.WaitingVisible = false;
         });
     },
@@ -373,7 +388,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .pagination {
   width: 100%;
   display: flex;

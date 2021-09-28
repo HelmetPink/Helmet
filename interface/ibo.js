@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { cloneDeep } from "lodash";
 import Web3 from "web3";
-import ERC20 from "../abi/ERC20ABI.json";
+import ERC20 from "~/web3/abis/ERC20ABI.json";
 import { Contract, Provider } from "ethers-multicall-x";
 import BigNumber from "bignumber.js";
 const BSCChainId = 56
@@ -63,17 +63,22 @@ export const getPoolInfo = (pool) => {
     : new Contract(pool.currency.address, ERC20.abi);
   const promiseList = [
     poolContract.price(),
-    poolContract.totalPurchasedCurrency(), //总申购的量
+    poolContract.totalPurchasedCurrency(), 
     poolContract.purchasedCurrencyOf(account),
-    poolContract.totalSettleable(),
+    // poolContract.totalSettleable(),
     poolContract.settleable(account),
     poolContract.totalSettledUnderlying(),
-    poolContract.maxUser(),//最多参与人数
-    poolContract.curUserCount(),//当前参与人数
-    poolContract.amtLow(),//最少金额
-    poolContract.amtHigh(),//最大金额
+    poolContract.maxUser(),
+    poolContract.curUserCount(),
+    poolContract.amtLow(),
+    poolContract.amtHigh(),
   ]
-  // 追加可能存在的
+  if (pool.airdrop) {
+    const airdropContract = new Contract(pool.airdrop.address, pool.airdrop.abi)
+    promiseList.push(airdropContract.allowList(account)) 
+    promiseList.push(airdropContract.withdrawList(account)) 
+    promiseList.push(airdropContract.begin()) 
+  }
   poolContract.time && promiseList.push(poolContract.time())
   poolContract.timeSettle && promiseList.push(poolContract.timeSettle())
   currencyToken && promiseList.push(currencyToken.allowance(account, pool.address))
@@ -87,52 +92,77 @@ export const getPoolInfo = (pool) => {
       price,
       totalPurchasedCurrency,
       purchasedCurrencyOf,
-      totalSettleable,
+      // totalSettleable,
       settleable,
       totalSettledUnderlying,
-      maxUser,//最多参与人数
-      curUserCount,//当前参与人数
+      maxUser,
+      curUserCount,
       amtLow,
       amtHigh,
-      time = 0,
-      timeSettle = 0,
-      currency_allowance = 0,
-      balanceOf = 0
     ] = resData
+      let time,
+        timeSettle,
+        currency_allowance,
+        balanceOf,
+        allowList,
+        withdrawList,
+        airdropBegin
+
+      if (pool.airdrop) {
+        allowList = resData[9]
+        withdrawList = resData[10]
+        airdropBegin = resData[11]
+        time = resData[12]
+        timeSettle = resData[13]
+        currency_allowance = resData[14]
+        balanceOf = resData[15]
+        pool.airdrop = Object.assign(pool.airdrop, {
+          begin: airdropBegin,
+          allowList: fromWei(allowList, 18).toFixed(6)*1,
+          withdrawList: {
+            'true': true,
+            'false': false
+          }[String(withdrawList)]
+        })
+      } else {
+        time = resData[9]
+        timeSettle = resData[10]
+        currency_allowance = resData[11]
+        balanceOf = resData[12]
+      }
+      if (pool.name === 'MONI') {
+        price = new BigNumber(price).div(2).toString()
+      }
       // time = 1629118800
       //   timeSettle = 1629118800
       // curUserCount=0
       // purchasedCurrencyOf=0
-    const [
-      total_completed_,
-      total_amount,
-      total_volume,
-      total_rate,
-    ] = totalSettleable;
-    const [completed_, amount, volume, rate] = settleable;
+    // const [
+    //   total_completed_,
+    //   total_amount,
+    //   total_volume,
+    //   total_rate,
+    // ] = totalSettleable
+    const [completed_, amount, volume, rate] = settleable
 
-    let status = pool.status || 0; // 即将上线
+    let status = pool.status || 0; 
     const timeClose = time;
     if (timeSettle) {
-      // time 如果没有的话，使用timeSettle填充
       time = timeSettle;
     }
     if (pool.start_at < now && status < 1) {
-      // 募集中
       status = 1;
     }
     if (time < now && status < 2) {
-      // 结算中
       status = 2;
     }
 
-    // 招募满了
-    if (
-      totalSettleable.volume == totalSettledUnderlying &&
-      totalSettleable.volume > 0
-    ) {
-      status = 3;
-    }
+    // if (
+    //   totalSettleable.volume == totalSettledUnderlying &&
+    //   totalSettleable.volume > 0
+    // ) {
+    //   status = 3
+    // }
 
     const totalPurchasedAmount = new BigNumber(
       fromWei(pool.amount, pool.decimal)
@@ -155,7 +185,7 @@ export const getPoolInfo = (pool) => {
     Object.assign(pool.currency, {
       allowance: currency_allowance,
     })
-      const num = new BigNumber(10).pow(pool.currency.decimal).multipliedBy(new BigNumber(10).pow(18)).div(new BigNumber(price).multipliedBy(new BigNumber(10).pow(pool.underlying.decimal))).toFixed(6) * 1
+    const num = new BigNumber(10).pow(pool.currency.decimal).multipliedBy(new BigNumber(10).pow(18)).div(new BigNumber(price).multipliedBy(new BigNumber(10).pow(pool.underlying.decimal))).toFixed(6) * 1
     return Object.assign({}, pool, {
       ratio: `1 ${pool.currency.symbol} = ${new BigNumber(num).toFormat()} ${
         pool.underlying.symbol
@@ -167,31 +197,31 @@ export const getPoolInfo = (pool) => {
           .toString(),
       status: status,
       time: time,
-      timeClose,//结束时间time
-      timeSettle,//claim开始时间
+      timeClose,
+      timeSettle,
       is_join,
       totalPurchasedCurrency,
       totalPurchasedAmount: totalPurchasedAmount,
       totalPurchasedUnderlying,
-      balanceOf: formatAmount(balanceOf, pool.currency.decimals, 6), // 余额
+      balanceOf: formatAmount(balanceOf, pool.currency.decimals, 6), 
       purchasedCurrencyOf,
-      totalSettleable: {
-        completed_: total_completed_,
-        amount: total_amount, // 预计获得
-        volume: total_volume,
-        rate: total_rate,
-      },
+      // totalSettleable: {
+      //   completed_: total_completed_,
+      //   amount: total_amount, 
+      //   volume: total_volume,
+      //   rate: total_rate,
+      // },
       totalSettledUnderlying,
       settleable: {
         completed_,
-        amount, // 未结算数量
-        volume, // 预计中签量
+        amount, 
+        volume, 
         rate,
       },
       pool_info: {
         ...pool.pool_info,
-        maxAccount: maxUser, // 最多参与人数
-        curUserCount, // 当前参与人数
+        maxAccount: maxUser, 
+        curUserCount, 
         min_allocation: fromWei(amtLow, pool.currency.decimal)*1,
         max_allocation: fromWei(amtHigh, pool.currency.decimal)*1,
       }
@@ -199,7 +229,6 @@ export const getPoolInfo = (pool) => {
   })
 }
 
-// 授权
 export const onApprove_ =  (contractAddress,poolAddress, callback = (status) => {}) => {
   let web3_ = new Web3(window.ethereum)
   let myContract = new web3_.eth.Contract(ERC20.abi, contractAddress);
@@ -216,7 +245,6 @@ export const onApprove_ =  (contractAddress,poolAddress, callback = (status) => 
       callback(false);
     });
 };
-// 质押
 export const onBurn_ = (_amount, iboData, callback) => {
   let web3_ = new Web3(window.ethereum)
   let myContract = new web3_.eth.Contract(iboData.abi, iboData.address, {
@@ -232,7 +260,6 @@ export const onBurn_ = (_amount, iboData, callback) => {
       callback(false);
     });
 };
-// 提取
 export const onClaim_ = (contractAddress, abi, callback) => {
   let web3_ = new Web3(window.ethereum);
   let myContract = new web3_.eth.Contract(abi, contractAddress);
@@ -242,7 +269,20 @@ export const onClaim_ = (contractAddress, abi, callback) => {
     .on("receipt", function() {
       callback(true);
     })
-    .on("error", () => {
-      callback(false);
-    });
-};
+    .on('error', () => {
+      callback(false)
+    })
+}
+export const onAirdrop_ = (contractAddress,abi, callback) => {
+  let web3_ = new Web3(window.ethereum)
+  let myContract = new web3_.eth.Contract(abi, contractAddress);
+  myContract.methods
+    .withdraw()
+    .send({ from: window.CURRENTADDRESS })
+    .on('receipt', function() {
+      callback(true)
+    })
+    .on('error', () => {
+      callback(false)
+    })
+}

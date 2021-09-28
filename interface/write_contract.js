@@ -1,20 +1,20 @@
-import MiningABI from "~/abi/MiningABI.json";
-import ApproveABI from "~/abi/IPancakePair.json";
-import CompoundABI from "~/abi/helmet_abi.json";
-import OrderABI from "~/abi/OrderABI.json";
-import ChainSwapABI from "~/abi/ChainSwap.json";
-import BurnSwapABI from "~/abi/BurnSwap.json";
-import MigrationABI from "~/abi/Migration.json";
-import IIOABI from "~/abi/iio_abi.json";
+import MiningABI from "~/web3/abis/MiningABI.json";
+import ApproveABI from "~/web3/abis/IPancakePair.json";
+import CompoundABI from "~/web3/abis/helmet_abi.json";
+import OrderABI from "~/web3/abis/OrderABI.json";
+import ChainSwapABI from "~/web3/abis/ChainSwap.json";
+import BurnSwapABI from "~/web3/abis/BurnSwap.json";
+import MigrationABI from "~/web3/abis/Migration.json";
+import CakePoolABI from "~/web3/abis/CakePoolABI.json";
+import IIOABI from "~/web3/abis/iio_abi.json";
 
 import {
   Web3Contract,
   getAccounts,
   getDecimals,
   TokenNameToWei,
-  toWei,
-  fromWei,
 } from "./common_contract.js";
+import { toWei, fromWei } from "~/web3/index.js";
 import BigNumber from "bignumber.js";
 import bus from "~/assets/js/bus";
 import { fixD } from "~/assets/js/util.js";
@@ -268,6 +268,7 @@ export const Exit = async (ContractAddress, callback) => {
   } catch (error) {}
 };
 export const Compound = async (ContractAddress, callback) => {
+  console.log(ContractAddress);
   let Contracts = await Web3Contract(CompoundABI.abi, ContractAddress);
   let Account = await getAccounts();
   try {
@@ -302,7 +303,9 @@ export const Compound = async (ContractAddress, callback) => {
         bus.$emit("CLOSE_STATUS_DIALOG");
         callback("error");
       });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 export const Approve = async (
   TokenAddress,
@@ -520,4 +523,91 @@ export const ApplyRewards3 = async (ContractAddress, EarnAddress, callBack) => {
     .on("error", (err, receipt) => {
       callBack("error");
     });
+};
+export const Deposit = async (
+  { ContractAddress, Pid, DepositeVolume },
+  callback
+) => {
+  let Contracts = await Web3Contract(CakePoolABI, ContractAddress);
+  let Account = await getAccounts();
+  let DecimalsUnit = getDecimals(18);
+  const Amount = toWei(DepositeVolume, DecimalsUnit);
+  try {
+    Contracts.methods
+      .deposit(Pid, Amount)
+      .send({ from: Account })
+      .on("transactionHash", (hash) => {
+        bus.$emit("CLOSE_STATUS_DIALOG");
+        bus.$emit("OPEN_STATUS_DIALOG", {
+          title: "Waiting For Confirmation",
+          layout: "layout2",
+          loading: true,
+          buttonText: "Confirm",
+          conTit: "Please Confirm the transaction in your wallet",
+          conText: `<a href="https://bscscan.com/tx/${hash}" target="_blank">View on BscScan</a>`,
+        });
+      })
+      .on("receipt", (receipt) => {
+        if (window.statusDialog) {
+          bus.$emit("CLOSE_STATUS_DIALOG");
+          bus.$emit("OPEN_STATUS_DIALOG", {
+            title: "Transation submitted",
+            layout: "layout2",
+            buttonText: "Confirm",
+            conText: `<a href="https://bscscan.com/tx/${receipt.transactionHash}" target="_blank">View on BscScan</a>`,
+            button: true,
+            buttonText: "Confirm",
+            showDialog: false,
+          });
+          callback("success");
+        }
+      })
+      .on("error", (err, receipt) => {
+        callback("error");
+      });
+  } catch (error) {}
+};
+export const Withdraw = async (
+  { ContractAddress, Pid, DepositeVolume },
+  callback
+) => {
+  let Contracts = await Web3Contract(CakePoolABI, ContractAddress);
+  let Account = await getAccounts();
+  console.log(ContractAddress, Pid, DepositeVolume);
+  let DecimalsUnit = getDecimals(18);
+  const Amount = toWei(DepositeVolume, DecimalsUnit);
+  try {
+    Contracts.methods
+      .withdraw(Pid, DepositeVolume === 0 ? DepositeVolume : Amount)
+      .send({ from: Account })
+      .on("transactionHash", (hash) => {
+        bus.$emit("CLOSE_STATUS_DIALOG");
+        bus.$emit("OPEN_STATUS_DIALOG", {
+          title: "Waiting For Confirmation",
+          layout: "layout2",
+          loading: true,
+          buttonText: "Confirm",
+          conTit: "Please Confirm the transaction in your wallet",
+          conText: `<a href="https://bscscan.com/tx/${hash}" target="_blank">View on BscScan</a>`,
+        });
+      })
+      .on("receipt", (receipt) => {
+        if (window.statusDialog) {
+          bus.$emit("CLOSE_STATUS_DIALOG");
+          bus.$emit("OPEN_STATUS_DIALOG", {
+            title: "Transation submitted",
+            layout: "layout2",
+            buttonText: "Confirm",
+            conText: `<a href="https://bscscan.com/tx/${receipt.transactionHash}" target="_blank">View on BscScan</a>`,
+            button: true,
+            buttonText: "Confirm",
+            showDialog: false,
+          });
+          callback("success");
+        }
+      })
+      .on("error", (err, receipt) => {
+        callback("error");
+      });
+  } catch (error) {}
 };

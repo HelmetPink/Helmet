@@ -34,13 +34,12 @@ export const mateMaskInfo = (address) => {
             // alert(111);
             return obj;
         }
-        obj.data.isLogin = true;
-        obj.data.account = current;
+        obj.isLogin = true;
+        obj.account = current;
         obj.status = 1;
         return obj;
     } catch (error) {
         console.log('util=>matemask=>mateMaskInfo', error);
-        // 打开下载弹框
         // bus.$emit('OPEN_DOWNLOAD');
         return {
             status: -1,

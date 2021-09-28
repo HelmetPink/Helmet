@@ -77,7 +77,7 @@
   },
   "Table": {
     "ID": "ID",
-    "Rent": "Policy Price(HELMET)",
+    "Rent": "Premium(HELMET)",
     "Premium": "Premium",
     "AllRent": "Premium",
     "Amount": "Policies In Supply",
@@ -299,11 +299,11 @@
     "Insurance_text3": "Last Price",
     "Insurance_text4": "Insurance Period",
     "Insurance_text5": "Operation",
-    "Insurance_text6": "Cover 50% Off ",
-    "Insurance_text7": "Cover Miss Out ",
+    "Insurance_text6": "Put Policys",
+    "Insurance_text7": "Call Policys",
     "Insurance_text8": "Supply",
-    "Insurance_text9": "Confirm Supply Cover Miss Out",
-    "Insurance_text10": "Confirm Supply Cover 50% Off",
+    "Insurance_text9": "Confirm Supply Call Policys",
+    "Insurance_text10": "Confirm Supply Put Policys",
     "Insurance_text11": "Activate Price",
     "Insurance_text13": "Expired",
     "Insurance_text14": "Completed",
@@ -316,7 +316,8 @@
     "Insurance_text21": "Cover Miss Out price",
     "Insurance_text22": "Finished",
     "Insurance_text23": "Deposit",
-    "Insurance_text24": "Buy"
+    "Insurance_text24": "Buy",
+    "Insurance_text25": "Canceled"
   },
   "Migration": {
     "MyBurning": "My Burning",
@@ -393,9 +394,20 @@
     "IBO_text38": "Aug.31st 20:00 UTC+8",
     "IBO_text39": "Aug.31st 20:00 UTC+8",
     "IBO_text40": "Sep.3th 23:00 UTC+8",
-    "IBO_text41": "Sep.1st 19:00 UTC+8"
+    "IBO_text41": "Sep.1st 19:00 UTC+8",
+    "IBO_text42": "Sep 14th 23:00 UTC+8",
+    "Approve": "Approve",
+    "IBO_text43": "16th Sep 22:30  UTC+8",
+    "IBO_text44": "Sep 16th UTC+8 19:00",
+    "IBO_text45": "Token claim 50%",
+    "IBO_text46": "Sep 17 UTC+8 02:05",
+    "IBO_text47": "October 17 UTC +8 02:05",
+    "IBO_text48": "1 Month Token Lock-up",
+    "IBO_text49": "Notice the uncertaintity of {token} IBO since the 1 month token lock-up. Helmet.insure will not be held responsible for any investment losses."
   },
   "Dialogs": {
-    "WaitText1": "You will supply {symbol}({type}) Policy with Pledged asset: {volume} {collateral} ; Activated Price: {strikeprice} {underlying} ; Expected premium gaining: {price}  HELMET ; Expire date: {expiry}."
+    "WaitText1": "You will supply {symbol}({type}) Policy with Pledged asset: {volume} {collateral} ; Activated Price: {strikeprice} {underlying} ; Expected premium gaining: {price}  HELMET ; Expire date: {expiry}.",
+    "InsuranceTip1": "You will lose your token if you supply the policy since {name} has hit the activate price.",
+    "MaxStaking": "Max {number} HELMET"
   }
 }

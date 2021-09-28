@@ -1,13 +1,13 @@
 import { getTokenPrice } from "~/interface/event.js";
 import { fixD } from "~/assets/js/util.js";
-import MiningABI from "~/abi/MiningABI.json";
+import MiningABI from "~/web3/abis/MiningABI.json";
 import { Contract } from "ethers-multicall-x";
 import {
   toWei,
   getOnlyMultiCallProvider,
   processResult,
   fromWei,
-} from "~/interface/index.js";
+} from "~/web3/index.js";
 export const PoolList = [
   {
     Key: "SHIBARGON",

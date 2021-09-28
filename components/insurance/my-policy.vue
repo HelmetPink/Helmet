@@ -46,13 +46,19 @@
           </p>
         </section>
         <section class="policy_item_action_web WEB">
-          <button @click="toActive(item)">
+          <!-- <button @click="toActive(item)">
             {{
-              item.status == "Expired"
+              item.Status == "Expired"
                 ? $t("Insurance.Insurance_text13")
                 : $t("Table.outSure")
             }}
             <i class="selectDown"></i>
+          </button> -->
+          <button v-if="item.Status == 'Normal'" @click="toActive(item)">
+            {{ $t("Table.outSure") }}
+          </button>
+          <button v-if="item.Status == 'Expired'">
+            {{ $t("Insurance.Insurance_text13") }}
           </button>
         </section>
         <!-- ================= -->
@@ -91,13 +97,18 @@
           </p>
         </section>
         <section class="policy_item_action_h5 H5">
-          <button @click="toActive(item)">
+          <!-- <button @click="toActive(item)">
             {{
-              item.status == "Expired"
+              item.Status == "Expired"
                 ? $t("Insurance.Insurance_text13")
                 : $t("Table.outSure")
             }}
-            <i class="selectDown"></i>
+          </button> -->
+          <button v-if="item.Status == 'Normal'" @click="toActive(item)">
+            {{ $t("Table.outSure") }}
+          </button>
+          <button v-if="item.Status == 'Expired'">
+            {{ $t("Insurance.Insurance_text13") }}
           </button>
         </section>
       </div>
@@ -119,9 +130,7 @@
       :DialogClose="waitingClose"
     >
       <div class="waiting_content">
-        <p>
-          {{ WaitingText }}
-        </p>
+        <p v-html="WaitingText"></p>
       </div>
     </WaitingConfirmationDialog>
     <SuccessConfirmationDialog
@@ -140,11 +149,11 @@ import { getInsuranceList } from "~/interface/event.js";
 import moment from "moment";
 import NoData from "./no-data.vue";
 import Loading from "./loading.vue";
-import { fromWei } from "~/interface/index.js";
+import { fromWei } from "~/web3/index.js";
 import { getCurrentInsurance } from "~/config/insurance.js";
 import BigNumber from "bignumber.js";
-import OrderABI from "../../abi/OrderABI.json";
-import ERC20ABI from "../../abi/ERC20ABI.json";
+import OrderABI from "~/web3/abis/OrderABI.json";
+import ERC20ABI from "~/web3/abis/ERC20ABI.json";
 import { getContract } from "../../web3/index.js";
 import WaitingConfirmationDialog from "~/components/dialogs/waiting-confirmation-dialog.vue";
 import SuccessConfirmationDialog from "~/components/dialogs/success-confirmation-dialog.vue";
@@ -173,23 +182,22 @@ export default {
     };
   },
   computed: {
-    userInfo() {
+    CurrentAccount() {
       return this.$store.state.userInfo;
     },
   },
-  mounted() {
-    this.getPolicysList();
-  },
   watch: {
-    userInfo: {
-      handler: "userInfoWatch",
+    CurrentAccount: {
+      handler: "reloadData",
       immediate: true,
     },
   },
   methods: {
-    userInfoWatch(newValue) {
-      if (newValue) {
-        this.isLogin = newValue.data.isLogin;
+    reloadData(Value) {
+      if (Value) {
+        this.isLogin = Value.isLogin;
+        this.isLoading = true;
+        this.getPolicysList();
       }
     },
     waitingClose() {
@@ -216,7 +224,7 @@ export default {
       getInsuranceList().then((res) => {
         let nowDate = parseInt(moment.now() / 1000);
         if (res && res.data.data.options) {
-          let Account = window.CURRENTADDRESS;
+          let Account = this.CurrentAccount.account;
           const ReturnList = res.data.data.options;
           const AskAssign = [];
           const BidAssign = [];
@@ -248,13 +256,11 @@ export default {
               const ResultItem = {
                 Type,
                 Expiry: item.expiry,
-                ShowExpiry,
+                ShowExpiry: moment(new Date(item.expiry * 1000)).format(
+                  "YYYY/MM/DD HH:mm:ss"
+                ),
                 Long: item.long,
                 Short: item.short,
-                ShowStrikePrice:
-                  Type === "Call"
-                    ? fromWei(item.strikePrice, StrikePriceDecimals)
-                    : 1 / fromWei(item.strikePrice, StrikePriceDecimals),
                 StrikePrice: item.strikePrice,
                 CollateralAddress: item.collateral,
                 CollateralSymbol,
@@ -265,6 +271,8 @@ export default {
                 CallToken,
                 PutToken,
               };
+              ResultItem.Status =
+                item.expiry * 1 > nowDate ? "Normal" : "Expired";
               item.asks.filter((itemAsk) => {
                 const ResultItemAsk = {
                   Binds: itemAsk.binds,
@@ -291,7 +299,8 @@ export default {
               UnderlyingAddress: itemAsks.UnderlyingAddress,
             });
 
-            let { StrikePriceDecimals, CollateralDecimals } = CurrentInsurance;
+            let { StrikePriceDecimals, CollateralDecimals, LastPriceDecimals } =
+              CurrentInsurance;
             if (itemAsks.Binds.length) {
               itemAsks.Binds.forEach((itemBid) => {
                 if (
@@ -315,7 +324,14 @@ export default {
                       ReturnItem.ShowVolume /
                         (1 / fromWei(itemAsks.StrikePrice, StrikePriceDecimals))
                     ).toFixed(8);
+                    ReturnItem.ShowStrikePrice = Number(
+                      1 / fromWei(itemAsks.StrikePrice, StrikePriceDecimals)
+                    ).toFixed(LastPriceDecimals);
                   } else {
+                    ReturnItem.ShowStrikePrice = fromWei(
+                      itemAsks.StrikePrice,
+                      StrikePriceDecimals
+                    );
                     ReturnItem.ShowVolume = Number(
                       ReturnItem.ShowVolume
                     ).toFixed(8);
@@ -341,14 +357,18 @@ export default {
               return list;
             });
             returnList = returnList.filter((filter) => filter.remain !== "0");
+            returnList = returnList.sort(
+              (a, b) => Number(b.BidID) - Number(a.BidID)
+            );
             this.PolicyList = returnList;
+            console.log(returnList);
             this.isLoading = false;
           });
         }
       });
     },
     getLongApporve(data) {
-      let Account = window.CURRENTADDRESS;
+      let Account = this.CurrentAccount.account;
       const Erc20ContractsLong = getContract(ERC20ABI.abi, data.Long);
       return Erc20ContractsLong.methods
         .allowance(Account, OrderAddress)
@@ -361,7 +381,7 @@ export default {
         });
     },
     getUnderlyingApprove(data) {
-      let Account = window.CURRENTADDRESS;
+      let Account = this.CurrentAccount.account;
       const Erc20ContractsLong = getContract(
         ERC20ABI.abi,
         data.UnderlyingAddress
@@ -381,19 +401,20 @@ export default {
       const Erc20Contracts = getContract(ERC20ABI.abi, data.UnderlyingAddress);
       const Infinitys =
         "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-      let Account = window.CURRENTADDRESS;
+      let Account = this.CurrentAccount.account;
       Erc20Contracts.methods
         .approve(OrderAddress, Infinitys)
         .send({ from: Account })
         .on("transactionHash", (hash) => {
           this.WaitingVisible = true;
-          this.WaitingText = `<p>You will approve <b>${data.UnderlyingSymbol}</b> to <b>Helmet.insure</b></p>`;
+          this.WaitingText = `You will approve <b>${data.UnderlyingSymbol}</b> to <b>Helmet.insure</b>`;
         })
         .on("receipt", (receipt) => {
           if (!this.SuccessVisible) {
             this.WaitingVisible = false;
             this.SuccessVisible = true;
             this.SuccessHash = receipt.transactionHash;
+            this.WaitingText = "";
             this.actionWithDraw(data);
           }
         })
@@ -405,19 +426,20 @@ export default {
       const Erc20Contracts = getContract(ERC20ABI.abi, data.Long);
       const Infinitys =
         "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
-      let Account = window.CURRENTADDRESS;
+      let Account = this.CurrentAccount.account;
       Erc20Contracts.methods
         .approve(OrderAddress, Infinitys)
         .send({ from: Account })
         .on("transactionHash", (hash) => {
           this.WaitingVisible = true;
-          this.WaitingText = `<p>You will approve <b>LONG</b> to <b>Helmet.insure</b></p>`;
+          this.WaitingText = `You will approve <b>LONG</b> to <b>Helmet.insure</b>`;
         })
         .on("receipt", (receipt) => {
           if (!this.SuccessVisible) {
             this.WaitingVisible = false;
             this.SuccessVisible = true;
             this.SuccessHash = receipt.transactionHash;
+            this.WaitingText = "";
             if (approveFlag) {
               this.actionWithDraw(data);
             } else {
@@ -427,12 +449,12 @@ export default {
         })
         .on("error", (ereor) => {
           this.WaitingVisible = false;
+          this.WaitingText = "";
         });
     },
     async toActive(data) {
       let LongApproveStatus = await this.getLongApporve(data);
       let UnderlyingApproveStatus = await this.getUnderlyingApprove(data);
-      console.log(LongApproveStatus, UnderlyingApproveStatus);
       if (!LongApproveStatus && !UnderlyingApproveStatus) {
         this.actionApproveLong(data);
         return;
@@ -451,7 +473,7 @@ export default {
       }
     },
     actionWithDraw(data) {
-      let Account = window.CURRENTADDRESS;
+      let Account = this.CurrentAccount.account;
       let Contracts = getContract(OrderABI, OrderAddress);
       Contracts.methods
         .exercise(data.BidID)
@@ -465,19 +487,21 @@ export default {
             this.SuccessHash = receipt.transactionHash;
             this.WaitingVisible = false;
             this.SuccessVisible = true;
+            this.WaitingText = "";
             this.getPolicysList();
           }
         })
-        .on("error", function (error) {
+        .on("error", (error) => {
           this.WaitingVisible = false;
           this.SuccessVisible = false;
+          this.WaitingText = "";
         });
     },
     async HBURGERPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x9ebbb98f2bC5d5D8E49579995C5efaC487303BEa"
       );
@@ -531,9 +555,9 @@ export default {
     },
     async LISHIPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x9eC5F3216c381715d7Bd06E00879a95d9Dd8e417"
       );
@@ -588,9 +612,9 @@ export default {
     },
     async hMATHPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0xdD9b5801e8A38ef7A728A42492699521C6A7379b"
       );
@@ -645,9 +669,9 @@ export default {
     },
     async HCCTIIPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x9065fcbb5f73B908aC4B05BdB81601Eec2065522"
       );
@@ -702,9 +726,9 @@ export default {
     },
     async hDODOPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0xfeD2e6A6105E48A781D0808E69460bd5bA32D3D3"
       );
@@ -759,9 +783,9 @@ export default {
     },
     async hTPTPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x412B6d4C3ca1F0a9322053490E49Bafb0D57dD7c",
         "hTPT"
@@ -818,9 +842,9 @@ export default {
     },
     async QFEIPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x7f6ff473adba47ee5ee5d5c7e6b9d41d61c32c6a"
       );
@@ -874,9 +898,9 @@ export default {
     },
     async qHELMETPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0xBf5fC08754ba85075d2d0dB370D6CA9aB4db0F99"
       );
@@ -930,9 +954,9 @@ export default {
     },
     async xhBURGERPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0xCa7597633927A98B800738eD5CD2933a74a80e8c"
       );
@@ -986,9 +1010,9 @@ export default {
     },
     async SHIBHRPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x224b33139a377a62d4BaD3D58cEDb7807AE228eB",
         "SHIBh"
@@ -1045,9 +1069,9 @@ export default {
     },
     async HWINGSRPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x34508EA9ec327ff3b98A2F10eEDc2950875bf026"
       );
@@ -1102,9 +1126,9 @@ export default {
     },
     async HMTRGPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0xa561926e81decb74b3d11e14680b3f6d1c5012bd"
       );
@@ -1159,9 +1183,9 @@ export default {
     },
     async HBABYPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x06a954537cdcf6fa57eadf2e3e56e4325b7e9624"
       );
@@ -1216,9 +1240,9 @@ export default {
     },
     async HBMXXPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x6dab495c467c8fb326dc5e792cd7faeb9ecafe44"
       );
@@ -1273,9 +1297,9 @@ export default {
     },
     async HARGONPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x4ce2d9804da7583c02f80fec087aea1d137214eb"
       );
@@ -1330,9 +1354,9 @@ export default {
     },
     async HMCRNPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x4c60bd0a7aa839e35882c7a9b9b240ea7e0657bf"
       );
@@ -1386,9 +1410,9 @@ export default {
     },
     async HWIZARDPolicy() {
       let myAddress =
-        this.$store.state.userInfo.data &&
-        this.$store.state.userInfo.data.account &&
-        this.$store.state.userInfo.data.account.toLowerCase();
+        this.$store.state.userInfo &&
+        this.$store.state.userInfo.account &&
+        this.$store.state.userInfo.account.toLowerCase();
       let volume = await getBalance(
         "0x792b733af7b9b83331f90dbbd297e519258b09bc"
       );
@@ -1445,7 +1469,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .icon {
   width: 24px;
   height: 24px;

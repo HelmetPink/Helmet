@@ -217,19 +217,18 @@ import { fixD } from "~/assets/js/util.js";
 import Message from "~/components/common/Message";
 import ClipboardJS from "clipboard";
 import countTo from "vue-count-to";
-import addToken from "~/assets/utils/addtoken.js";
-import MiningABI from "../../abi/MiningABI.json";
-import ERC20ABI from "../../abi/ERC20ABI.json";
-import { getContract } from "../../web3/index.js";
+import { addToken } from "~/web3/wallet.js";
+import MiningABI from "~/web3/abis/MiningABI.json";
+import ERC20ABI from "~/web3/abis/ERC20ABI.json";
+import { getContract, toWei } from "../../web3/index.js";
 import { Contract } from "ethers-multicall-x";
 import WaitingConfirmationDialog from "~/components/dialogs/waiting-confirmation-dialog.vue";
 import SuccessConfirmationDialog from "~/components/dialogs/success-confirmation-dialog.vue";
-import { toWei } from "~/interface/index";
 import {
   getOnlyMultiCallProvider,
   processResult,
   fromWei,
-} from "~/interface/index.js";
+} from "~/web3/index.js";
 export default {
   props: ["ActiveData", "ActiveFlag", "ActiveType"],
   components: {
@@ -257,23 +256,27 @@ export default {
       WaitingText: "",
     };
   },
-  async mounted() {
-    this.$nextTick(() => {
-      this.getPoolInfo();
-    });
-  },
-  watch: {
-    userInfo: {
-      handler: "userInfoWatch",
-      immediate: true,
-    },
-  },
   computed: {
-    userInfo() {
+    CurrentAccount() {
       return this.$store.state.userInfo;
     },
   },
+  watch: {
+    CurrentAccount: {
+      handler: "reloadData",
+      immediate: true,
+    },
+  },
+
   methods: {
+    reloadData(Value) {
+      if (Value) {
+        this.isLogin = Value.isLogin;
+        this.$nextTick(() => {
+          this.getPoolInfo();
+        });
+      }
+    },
     waitingClose() {
       this.WaitingVisible = false;
     },
@@ -289,18 +292,12 @@ export default {
       };
       await addToken(data);
     },
-    userInfoWatch(newValue) {
-      if (newValue) {
-        this.isLogin = newValue.data.isLogin;
-      }
-    },
     copyAdress(e, text) {
       let copys = new ClipboardJS(".copy", { text: () => text });
       copys.on("success", function (e) {
         Message({
           message: "Successfully copied",
           type: "success",
-          // duration: 0,
         });
         copys.destroy();
       });
@@ -316,7 +313,7 @@ export default {
       const PoolContracts = new Contract(PoolAddress, MiningABI);
       const StakeContracts = new Contract(StakeAddress, MiningABI);
       const ApproveContracts = new Contract(StakeAddress, ERC20ABI.abi);
-      const Account = window.CURRENTADDRESS;
+      const Account = this.CurrentAccount.account;
       const PromiseList = [
         StakeContracts.balanceOf(Account),
         PoolContracts.balanceOf(Account),
@@ -345,7 +342,6 @@ export default {
         this.ApproveStatus = ApproveStatus > 0;
       });
     },
-    // 抵押
     async toDeposite() {
       if (!this.StakeVolume || this.StakeLoading) {
         return;
@@ -355,7 +351,7 @@ export default {
       const TokenSymbol = this.ActiveData.StakeSymbol;
       const Decimals = this.ActiveData.StakeDecimals;
       const Volume = toWei(this.StakeVolume, Decimals);
-      const Account = window.CURRENTADDRESS;
+      const Account = this.CurrentAccount.account;
       const Infinity =
         "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
       this.StakeLoading = true;
@@ -379,7 +375,7 @@ export default {
               this.getPoolInfo();
             }
           })
-          .on("error", function (error) {
+          .on("error", (error) => {
             this.WaitingVisible = false;
             this.SuccessVisible = false;
             this.ApproveStatus = false;
@@ -402,7 +398,7 @@ export default {
               this.getPoolInfo();
             }
           })
-          .on("error", function (error) {
+          .on("error", (error) => {
             this.WaitingVisible = false;
             this.SuccessVisible = false;
             this.StakeLoading = false;
@@ -415,7 +411,7 @@ export default {
       }
       this.ClaimLoading = true;
       const ContractAddress = this.ActiveData.PoolAddress;
-      const Account = window.CURRENTADDRESS;
+      const Account = this.CurrentAccount.account;
       const Contracts = getContract(MiningABI, ContractAddress);
       Contracts.methods
         .getReward()
@@ -432,20 +428,19 @@ export default {
             this.getPoolInfo();
           }
         })
-        .on("error", function (error) {
+        .on("error", (error) => {
           this.WaitingVisible = false;
           this.SuccessVisible = false;
           this.ClaimLoading = false;
         });
     },
-    // 退出
     async toExit() {
       if (this.ExitLoading) {
         return;
       }
       this.ExitLoading = true;
       let ContractAddress = this.ActiveData.PoolAddress;
-      const Account = window.CURRENTADDRESS;
+      const Account = this.CurrentAccount.account;
       const Contracts = getContract(MiningABI, ContractAddress);
       Contracts.methods
         .exit()
@@ -462,7 +457,7 @@ export default {
             this.getPoolInfo();
           }
         })
-        .on("error", function (error) {
+        .on("error", (error) => {
           this.WaitingVisible = false;
           this.SuccessVisible = false;
           this.ExitLoading = false;

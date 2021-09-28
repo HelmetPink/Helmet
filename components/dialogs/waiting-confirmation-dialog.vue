@@ -26,18 +26,22 @@ export default {
 </script>
 
 <style lang='scss' >
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .waiting_title {
   font-size: 16px;
   font-family: IBMPlexSans-Bold, IBMPlexSans;
   font-weight: bold;
-  color: #17173a;
+  @include themeify {
+    color: themed("color-17173a");
+  }
   line-height: 16px;
 }
 .waiting_info {
   font-size: 14px;
   font-family: IBMPlexSans;
-  color: #17173a;
+  @include themeify {
+    color: themed("color-17173a");
+  }
   line-height: 16px;
   margin-top: 15px;
 }

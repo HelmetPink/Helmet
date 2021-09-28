@@ -42,12 +42,8 @@
 </template>
 
 <script>
-import ClipboardJS from "clipboard";
-import Message from "~/components/common/Message";
 import { totalSupply, getLPTOKEN } from "~/interface/deposite";
 import { fixD, addCommom } from "~/assets/js/util.js";
-import { getLongValue } from "~/interface/event.js";
-import { toWei, fromWei } from "~/assets/utils/web3-fun.js";
 import { applied3 } from "~/interface/iio.js";
 import { Information } from "../../config/iio.js";
 export default {
@@ -112,9 +108,7 @@ export default {
       let Name = this.iioType.toUpperCase();
       let lpt_name = `IIO_HELMETBNB_${Name}`;
       let pool_name = "IIO_HELMETBNB_POOL";
-      // 已抵押数量
       let DepositedVolume = await getLPTOKEN(pool_name);
-      // 总抵押
       let DepositeTotal = await totalSupply(pool_name);
       this.showMsg.DepositeValue = addCommom(DepositeTotal, 2);
       this.showMsg.DepositedVolume = fixD(DepositedVolume, 2);

@@ -1,24 +1,24 @@
-import MiningABI from "~/abi/MiningABI.json";
-import ApproveABI from "~/abi/IPancakePair.json";
-import CakePoolABI from "~/abi/CakePoolABI.json";
-import MdexPoolABI from "~/abi/MdexPoolABI.json";
-import SushiPoolABI from "~/abi/SushiPoolABI.json";
-import OrderABI from "~/abi/OrderABI.json";
-import FactoryABI from "~/abi/FactoryABI.json";
-import BurnSwapABI from "~/abi/BurnSwap.json";
-import SushiSwapABI from "~/abi/SushiSwap.json";
-import ChainSwapABI from "~/abi/ChainSwap.json";
-import MigrationABI from "~/abi/Migration.json";
-import IIOABI from "~/abi/iio_abi.json";
+import MiningABI from "~/web3/abis/MiningABI.json";
+import ApproveABI from "~/web3/abis/IPancakePair.json";
+import CakePoolABI from "~/web3/abis/CakePoolABI.json";
+import MdexPoolABI from "~/web3/abis/MdexPoolABI.json";
+import SushiPoolABI from "~/web3/abis/SushiPoolABI.json";
+import OrderABI from "~/web3/abis/OrderABI.json";
+import FactoryABI from "~/web3/abis/FactoryABI.json";
+import BurnSwapABI from "~/web3/abis/BurnSwap.json";
+import SushiSwapABI from "~/web3/abis/SushiSwap.json";
+import ChainSwapABI from "~/web3/abis/ChainSwap.json";
+import MigrationABI from "~/web3/abis/Migration.json";
+import IIOABI from "~/web3/abis/iio_abi.json";
 import {
   Web3Contract,
   getAccounts,
   getDecimals,
-  toWei,
-  fromWei,
   BlockNumber,
   getBlockNumber,
 } from "./common_contract.js";
+import { toWei, fromWei } from "~/web3/index.js";
+
 import BigNumber from "bignumber.js";
 let OrderContractAddress = "0x4C899b7C39dED9A06A5db387f0b0722a18B8d70D";
 let FectoryContractAddress = "0x021297e233550eDBa8e6487EB7c6696cFBB63b88";
@@ -317,4 +317,24 @@ export const Applied3 = async (ContractAddress, RewardAdress) => {
   let Contracts = await Web3Contract(IIOABI.abi, ContractAddress);
   let Account = await getAccounts();
   return Contracts.methods.applied3(RewardAdress, Account).call();
+};
+export const PendingCake = async (ContractAddress, Pid) => {
+  let Contracts = await Web3Contract(CakePoolABI, ContractAddress);
+  let Account = await getAccounts();
+  return Contracts.methods
+    .pendingCake(Pid, Account)
+    .call()
+    .then((res) => {
+      return fromWei(res);
+    });
+};
+export const UserInfo = async (ContractAddress, Pid) => {
+  let Contracts = await Web3Contract(CakePoolABI, ContractAddress);
+  let Account = await getAccounts();
+  return Contracts.methods
+    .userInfo(Pid, Account)
+    .call()
+    .then((res) => {
+      return fromWei(res.amount)
+    });
 };

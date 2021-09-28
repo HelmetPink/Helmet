@@ -1,5 +1,5 @@
 <template>
-  <div class="insurance-banner">
+  <div class="insurance_data">
     <ul>
       <li>
         <div class="label_data">
@@ -84,7 +84,7 @@
 </template>
 <script>
 import { fixD, addCommom } from "~/assets/js/util.js";
-import ERC20ABI from "~/abi/ERC20ABI.json";
+import ERC20ABI from "~/web3/abis/ERC20ABI.json";
 import {
   getLongType,
   getLongTokenValue,
@@ -92,10 +92,11 @@ import {
 } from "~/interface/event.js";
 import { BalanceOf } from "~/interface/read_contract.js";
 import countTo from "vue-count-to";
-import { fromWei } from "../../interface/index.js";
+import { fromWei } from "../../web3/index.js";
+import { TokenBalance } from "~/web3/index.js";
 import Web3 from "web3";
 export default {
-  name: "insurance-banner",
+  name: "insurance_data",
   components: {
     countTo,
   },
@@ -134,41 +135,37 @@ export default {
         this.TotalHelmetsBorrowedVolume = res;
       });
       this.getHelmetVolume().then((res) => {
+        console.log(res);
         this.Helmetvolume = res;
       });
-      // this.getGuardVolume().then((res) => {
-      //   // 矿山初始值 400W - 当前矿山的量(3,994,969) + 常数(10W)
-      //   this.GuardVolume = new BigNumber(4000000)
-      //     .minus(new BigNumber(res))
-      //     .plus(100000);
-      // });
+     
       this.getHelmetPrice().then((res) => {
         this.HelmetPrice = fromWei(res.data.toTokenAmount);
       });
     });
   },
   methods: {
-    handleClickBuy() {
+    handleClickBuy() {                            
       this.$bus.$emit("OPEN_BUY_DIALOG", true);
     },
     userInfoWatch(newValue) {
       if (newValue) {
-        this.isLogin = newValue.data.isLogin;
+        this.isLogin = newValue.isLogin;
       }
     },
     async getHelmetPrice() {
       let helmetConrtact = "0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8";
-      let usdtConrtact = "0x55d398326f99059ff775485246999027b3197955";
+      let busdConrtact = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
       return getTokenPrice({
         fromTokenAddress: helmetConrtact,
-        toTokenAddress: usdtConrtact,
+        toTokenAddress: busdConrtact,
         amount: "1000000000000000000",
       });
     },
     async getHelmetVolume() {
       let helmetConrtact = "0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8";
       let deadContract = "0x000000000000000000000000000000000000dead";
-      return await BalanceOf(helmetConrtact, 18, deadContract);
+      return await TokenBalance(helmetConrtact, 18, deadContract);
     },
     async getGuardVolume() {
       const HttpWeb3 = new Web3(
@@ -189,8 +186,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
-.insurance-banner {
+@import "~/assets/css/themes.scss";
+.insurance_data {
   ul {
     height: 100%;
     label {
@@ -204,12 +201,12 @@ export default {
   }
 }
 @media screen and (min-width: 750px) {
-  .insurance-banner {
+  .insurance_data {
     width: 100%;
     height: 200px;
     margin: 0 auto;
     font-size: 16px;
-    color: $text-m;
+    color: #ffffff;
     margin-bottom: 10px;
     ul {
       display: flex;
@@ -409,7 +406,7 @@ export default {
   }
 }
 @media screen and (max-width: 750px) {
-  .insurance-banner {
+  .insurance_data {
     width: 100%;
     height: 160px;
     font-size: 16px;

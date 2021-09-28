@@ -6,7 +6,9 @@
         <span>HELMET Token Contract Address:</span>
         <span>0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8</span>
         <p>
-          <a @click="openBUY" class="bsc_helmet">Buy HELMET(BSC)</a>
+          <a @click="handleClickBuyHelmet" class="bsc_helmet"
+            >Buy HELMET(BSC)</a
+          >
           <a href="https://www.guard.insure/insurance/" class="matic_helmet"
             >Guard(Polygon)</a
           >
@@ -41,7 +43,10 @@
       @close="closeStatusDialog"
     />
     <Airdrop />
-    <BuyDialog />
+    <BuyHelmetDialog
+      :DialogVisible="BuyHelmetVisible"
+      :DialogClose="BuyHelmetClose"
+    />
     <RiskConfirmationDialog
       :DialogVisible="RiskVisible"
       :DialogClose="RiskClose"
@@ -57,18 +62,18 @@ import PHeader from "~/components/common/header.vue";
 import PFooter from "~/components/common/footer.vue";
 import PSlider from "~/components/common/slider.vue";
 import Airdrop from "~/components/common/airdrop.vue";
-import BuyDialog from "~/components/common/buy-dialog.vue";
-import { web3 } from "~/assets/utils/web3-obj.js";
-import { getID } from "~/assets/utils/address-pool.js";
-import { mateMaskInfo } from "~/assets/utils/matemask.js";
 import StatusDialog from "~/components/common/status-dialog.vue";
 import WallectDownLoad from "~/components/common/wallet-download.vue";
-import { pancakeswap } from "~/assets/utils/pancakeswap.js";
-import { getBalance } from "~/interface/order.js";
-import { fixD, addCommom, autoRounding, toRounding } from "~/assets/js/util.js";
-import { toWei, fromWei } from "~/assets/utils/web3-fun.js";
 import Message from "~/components/common/Message";
 import ClipboardJS from "clipboard";
+import {
+  openMetaMaskWallet,
+  watchAccountChange,
+  watchNetWorkChange,
+  getNetworkChainID,
+} from "../web3/wallet.js";
+import { WEB3 } from "../web3/index.js";
+import BuyHelmetDialog from "../components/dialogs/buy-helmet-dialog.vue";
 import NetWorkConfirmationDialog from "../components/dialogs/network-confirmation-dialog.vue";
 import RiskConfirmationDialog from "../components/dialogs/risk-confirmation-dialog.vue";
 export default {
@@ -79,8 +84,8 @@ export default {
     PFooter,
     StatusDialog,
     Airdrop,
-    BuyDialog,
     WallectDownLoad,
+    BuyHelmetDialog,
     NetWorkConfirmationDialog,
     RiskConfirmationDialog,
   },
@@ -99,34 +104,24 @@ export default {
       canShow: false,
       NetWorkVisible: false,
       RiskVisible: false,
+      BuyHelmetVisible: false,
     };
   },
   computed: {
     routeObj() {
       return this.$route;
     },
-    // 标的物
-    policyUndArray() {
-      return this.$store.state.policyUndArray;
-    },
     ChainID() {
-      let chainID = this.$store.state.chainID;
-      return chainID;
-    },
-    localeList() {
-      return this.$store.state.localeList;
+      return this.$store.state.chainID;
     },
     storeThemes() {
       return this.$store.state.themes;
     },
   },
   watch: {
-    ChainID(newValue) {
-      if (newValue == 56) {
-        this.NetWorkVisible = false;
-      } else {
-        this.NetWorkVisible = true;
-      }
+    ChainID: {
+      handler: "watchChainID",
+      immediate: true,
     },
     storeThemes(newValue) {
       if (newValue) {
@@ -137,39 +132,32 @@ export default {
   },
 
   async mounted() {
-    // 是否阅读过【风险提示】
     if (!window.localStorage.getItem("readRisk")) {
       this.RiskVisible = true;
     }
     this.copy();
-    window.WEB3 = await web3();
-    window.chainID = await getID();
-    this.showWallet();
-    this.$store.commit("SET_CHAINID", window.chainID);
-    this.getUserInfo();
-    // 获取映射
-    this.monitorNetWorkChange();
-    this.mointorAccountChange();
-    // 显示状态弹框
+    window.WEB3 = WEB3();
+    let NetWork = await getNetworkChainID();
+    this.$store.dispatch("setChainID", NetWork);
+
     this.$bus.$on("OPEN_STATUS_DIALOG", (data) => {
       this.statusData = data;
       this.openStatusDialog();
       window.statusDialog = true;
     });
-    // 关闭状态弹框
+
     this.$bus.$on("CLOSE_STATUS_DIALOG", (data) => {
       this.closeStatusDialog();
       window.statusDialog = false;
     });
-    this.$bus.$on("REFRESH_BALANCE", () => {
-      this.getBalance();
-    });
-    this.$bus.$emit("GET_SLIDER_NUMBER");
     let themes = localStorage.themes || this.storeThemes || "light";
     document.body.setAttribute("class", themes);
     localStorage.setItem("themes", themes);
     this.$store.dispatch("setThemes", themes);
     this.canShow = true;
+    await openMetaMaskWallet();
+    watchAccountChange();
+    watchNetWorkChange();
   },
   methods: {
     NetWorkClose() {
@@ -178,8 +166,18 @@ export default {
     RiskClose() {
       this.RiskVisible = false;
     },
-    openBUY() {
-      this.$bus.$emit("OPEN_BUY_DIALOG", true);
+    BuyHelmetClose() {
+      this.BuyHelmetVisible = false;
+    },
+    handleClickBuyHelmet() {
+      this.BuyHelmetVisible = true;
+    },
+    openStatusDialog() {
+      this.showStatusDialog = true;
+    },
+    closeStatusDialog() {
+      window.statusDialog = false;
+      this.showStatusDialog = false;
     },
     copy() {
       let copy = new ClipboardJS("#copy_default");
@@ -197,73 +195,19 @@ export default {
         copy.destroy();
       });
     },
-    closeDialog() {
-      this.$emit("close");
-    },
-    openStatusDialog() {
-      this.showStatusDialog = true;
-    },
-    closeStatusDialog() {
-      window.statusDialog = false;
-      this.showStatusDialog = false;
-    },
-    monitorNetWorkChange() {
-      if (window.ethereum) {
-        ethereum.on("chainChanged", (chainID) => {
-          window.chainID = chainID;
-          if (chainID * 1 === 137) {
-            window.location.href = "https://www.guard.insure/insurance/";
-          }
-          this.$store.commit("SET_CHAINID", chainID);
-        });
+    watchChainID(value) {
+      console.log(value);
+      if (value == 56) {
+        this.NetWorkVisible = false;
       } else {
-        if (this.times < 10) {
-          this.times = this.times + 1;
-          this.monitorNetWorkChange();
-        }
-      }
-    },
-    mointorAccountChange() {
-      if (window.ethereum) {
-        ethereum.on("accountsChanged", async (account) => {
-          let userInfo = await mateMaskInfo(account[0], "MetaMask");
-          this.$store.dispatch("setUserInfo", userInfo);
-          this.$bus.$emit("REFRESH_MINING");
-          this.$bus.$emit("GET_CARD_BALANCE");
-          this.$bus.$emit("NFT_WINDOW_STATUS");
-        });
-      }
-    },
-    showWallet() {
-      try {
-        window.ethereum
-          .request({ method: "eth_requestAccounts" })
-          .then(async (account) => {
-            window.localStorage.setItem("currentType", "MetaMask");
-
-            let userInfo = await mateMaskInfo(account[0], "MetaMask");
-            this.$store.dispatch("setUserInfo", userInfo);
-            this.$bus.$emit("REFRESH_MINING");
-            this.closeDialog();
-          });
-      } catch (error) {}
-    },
-    async getUserInfo() {
-      let res = await mateMaskInfo();
-      try {
-        if (res.status === -1) {
-          return;
-        }
-        this.$store.dispatch("setUserInfo", res);
-      } catch (error) {
-        alert(error);
+        this.NetWorkVisible = true;
       }
     },
   },
 };
 </script>
 <style scoped lang="scss">
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;

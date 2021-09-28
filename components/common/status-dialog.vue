@@ -96,7 +96,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .loading_wrap {
   display: flex;
   align-items: center;
@@ -130,7 +130,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 9999999;
     /* background-color: rgba(0, 0, 0, 0.8); */
     .activeWarn {
       margin-top: 10px;

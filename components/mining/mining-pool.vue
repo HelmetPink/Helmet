@@ -12,7 +12,7 @@
             :startVal="Number(0)"
             :endVal="Number(CanDeposite)"
             :duration="2000"
-            :decimals="8"
+            :decimals="4"
           />
           <span v-else>--</span>
           {{ ActiveData.StakeUnit }}
@@ -26,12 +26,12 @@
             v-model="StakeVolume"
             :class="ActiveType == 'Stake' ? 'activeInput' : ''"
           />
-          <span @click="StakeVolume = CanDeposite">{{ $t("Table.Max") }}</span>
+          <span @click="handleClickMax()">{{ $t("Table.Max") }}</span>
         </div>
       </div>
       <div class="button">
         <button
-          v-if="ActiveData.StakeSymbol === 'HELMET'"
+          v-if="ActiveData.PoolType === 'compound'"
           @click="toDeposite"
           :class="
             (StakeLoading ? 'disable b_button' : 'b_button',
@@ -42,7 +42,7 @@
           >{{
             !ApproveStatus
               ? $t("Table.Approve")
-              : CanClaim1
+              : Number(CanClaim1)
               ? $t("Table.StakeAndCompound")
               : $t("Table.ConfirmDeposit")
           }}
@@ -52,7 +52,10 @@
           @click="toDeposite"
           :class="
             (StakeLoading ? 'disable b_button' : 'b_button',
-            ActiveData.Status == 3 ? 'disable_button b_button' : 'b_button')
+            ActiveData.Status == 3 ||
+            (ActiveData.Max && Number(MaxStaking) === Number(CanWithdraw))
+              ? 'disable_button b_button'
+              : 'b_button')
           "
         >
           <i :class="StakeLoading ? 'loading_pic' : ''"></i
@@ -129,6 +132,11 @@
         </p>
         <i></i>
       </div>
+      <div v-if="ActiveData.Max">
+        <p class="jump_text">
+          <a> {{ $t("Dialogs.MaxStaking", { number: MaxStaking }) }}</a>
+        </p>
+      </div>
     </div>
     <div
       class="withdraw"
@@ -142,7 +150,7 @@
             :startVal="Number(0)"
             :endVal="Number(CanWithdraw)"
             :duration="2000"
-            :decimals="8"
+            :decimals="4"
           />
           <span v-else>--</span>
           {{ ActiveData.StakeUnit }}
@@ -204,7 +212,7 @@
         </p>
         <!-- compound -->
         <button
-          v-if="ActiveData.compound"
+          v-if="ActiveData.Compound"
           @click="toCompound"
           :class="ClaimLoading ? 'disable o_button' : 'o_button'"
         >
@@ -269,17 +277,16 @@ import { fixD } from "~/assets/js/util.js";
 import Message from "~/components/common/Message";
 import ClipboardJS from "clipboard";
 import countTo from "vue-count-to";
-import addToken from "~/assets/utils/addtoken.js";
-import MiningABI from "../../abi/MiningABI.json";
-import ERC20ABI from "../../abi/ERC20ABI.json";
+import { addToken } from "~/web3/wallet.js";
+import ERC20ABI from "~/web3/abis/ERC20ABI.json";
 import { Contract } from "ethers-multicall-x";
-import { getContract } from "../../web3/index.js";
-import { toWei } from "~/interface/index";
 import {
   getOnlyMultiCallProvider,
   processResult,
   fromWei,
-} from "~/interface/index.js";
+  toWei,
+  getContract,
+} from "~/web3/index.js";
 import SuccessConfirmationDialog from "~/components/dialogs/success-confirmation-dialog.vue";
 import WaitingConfirmationDialog from "~/components/dialogs/waiting-confirmation-dialog.vue";
 export default {
@@ -307,30 +314,46 @@ export default {
       SuccessVisible: false,
       SuccessHash: "",
       WaitingText: "",
+      MaxStaking: 0,
     };
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.getPoolInfo();
-    });
-  },
-  watch: {
-    userInfo: {
-      handler: "userInfoWatch",
-      immediate: true,
-    },
-  },
   computed: {
-    userInfo() {
+    CurrentAccount() {
       return this.$store.state.userInfo;
     },
   },
+  watch: {
+    CurrentAccount: {
+      handler: "reloadData",
+      immediate: true,
+    },
+  },
+
   methods: {
+    reloadData(Value) {
+      if (Value) {
+        console.log(Value);
+        this.isLogin = Value.isLogin;
+        this.$nextTick(() => {
+          this.getPoolInfo();
+        });
+      }
+    },
     waitingClose() {
       this.WaitingVisible = false;
     },
     successClose() {
       this.SuccessVisible = false;
+    },
+    handleClickMax() {
+      if (this.ActiveData.Max) {
+        this.StakeVolume = Math.min(
+          this.CanDeposite,
+          this.MaxStaking - this.CanWithdraw
+        );
+      } else {
+        this.StakeVolume = this.CanDeposite;
+      }
     },
     async addTokenFn(options) {
       let data = {
@@ -353,11 +376,7 @@ export default {
         return;
       }
     },
-    userInfoWatch(newValue) {
-      if (newValue) {
-        this.isLogin = newValue.data.isLogin;
-      }
-    },
+
     copyAdress(e, text) {
       let _this = this;
       let copys = new ClipboardJS(".copy", { text: () => text });
@@ -376,44 +395,104 @@ export default {
       });
     },
     getPoolInfo() {
-      let { StakeAddress, PoolAddress, StakeDecimals, RewardDecimals } =
-        this.ActiveData;
-      const PoolContracts = new Contract(PoolAddress, MiningABI);
-      const StakeContracts = new Contract(StakeAddress, MiningABI);
+      let {
+        StakeAddress,
+        PoolAddress,
+        StakeDecimals,
+        RewardDecimals,
+        NoProxy,
+        PoolABI,
+        StakeABI,
+        ProxyPid,
+        PoolType,
+        CanWithDrawMethods,
+        CanClaim1Methods,
+        CanClaim2Methods,
+      } = this.ActiveData;
+      const PoolContracts = new Contract(PoolAddress, PoolABI);
+      const StakeContracts = new Contract(StakeAddress, StakeABI);
       const ApproveContracts = new Contract(StakeAddress, ERC20ABI.abi);
-      const Account = window.CURRENTADDRESS;
-      const PromiseList = [
-        StakeContracts.balanceOf(Account),
-        PoolContracts.balanceOf(Account),
-        PoolContracts.totalSupply(),
-        PoolContracts.earned(Account),
-        PoolContracts.earned2(Account),
-        ApproveContracts.allowance(Account, PoolAddress),
-      ];
+      const Account = this.CurrentAccount.account;
+
+      let PromiseList;
+      let Params = NoProxy ? [ProxyPid, Account] : [Account];
+      if (PoolType === "candy") {
+        PromiseList = [
+          StakeContracts.balanceOf(Account),
+          PoolContracts.balanceOf(Account),
+          PoolContracts.totalSupply(),
+          PoolContracts.earned(Account),
+          PoolContracts.stakingMax(),
+          ApproveContracts.allowance(Account, PoolAddress),
+        ];
+      } else {
+        PromiseList = [
+          StakeContracts.balanceOf(Account),
+          PoolContracts[CanWithDrawMethods](...Params),
+          NoProxy ? StakeContracts.totalSupply() : PoolContracts.totalSupply(),
+          PoolContracts[CanClaim1Methods](...Params),
+          PoolContracts[CanClaim2Methods](...Params),
+          ApproveContracts.allowance(Account, PoolAddress),
+        ];
+      }
+
       const MulticallProvider = getOnlyMultiCallProvider();
       MulticallProvider.all(PromiseList).then((res) => {
         const FixData = processResult(res);
-        const [
-          CanDeposite,
-          CanWithdraw,
-          TotalDeposite,
-          CanClaim1,
-          CanClaim2,
-          ApproveStatus,
-        ] = FixData;
-        this.CanDeposite = fromWei(CanDeposite, StakeDecimals);
-        this.CanWithdraw = fromWei(CanWithdraw, StakeDecimals);
-        this.TotalDeposite = fromWei(TotalDeposite, StakeDecimals);
-        this.CanClaim1 = fromWei(CanClaim1, RewardDecimals);
-        this.CanClaim2 = fromWei(CanClaim2, RewardDecimals);
-        this.MyPoolShare = fixD(
-          (this.CanWithdraw / this.TotalDeposite) * 100,
-          2
-        );
-        this.ApproveStatus = ApproveStatus > 0;
+        if (PoolType === "candy") {
+          const [
+            CanDeposite,
+            CanWithdraw,
+            TotalDeposite,
+            CanClaim1,
+            MaxStaking,
+            ApproveStatus,
+          ] = FixData;
+          this.CanDeposite = fromWei(CanDeposite, StakeDecimals);
+          this.CanWithdraw = fromWei(
+            NoProxy ? CanWithdraw[0] : CanWithdraw,
+            StakeDecimals
+          );
+          this.TotalDeposite = fromWei(TotalDeposite, StakeDecimals);
+          this.CanClaim1 = fromWei(CanClaim1, RewardDecimals);
+          this.MaxStaking = fromWei(MaxStaking, RewardDecimals);
+          this.MyPoolShare = fixD(
+            (this.CanWithdraw / this.TotalDeposite) * 100,
+            2
+          );
+          this.ApproveStatus = ApproveStatus > 0;
+          if (this.ActiveData.Max) {
+            this.StakeVolume = Math.min(
+              this.CanDeposite,
+              Number(this.MaxStaking) - Number(this.CanWithdraw)
+            );
+          }
+        } else {
+          const [
+            CanDeposite,
+            CanWithdraw,
+            TotalDeposite,
+            CanClaim1,
+            CanClaim2,
+            ApproveStatus,
+          ] = FixData;
+
+          this.CanDeposite = fromWei(CanDeposite, StakeDecimals);
+          this.CanWithdraw = fromWei(
+            NoProxy ? CanWithdraw[0] : CanWithdraw,
+            StakeDecimals
+          );
+          this.TotalDeposite = fromWei(TotalDeposite, StakeDecimals);
+          this.CanClaim1 = fromWei(CanClaim1, RewardDecimals);
+          this.CanClaim2 = fromWei(CanClaim2, RewardDecimals);
+          this.MyPoolShare = fixD(
+            (this.CanWithdraw / this.TotalDeposite) * 100,
+            2
+          );
+          this.ApproveStatus = ApproveStatus > 0;
+        }
       });
     },
-    // 抵押
     async toDeposite() {
       if (!this.StakeVolume || this.StakeLoading) {
         return;
@@ -422,8 +501,12 @@ export default {
       const StakeAddress = this.ActiveData.StakeAddress;
       const TokenSymbol = this.ActiveData.StakeSymbol;
       const Decimals = this.ActiveData.StakeDecimals;
-      const Volume = toWei(this.StakeVolume, Decimals);
-      const Account = window.CURRENTADDRESS;
+      const PoolABI = this.ActiveData.PoolABI;
+      const ProxyPid = this.ActiveData.ProxyPid;
+      const StakeMethods = this.ActiveData.StakeMethods;
+      const NoProxy = this.ActiveData.NoProxy;
+      const Volume = toWei(this.StakeVolume + "", Decimals);
+      const Account = this.CurrentAccount.account;
       const Infinity =
         "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
       this.StakeLoading = true;
@@ -444,19 +527,26 @@ export default {
               this.SuccessVisible = true;
               this.StakeLoading = false;
               this.ApproveStatus = true;
+              this.WaitingText = "";
+              this.$store.dispatch("refreshData");
               this.getPoolInfo();
             }
           })
-          .on("error", function (error) {
+          .on("error", (error) => {
             this.WaitingVisible = false;
             this.SuccessVisible = false;
             this.ApproveStatus = false;
             this.StakeLoading = false;
           });
       } else {
-        const Contracts = getContract(MiningABI, PoolAddress);
-        Contracts.methods
-          .stake(Volume)
+        const Contracts = getContract(PoolABI, PoolAddress);
+        let Params;
+        if (NoProxy) {
+          Params = [ProxyPid, Volume];
+        } else {
+          Params = [Volume];
+        }
+        Contracts.methods[StakeMethods](...Params)
           .send({ from: Account })
           .on("transactionHash", (hash) => {
             this.WaitingVisible = true;
@@ -467,89 +557,84 @@ export default {
               this.WaitingVisible = false;
               this.SuccessVisible = true;
               this.StakeLoading = false;
+              this.$store.dispatch("refreshData");
               this.getPoolInfo();
             }
           })
-          .on("error", function (error) {
+          .on("error", (error) => {
+            this.StakeLoading = false;
             this.WaitingVisible = false;
             this.SuccessVisible = false;
-            this.StakeLoading = false;
           });
       }
     },
 
-    // 结算Paya
     async toClaim() {
       if (this.ClaimLoading) {
         return;
       }
       this.ClaimLoading = true;
       const ContractAddress = this.ActiveData.PoolAddress;
-      const RewardVolume = this.ActiveData.RewardVolume;
-      const Account = window.CURRENTADDRESS;
-      const Contracts = getContract(MiningABI, ContractAddress);
-      if (RewardVolume == "one") {
-        Contracts.methods
-          .getReward()
-          .send({ from: Account })
-          .on("transactionHash", (hash) => {
-            this.WaitingVisible = true;
-          })
-          .on("receipt", (receipt) => {
-            if (!this.SuccessVisible) {
-              this.SuccessHash = receipt.transactionHash;
-              this.WaitingVisible = false;
-              this.SuccessVisible = true;
-              this.ClaimLoading = false;
-              this.getPoolInfo();
-            }
-          })
-          .on("error", function (error) {
-            this.WaitingVisible = false;
-            this.SuccessVisible = false;
-            this.ClaimLoading = false;
-          });
+      const WithDrawMethods = this.ActiveData.WithDrawMethods;
+      const PoolABI = this.ActiveData.PoolABI;
+      const NoProxy = this.ActiveData.NoProxy;
+      const ProxyPid = this.ActiveData.ProxyPid;
+      const Account = this.CurrentAccount.account;
+      const Contracts = getContract(PoolABI, ContractAddress);
+      let Params;
+      if (NoProxy) {
+        Params = [ProxyPid, 0];
       } else {
-        Contracts.methods
-          .getDoubleReward()
-          .send({ from: Account })
-          .on("transactionHash", (hash) => {
-            this.WaitingVisible = true;
-          })
-          .on("receipt", (receipt) => {
-            if (!this.SuccessVisible) {
-              this.SuccessHash = receipt.transactionHash;
-              this.WaitingVisible = false;
-              this.SuccessVisible = true;
-              this.ClaimLoading = false;
-              this.getPoolInfo();
-            }
-          })
-          .on("error", function (error) {
-            this.WaitingVisible = false;
-            this.SuccessVisible = false;
-            this.ClaimLoading = false;
-          });
+        Params = [];
       }
+      Contracts.methods[WithDrawMethods](...Params)
+        .send({ from: Account })
+        .on("transactionHash", (hash) => {
+          this.WaitingVisible = true;
+        })
+        .on("receipt", (receipt) => {
+          if (!this.SuccessVisible) {
+            this.SuccessHash = receipt.transactionHash;
+            this.WaitingVisible = false;
+            this.SuccessVisible = true;
+            this.ClaimLoading = false;
+            this.$store.dispatch("refreshData");
+            this.getPoolInfo();
+          }
+        })
+        .on("error", (error) => {
+          this.WaitingVisible = false;
+          this.SuccessVisible = false;
+          this.ClaimLoading = false;
+        });
     },
     toCompound() {
       this.$bus.$emit("OPEN_COMPOUND", {
         title: "Compound HELMET Earned",
         number: this.CanClaim1,
-        PoolAddress: this.ActiveData.PoolAddress,
+        poolAddress: this.ActiveData.PoolAddress,
       });
     },
-    // 退出
     async toExit() {
       if (this.ExitLoading) {
         return;
       }
       this.ExitLoading = true;
       let ContractAddress = this.ActiveData.PoolAddress;
-      const Account = window.CURRENTADDRESS;
-      const Contracts = getContract(MiningABI, ContractAddress);
-      Contracts.methods
-        .exit()
+      const PoolABI = this.ActiveData.PoolABI;
+      const NoProxy = this.ActiveData.NoProxy;
+      const ProxyPid = this.ActiveData.ProxyPid;
+      const Decimals = this.ActiveData.StakeDecimals;
+      const ExitMethods = this.ActiveData.ExitMethods;
+      const Account = this.CurrentAccount.account;
+      const Contracts = getContract(PoolABI, ContractAddress);
+      let Params;
+      if (NoProxy) {
+        Params = [ProxyPid, toWei(this.CanWithdraw, Decimals)];
+      } else {
+        Params = [];
+      }
+      Contracts.methods[ExitMethods](...Params)
         .send({ from: Account })
         .on("transactionHash", (hash) => {
           this.WaitingVisible = true;
@@ -560,10 +645,11 @@ export default {
             this.WaitingVisible = false;
             this.SuccessVisible = true;
             this.ExitLoading = false;
+            this.$store.dispatch("refreshData");
             this.getPoolInfo();
           }
         })
-        .on("error", function (error) {
+        .on("error", (error) => {
           this.WaitingVisible = false;
           this.SuccessVisible = false;
           this.ExitLoading = false;
@@ -613,6 +699,12 @@ export default {
     }
     .acsi {
       background-image: url("../../assets/img/icon/acsi@2x.png");
+    }
+    .cafeswap {
+      background-image: url("../../assets/img/icon/cafeswap@2x.png");
+    }
+    .xms {
+      background-image: url("../../assets/img/icon/xms@2x.png");
     }
   }
   .H5_link {

@@ -1,5 +1,5 @@
-import query_abi from '~/abi/query_abi.json';
-import IPancakePair from '~/abi/IPancakePair.json';
+import query_abi from '~/web3/abis/query_abi.json';
+import IPancakePair from '~/web3/abis/IPancakePair.json';
 import { getAddress, getWei_2 } from './address-pool';
 import Message from '~/components/common/Message';
 import { web3 } from '~/assets/utils/web3-obj.js';
@@ -40,7 +40,6 @@ export const burgerswaplpt = async (token1, token2, unit) => {
 export const burgerswaptoken = async (address) => {
     const WEB3 = await web3();
     const Contracts = await new WEB3.eth.Contract(IPancakePair.abi, address);
-    // 获取getReserves
     return Contracts.methods
         .getReserves()
         .call()

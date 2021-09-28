@@ -199,13 +199,13 @@ import countTo from "vue-count-to";
 import ClipboardJS from "clipboard";
 import Message from "~/components/common/Message";
 import moment from "moment";
-import MiningABI from "../../abi/MiningABI.json";
+import MiningABI from "~/web3/abis/MiningABI.json";
 import { Contract } from "ethers-multicall-x";
 import {
   getOnlyMultiCallProvider,
   processResult,
   fromWei,
-} from "~/interface/index.js";
+} from "~/web3/index.js";
 export default {
   props: ["activeData", "activeFlag", "activeType"],
   components: {
@@ -281,7 +281,7 @@ export default {
     },
     userInfoWatch(newValue) {
       if (newValue) {
-        this.isLogin = newValue.data.isLogin;
+        this.isLogin = newValue.isLogin;
       }
     },
     getPoolInfo() {
@@ -328,7 +328,7 @@ export default {
           process > 0 ? fixD(process * this.activeData.total_bonus, 4) : 0;
       }
     },
-    // 抵押
+    
     async toDeposite() {
       if (!this.DepositeNum) {
         return;

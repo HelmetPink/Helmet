@@ -4,7 +4,10 @@
       <h3>{{ $t("Type.Claim") }}</h3>
     </div>
     <Loading v-if="isLoading" />
-    <div class="claim_text" v-if="PolicyList && PolicyList.length">
+    <div
+      class="claim_text"
+      v-if="!isLoading && PolicyList && PolicyList.length"
+    >
       <span>{{ $t("Table.Type") }}</span>
       <span>{{ $t("Table.DenAssets") }}</span>
       <span>{{ $t("Table.BaseAssets") }}</span>
@@ -118,8 +121,8 @@
 import precision from "~/assets/js/precision.js";
 import { fixD } from "~/assets/js/util.js";
 import { getInsuranceList } from "~/interface/event.js";
-import { BalanceOf, Settleable } from "~/interface/read_contract.js";
-import FactoryABI from "../../abi/FactoryABI.json";
+import FactoryABI from "~/web3/abis/FactoryABI.json";
+import MiningABI from "~/web3/abis/MiningABI.json";
 import { getContract } from "../../web3/index.js";
 import WaitingConfirmationDialog from "~/components/dialogs/waiting-confirmation-dialog.vue";
 import SuccessConfirmationDialog from "~/components/dialogs/success-confirmation-dialog.vue";
@@ -127,7 +130,7 @@ import NoData from "./no-data.vue";
 import Loading from "./loading.vue";
 const FactoryAddress = "0x021297e233550eDBa8e6487EB7c6696cFBB63b88";
 import { getCurrentInsurance } from "~/config/insurance.js";
-import { fromWei, toWei } from "../../interface/index.js";
+import { fromWei, toWei } from "../../web3/index.js";
 export default {
   components: {
     WaitingConfirmationDialog,
@@ -153,26 +156,25 @@ export default {
     };
   },
   computed: {
-    myAboutInfoSell() {
-      return this.$store.state.myAboutInfoSell;
-    },
-    userInfo() {
+    CurrentAccount() {
       return this.$store.state.userInfo;
-    },
-    storeThemes() {
-      return this.$store.state.themes;
     },
   },
   watch: {
-    userInfo: {
-      handler: "userInfoWatch",
+    CurrentAccount: {
+      handler: "reloadData",
       immediate: true,
     },
   },
-  mounted() {
-    this.getList();
-  },
   methods: {
+    reloadData(Value) {
+      if (Value) {
+        console.log(Value);
+        this.isLogin = Value.isLogin;
+        this.isLoading = true;
+        this.getPolicysList();
+      }
+    },
     waitingClose() {
       this.WaitingVisible = false;
     },
@@ -189,17 +191,27 @@ export default {
         this.MaxNumber = (value - 1) * this.PageSize + this.PageSize;
       }
     },
-    userInfoWatch(newValue) {
-      if (newValue) {
-        this.isLogin = newValue.data.isLogin;
-      }
+
+    Settleable(Seller, Short) {
+      let Contracts = getContract(FactoryABI, FactoryAddress);
+      return Contracts.methods.settleable(Seller, Short).call();
     },
-    getList() {
+    BalanceOf(ContractAddress, Decimals) {
+      let Contracts = getContract(MiningABI, ContractAddress);
+      let Account = this.CurrentAccount.account;
+      return Contracts.methods
+        .balanceOf(Account)
+        .call()
+        .then((res) => {
+          return fromWei(res, Decimals);
+        });
+    },
+    getPolicysList() {
       getInsuranceList().then((res) => {
         let ReturnList = res.data.data.options;
         let FixList = [];
         this.isLoading = true;
-        ReturnList.forEach(async (item) => {
+        return ReturnList.forEach(async (item) => {
           const CurrentInsurance = getCurrentInsurance({
             CollateralAddress: item.collateral,
             UnderlyingAddress: item.underlying,
@@ -214,10 +226,14 @@ export default {
               UnderlyingDecimals,
               SettleTokenDecimals,
             } = CurrentInsurance;
-            // 结算
-            let LongBalance = await BalanceOf(item.long, CollateralDecimals);
-            let ShortBalance = await BalanceOf(item.short, CollateralDecimals);
-
+            let LongBalance = await this.BalanceOf(
+              item.long,
+              CollateralDecimals
+            );
+            let ShortBalance = await this.BalanceOf(
+              item.short,
+              CollateralDecimals
+            );
             if (
               Number(fixD(ShortBalance, 8)) > 0 &&
               Number(fixD(LongBalance, 8)) > 0
@@ -244,11 +260,11 @@ export default {
               });
             }
             let ShortMinusLong =
-              precision.minus(ShortBalance, LongBalance) + "";
+              Number(ShortBalance) - Number(LongBalance) + "";
             if (Number(ShortMinusLong) > 0) {
-              const SettleInfo = await Settleable(
+              const SettleInfo = await this.Settleable(
                 item.short,
-                toWei(ShortMinusLong, CollateralDecimals)
+                toWei(fixD(ShortMinusLong, 10), CollateralDecimals)
               );
               FixList.push({
                 collateral: item.collateral,
@@ -281,18 +297,18 @@ export default {
                 fixD(newItem.und, 8) > 0 ||
                 precision.plus(newItem.col, newItem.claimBalance) > 0
             );
+            // console.log(1);
             this.isLoading = false;
             return this.PolicyList;
           }
         });
       });
     },
-    // 行权
     toClaim(item) {
       let data = item;
       console.log(data);
       let Contracts = getContract(FactoryABI, FactoryAddress);
-      const Account = window.CURRENTADDRESS;
+      const Account = this.CurrentAccount.account;
       if (data.claimBalance != 0) {
         Contracts.methods
           .burn(data.short, toWei(data.claimBalance, data.collateral_decimals))
@@ -305,10 +321,10 @@ export default {
               this.SuccessHash = receipt.transactionHash;
               this.WaitingVisible = false;
               this.SuccessVisible = true;
-              this.getList();
+              this.getPolicysList();
             }
           })
-          .on("error", function (error) {
+          .on("error", (error) => {
             this.WaitingVisible = false;
             this.SuccessVisible = false;
           });
@@ -324,10 +340,10 @@ export default {
               this.SuccessHash = receipt.transactionHash;
               this.WaitingVisible = false;
               this.SuccessVisible = true;
-              this.getList();
+              this.getPolicysList();
             }
           })
-          .on("error", function (error) {
+          .on("error", (error) => {
             this.WaitingVisible = false;
             this.SuccessVisible = false;
           });
@@ -338,7 +354,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .pagination {
   width: 100%;
   display: flex;

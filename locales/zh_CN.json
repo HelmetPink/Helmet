@@ -77,7 +77,7 @@
   },
   "Table": {
     "ID": "ID",
-    "Rent": "保单单价(HELMET)",
+    "Rent": "保费(HELMET)",
     "Premium": "保费",
     "AllRent": "总保费",
     "Amount": "保单数量",
@@ -299,11 +299,11 @@
     "Insurance_text3": "最新价",
     "Insurance_text4": "保期",
     "Insurance_text5": "操作",
-    "Insurance_text6": "腰斩险",
-    "Insurance_text7": "翻倍险",
+    "Insurance_text6": "看跌险",
+    "Insurance_text7": "看涨险",
     "Insurance_text8": "发行保险",
-    "Insurance_text9": "立即创建翻倍险",
-    "Insurance_text10": "立即创建腰斩险",
+    "Insurance_text9": "立即创建看涨险",
+    "Insurance_text10": "立即创建看跌险",
     "Insurance_text11": "出险价",
     "Insurance_text13": "已到期",
     "Insurance_text14": "已全部成交",
@@ -316,7 +316,8 @@
     "Insurance_text21": "翻倍价",
     "Insurance_text22": "已结束",
     "Insurance_text23": "抵押",
-    "Insurance_text24": "购买"
+    "Insurance_text24": "购买",
+    "Insurance_text25": "已撤销"
   },
   "Migration": {
     "MyBurning": "燃烧中",
@@ -393,9 +394,20 @@
     "IBO_text38": "8.31 20:00 UTC+8",
     "IBO_text39": "8.31 20:00 UTC+8",
     "IBO_text40": "9.3 23:00 UTC+8",
-    "IBO_text41": "9.1 19:00 UTC+8"
+    "IBO_text41": "9.1 19:00 UTC+8",
+    "IBO_text42": "9.14 23:00 UTC+8",
+    "Approve": "授权",
+    "IBO_text43": "9.16 22:30 UTC+8",
+    "IBO_text44": "9.16 19:00 UTC+8",
+    "IBO_text45": "结算50%时间",
+    "IBO_text46": "9.17 02:05 UTC+8",
+    "IBO_text47": "10.17 02:05 UTC+8",
+    "IBO_text48": "锁仓部分（一个月后解锁）",
+    "IBO_text49": "{token} IBO 需要长达一个月的锁仓期限，存在不确定性风险，请注意风险。Helmet.insure 不承担任何投资损失责任。"
   },
   "Dialogs": {
-    "WaitText1": "你将要发布 {symbol}({type}) 保险，抵押资产为 {volume} {collateral} ，出险价格为 {strikeprice} {underlying}，预计保费收益 {price} HELMET ，到期时间 {expiry}"
+    "WaitText1": "你将要发布 {symbol}({type}) 保险，抵押资产为 {volume} {collateral} ，出险价格为 {strikeprice} {underlying}，预计保费收益 {price} HELMET ，到期时间 {expiry}",
+    "InsuranceTip1": "现在发行保险有立即被行权的风险，请谨慎发行保险。",
+    "MaxStaking": "最多抵押 {number} HELMET"
   }
 }

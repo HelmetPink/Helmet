@@ -25,6 +25,17 @@
           />
           <img
             class="combo_img"
+            style="width: 148px"
+            :src="
+              require(`~/assets/img/mining/partner_${
+                item.Status === 3 ? 'expired_' + storeThemes : 'web'
+              }.png`)
+            "
+            alt=""
+            v-if="item.IsPartner"
+          />
+          <img
+            class="combo_img"
             style="width: 116px"
             :src="
               require(`~/assets/img/mining/${
@@ -61,7 +72,7 @@
             <span
               class="onePager"
               v-html="item.PoolName"
-              @click="hadnleShowOnePager($event, item.ONE_PAGER)"
+              @click="hadnleShowOnePager($event, item.HaveOnePager)"
             ></span>
           </section>
           <section class="mining_pool_earn_web WEB">
@@ -98,13 +109,13 @@
             <span>{{ item.YearEarnType }}</span>
           </section>
           <section class="APY mining_pool_reward_web WEB" v-else>
-            <span>{{ item.APY }}</span>
+            <span>{{ item.APR }}</span>
             <span>
               {{ item.YearEarnType }}
               <el-tooltip effect="dark" placement="top-start">
                 <div slot="content" style="width: 200px">
-                  <p>{{ $t("Tip.APR") }} : {{ item.APY }}</p>
-                  <p>{{ $t("Tip.APY") }} : {{ item.APR }}</p>
+                  <p>{{ $t("Tip.APR") }} : {{ item.APR }}</p>
+                  <p>{{ $t("Tip.APY") }} : {{ item.APY }}</p>
                   <p>{{ $t("Tip.EarnTip1") }}</p>
                   <p>{{ $t("Tip.EarnTip2") }}</p>
                 </div>
@@ -128,11 +139,11 @@
           </section>
           <section class="mining_pool_action_web WEB">
             <button
-              @click="HandleClickAction(item, 'STAKE')"
+              @click="HandleClickAction(item, 'Stake')"
               :class="
                 ActiveMining == item.RewardSymbol &&
                 ShowActiveMining &&
-                ActiveType == 'STAKE'
+                ActiveType == 'Stake'
                   ? 'activeButton stakeMining'
                   : 'stakeMining'
               "
@@ -141,11 +152,11 @@
               <i class="selectDown"></i>
             </button>
             <button
-              @click="HandleClickAction(item, 'CLAIM')"
+              @click="HandleClickAction(item, 'Claim')"
               :class="
                 ActiveMining == item.RewardSymbol &&
                 ShowActiveMining &&
-                ActiveType == 'CLAIM'
+                ActiveType == 'Claim'
                   ? 'activeButton claimMining'
                   : 'claimMining'
               "
@@ -159,7 +170,7 @@
             <span
               class="onePager"
               v-html="item.PoolName"
-              @click="hadnleShowOnePager($event, item.ONE_PAGER)"
+              @click="hadnleShowOnePager($event, item.HaveOnePager)"
             ></span>
             <p>
               {{ $t("Table.EarnList") }}
@@ -182,13 +193,13 @@
               <span>{{ item.YearEarnType }}</span>
             </p>
             <p class="APY" v-else>
-              <span>{{ item.APY }}</span>
+              <span>{{ item.APR }}</span>
               <span>
                 {{ item.YearEarnType }}
                 <el-tooltip effect="dark" placement="top-start">
                   <div slot="content" style="width: 150px">
-                    <p>{{ $t("Tip.APR") }} : {{ item.APY }}</p>
-                    <p>{{ $t("Tip.APY") }} : {{ item.APR }}</p>
+                    <p>{{ $t("Tip.APR") }} : {{ item.APR }}</p>
+                    <p>{{ $t("Tip.APY") }} : {{ item.APY }}</p>
                     <p>{{ $t("Tip.EarnTip1") }}</p>
                     <p>{{ $t("Tip.EarnTip2") }}</p>
                   </div>
@@ -220,11 +231,11 @@
           </section>
           <section class="mining_pool_action_h5 H5">
             <button
-              @click="HandleClickAction(item, 'STAKE', true)"
+              @click="HandleClickAction(item, 'Stake', true)"
               :class="
                 ActiveMining == item.RewardSymbol &&
                 ShowActiveMining &&
-                ActiveType == 'STAKE'
+                ActiveType == 'Stake'
                   ? 'activeButton stakeMining'
                   : 'stakeMining'
               "
@@ -232,16 +243,16 @@
             >
               {{ $t("Table.Stakeing") }}
             </button>
-            <button @click="toCompound" v-if="item.COMPOUND">
+            <button @click="toCompound" v-if="item.Compound">
               <i :class="claimLoading ? 'loading_pic' : ''"></i
               >{{ $t("Table.Compound") }}
             </button>
             <button
-              @click="HandleClickAction(item, 'CLAIM', true)"
+              @click="HandleClickAction(item, 'Claim', true)"
               :class="
                 ActiveMining == item.RewardSymbol &&
                 ShowActiveMining &&
-                ActiveType == 'CLAIM'
+                ActiveType == 'Claim'
                   ? 'activeButton claimMining'
                   : 'claimMining'
               "
@@ -277,7 +288,7 @@
             <div class="wraper_header">
               <h3 class="">
                 {{
-                  ActiveType == "STAKE"
+                  ActiveType == "Stake"
                     ? $t("Insurance.Insurance_text23")
                     : $t("Table.Claim")
                 }}
@@ -312,6 +323,7 @@ import {
   formatMiningPool,
   getComboAPR,
   getAPRAndAPY,
+  getCandyAPR,
 } from "../../config/mining.js";
 export default {
   components: {
@@ -344,12 +356,12 @@ export default {
     if (this.$route.params.earn) {
       this.ActiveMining = this.$route.params.earn;
       this.ShowActiveMining = true;
-      this.ActiveType = "STAKE";
+      this.ActiveType = "Stake";
       if (flag) {
         this.$bus.$emit("OPEN_WRAPER_PAFE", true);
-        this.TradeType = "STAKE";
+        this.TradeType = "Stake";
       } else {
-        this.TradeType = "STAKE";
+        this.TradeType = "Stake";
       }
     }
   },
@@ -370,7 +382,11 @@ export default {
         if (item.PoolType === "compound") {
           await getAPRAndAPY(item);
         }
+        if (item.PoolType === "candy") {
+          await getCandyAPR(item);
+        }
       });
+      console.log(comboPoolList);
     },
     hadnleShowOnePager(e, ONE_PAGER) {
       if (e.target.tagName === "I" && ONE_PAGER) {
@@ -384,8 +400,8 @@ export default {
         return;
       }
     },
-    // 复投
     toCompound() {
+      console.log(this.HelmetBalance);
       this.$bus.$emit("OPEN_COMPOUND", {
         title: "Compound HELMET Earned",
         number: this.HelmetBalance,
@@ -443,7 +459,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .finshed_line {
   width: 100%;
   margin: 20px 0 21px 0;
@@ -793,96 +809,152 @@ export default {
       }
     }
   }
-
-  .mining_item_h5 {
+  .mining_item_wrap {
     width: 100%;
-    padding: 24px 10px;
+    margin-bottom: 10px;
     @include themeify {
       background: themed("color-ffffff");
     }
+  }
+  .mining_item {
+    width: 100%;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
     border-radius: 5px;
+    padding: 24px 10px;
     position: relative;
     .combo_img {
       position: absolute;
       width: 156px;
       height: 37px;
-      left: -28px;
+      left: -8px;
       top: -11px;
     }
-    section {
-      &:nth-of-type(1) {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        > span {
-          font-size: 16px;
-          font-family: IBMPlexSans-Medium, IBMPlexSans;
-          font-weight: 600;
-          @include themeify {
-            color: themed("color-17173a");
-          }
-          line-height: 16px;
-          > i {
-            margin: 0 4px 0 2px;
-            cursor: pointer;
-            svg {
-              fill: rgba(164, 162, 178, 1);
-            }
-            &:hover {
-              svg {
-                fill: #fd8a2b;
-              }
-            }
-          }
+    .mining_pool_name_h5 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      > span {
+        font-size: 16px;
+        font-family: IBMPlexSans-Medium, IBMPlexSans;
+        font-weight: 600;
+        @include themeify {
+          color: themed("color-17173a");
         }
-        p {
-          display: flex;
-          align-items: center;
-          font-size: 14px;
-          font-family: IBMPlexSans;
-          @include themeify {
-            color: darken($color: themed("color-17173a"), $amount: 55%);
+        line-height: 16px;
+        > i {
+          margin: 0 4px 0 2px;
+          cursor: pointer;
+          svg {
+            fill: rgba(164, 162, 178, 1);
           }
-          line-height: 18px;
-          font-weight: normal;
-          .two {
-            width: 35px;
-            height: 20px;
-          }
-          .one {
-            width: 20px;
-            height: 20px;
-          }
-          > span {
-            text-align: center;
-            min-width: 60px;
-            margin-left: 10px;
-            padding: 4px 11px;
-            @include themeify {
-              color: themed("color-f8f9fa");
+          &:hover {
+            svg {
+              fill: #fd8a2b;
             }
-            border-radius: 5px;
-            height: 28px;
           }
         }
       }
-      &:nth-of-type(2) {
+      p {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-top: 14px;
+        font-size: 14px;
+        font-family: IBMPlexSans;
+        @include themeify {
+          color: darken($color: themed("color-17173a"), $amount: 55%);
+        }
+        line-height: 18px;
+        font-weight: normal;
+        .two {
+          width: 35px;
+          height: 20px;
+        }
+        .one {
+          width: 20px;
+          height: 20px;
+        }
+        > span {
+          text-align: center;
+          min-width: 60px;
+          margin-left: 10px;
+          padding: 4px 11px;
+          @include themeify {
+            color: themed("color-f8f9fa");
+          }
+          border-radius: 5px;
+          height: 28px;
+        }
+      }
+    }
+    .mining_pool_reward_h5 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      p {
+        display: flex;
+        flex-direction: column;
+        span {
+          &:nth-of-type(1) {
+            font-size: 14px;
+            font-family: IBMPlexSans;
+            @include themeify {
+              color: themed("color-17173a");
+            }
+          }
+          &:nth-of-type(2) {
+            margin-top: 4px;
+            font-size: 12px;
+            font-family: IBMPlexSans;
+            @include themeify {
+              color: darken($color: themed("color-17173a"), $amount: 55%);
+            }
+          }
+        }
+      }
+      div {
+        display: flex;
+        align-items: center;
+        > i {
+          display: block;
+          width: 24px;
+          height: 24px;
+          background-image: url("../../assets/img/insurancelist/insuranceTime.png");
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+          margin-right: 8px;
+        }
         p {
           display: flex;
           flex-direction: column;
-          span {
+          > span {
             &:nth-of-type(1) {
+              display: flex;
+              align-items: center;
+              align-self: flex-start;
+              border-radius: 3px;
               font-size: 14px;
               font-family: IBMPlexSans;
               @include themeify {
                 color: themed("color-17173a");
+              }
+              line-height: 14px;
+              font-weight: 500;
+              height: 18px;
+              b {
+                font-size: 10px;
+                font-weight: 500;
+              }
+              i {
+                font-size: 12px;
+                font-family: IBMPlexSans-Bold, IBMPlexSans;
+                font-weight: bold;
+                color: #cfcfd2;
+                margin: 0 2px;
+                &:last-of-type {
+                  display: none;
+                }
               }
             }
             &:nth-of-type(2) {
@@ -892,93 +964,38 @@ export default {
               @include themeify {
                 color: darken($color: themed("color-17173a"), $amount: 55%);
               }
-            }
-          }
-        }
-        div {
-          display: flex;
-          align-items: center;
-          > i {
-            display: block;
-            width: 24px;
-            height: 24px;
-            background-image: url("../../assets/img/insurancelist/insuranceTime.png");
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
-            margin-right: 8px;
-          }
-          p {
-            display: flex;
-            flex-direction: column;
-            > span {
-              &:nth-of-type(1) {
-                display: flex;
-                align-items: center;
-                align-self: flex-start;
-                border-radius: 3px;
-                font-size: 14px;
-                font-family: IBMPlexSans;
-                @include themeify {
-                  color: themed("color-17173a");
-                }
-                line-height: 14px;
-                font-weight: 500;
-                height: 18px;
-                b {
-                  font-size: 10px;
-                  font-weight: 500;
-                }
-                i {
-                  font-size: 12px;
-                  font-family: IBMPlexSans-Bold, IBMPlexSans;
-                  font-weight: bold;
-                  color: #cfcfd2;
-                  margin: 0 2px;
-                  &:last-of-type {
-                    display: none;
-                  }
-                }
-              }
-              &:nth-of-type(2) {
-                margin-top: 4px;
-                font-size: 12px;
-                font-family: IBMPlexSans;
-                @include themeify {
-                  color: darken($color: themed("color-17173a"), $amount: 55%);
-                }
-                line-height: 12px;
-              }
+              line-height: 12px;
             }
           }
         }
       }
-      &:nth-of-type(3) {
+    }
+    .mining_pool_action_h5 {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      .activeButton {
+        border: 2px solid #fd7e14 !important;
+        color: #fd7e14 !important;
+      }
+      button {
+        flex: 1;
+        height: 36px;
+        @include themeify {
+          background: themed("insure_button");
+          border: 1px solid themed("insure_button_border");
+          color: themed("insure_button_text");
+        }
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: HelveticaNeue;
+        border: 2px solid transparent;
+        line-height: 24px;
+        font-weight: 500;
         display: flex;
-        justify-content: space-between;
-        margin-top: 12px;
-        .activeButton {
-          border: 2px solid #fd7e14 !important;
-          color: #fd7e14 !important;
-        }
-        button {
-          flex: 1;
-          height: 36px;
-          @include themeify {
-            background: themed("insure_button");
-            border: 1px solid themed("insure_button_border");
-            color: themed("insure_button_text");
-          }
-          border-radius: 5px;
-          font-size: 14px;
-          font-family: HelveticaNeue;
-          border: 2px solid transparent;
-          line-height: 24px;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-sizing: border-box;
-        }
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
       }
     }
   }

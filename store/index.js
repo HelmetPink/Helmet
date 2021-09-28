@@ -1,6 +1,6 @@
 export const state = () => ({
   locale: "en_US",
-  chainID: 56,
+  chainID: null,
   themes: "light",
   localeList: [
     {
@@ -37,15 +37,13 @@ export const state = () => ({
     },
   ],
   userInfo: {
-    // 用户信息
-    data: {
-      isLogin: false,
-      account: null,
-      balace: "--",
-    },
-    status: 0,
+    
+    name: "MetaMask",
+    isLogin: false,
+    account: null,
   },
-  walletType: "", // 钱包类型
+  walletType: "", 
+  refreshNumber: 0,
 });
 
 export const mutations = {
@@ -60,11 +58,17 @@ export const mutations = {
   SET_CHAINID(state, data) {
     state.chainID = data;
   },
+  SET_WALLET_RYPE(state, data) {
+    state.walletType = data;
+  },
   SET_USER_INFO(state, data) {
     state.userInfo = data;
   },
+  SET_REFRESH_DATA(state) {
+    console.log(state);
+    state.refreshNumber = state.refreshNumber + 1;
+  },
 };
-
 export const actions = {
   // nuxtServerInit(store, { req }) {
   //     if (req.locale) {
@@ -74,11 +78,16 @@ export const actions = {
   setThemes({ commit }, data) {
     commit("SET_THEMES", data);
   },
-  // 设置钱包类型
   setWalletType({ commit }, data) {
     commit("SET_WALLET_RYPE", data);
   },
-  setUserInfo({ commit, state }, data) {
+  setUserInfo({ commit }, data) {
     commit("SET_USER_INFO", data);
+  },
+  setChainID({ commit }, data) {
+    commit("SET_CHAINID", data);
+  },
+  refreshData({ commit }) {
+    commit("SET_REFRESH_DATA");
   },
 };

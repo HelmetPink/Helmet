@@ -1,9 +1,10 @@
 <template>
   <div class="swiper-container">
     <div class="swiper-wrapper">
+      <div class="swiper-slide kala"><div></div></div>
+      <div class="swiper-slide lpt"><div></div></div>
       <div class="swiper-slide newinsure"><div></div></div>
       <div class="swiper-slide insure"><div></div></div>
-      <div class="swiper-slide ibo"><div></div></div>
       <div class="swiper-slide guard"><div></div></div>
       <a
         class="swiper-slide dis"
@@ -79,7 +80,7 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .swiper-pagination {
   display: flex;
   align-items: center;
@@ -109,7 +110,7 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 @media screen and (min-width: 750px) {
   .swiper-container {
     width: 100%;
@@ -134,6 +135,18 @@ export default {
         background-repeat: no-repeat;
         background-size: 1026px 180px;
         background-position: center;
+      }
+    }
+    .kala {
+      background: #288d59;
+      > div {
+        background-image: url("../../assets/img/banner/kala_web.png");
+      }
+    }
+    .lpt {
+      background: #ac000a;
+      > div {
+        background-image: url("../../assets/img/banner/lpt_web.png");
       }
     }
     .newinsure {
@@ -194,6 +207,18 @@ export default {
         background-repeat: no-repeat;
         background-size: 100% 100%;
         background-position: center;
+      }
+    }
+    .kala {
+      background: #288d59;
+      > div {
+        background-image: url("../../assets/img/banner/kala_h5.png");
+      }
+    }
+    .lpt {
+      background: #ac000a;
+      > div {
+        background-image: url("../../assets/img/banner/lpt_h5.png");
       }
     }
     .newinsure {

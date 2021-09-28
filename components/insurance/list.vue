@@ -48,7 +48,7 @@
             <section class="insurance_price_web WEB">
               <span>
                 {{ fixD(item.LastPrice, item.LastPriceDecimals) }}
-                {{ item.Call.UnderlyingSymbol }}
+                {{ item.InsurancePut }}
               </span>
               <span>
                 $ {{ fixD(item.LastUsdtPrice, item.LastUsdtPriceDecimals) }}
@@ -110,7 +110,7 @@
               <p>
                 <span>
                   {{ fixD(item.LastPrice, item.LastPriceDecimals) }}
-                  {{ item.Call.UnderlyingSymbol }}
+                  {{ item.InsurancePut }}
                 </span>
                 <span>
                   $ {{ fixD(item.LastUsdtPrice, item.LastUsdtPriceDecimals) }}
@@ -141,7 +141,7 @@
           />
           <Supply
             :ActiveData="ActiveData"
-            :InsureTypeActive="'All'"
+            :ActiveType="'All'"
             v-if="TradeType == 'Sell'"
           />
         </div>
@@ -168,10 +168,14 @@
               >
             </div>
             <div class="activePage">
-              <Market :ActiveData="ActiveData" :ActiveType="ActiveType" />
+              <Market
+                :ActiveData="ActiveData"
+                :ActiveType="ActiveType"
+                v-if="TradeType == 'Buy'"
+              />
               <Supply
-                :ActiveInsurance="ActiveInsurance"
-                :InsureTypeActive="InsureTypeActive"
+                :ActiveData="ActiveData"
+                :ActiveType="ActiveType"
                 v-if="TradeType == 'Sell'"
               />
             </div>
@@ -187,9 +191,12 @@ import { fixD, toRounding } from "~/assets/js/util.js";
 import Market from "./market";
 import Supply from "./supply";
 import Wraper from "~/components/common/wraper.vue";
-import { InsuranceTypeList } from "../../config/insurance.js";
+import {
+  getCurrentInsurance,
+  InsuranceTypeList,
+} from "../../config/insurance.js";
 import { getTokenPrice } from "../../interface/event.js";
-import { fromWei, toWei } from "../../interface/index.js";
+import { fromWei, toWei } from "../../web3/index.js";
 export default {
   components: {
     Market,
@@ -206,50 +213,47 @@ export default {
       ActiveData: [],
       ActiveType: "Call",
       ActiveInsurance: "",
-      InsureTypeActive: "Put", //H5 tab
       TradeType: "Buy",
     };
   },
   mounted() {
     this.formatInsuranceData();
     this.InsuanceData = InsuranceTypeList;
+    console.log(this.InsuanceData);
   },
   methods: {
     formatInsuranceData() {
       InsuranceTypeList.map(async (Item) => {
-        if (Item.Call) {
+        if (!Item.Ads) {
+          let CurrentInsurance = getCurrentInsurance({
+            Type: "Call",
+            Insurance: Item.InsuranceName,
+          });
           const BUSD = "0xe9e7cea3dedca5984780bafc599bd69add087d56";
+          const BNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
           const {
             CollateralAddress,
-            StrikePriceDecimals,
+            CollateralDecimals,
             UnderlyingAddress,
             UnderlyingDecimals,
-          } = Item.Call;
-          let Amount = toWei("1", StrikePriceDecimals);
+          } = CurrentInsurance;
+          let Amount = toWei("1");
+          let Amount1 = toWei("1", CollateralDecimals);
           let Data = await getTokenPrice({
-            fromTokenAddress: CollateralAddress,
-            toTokenAddress: UnderlyingAddress,
+            fromTokenAddress: BNB,
+            toTokenAddress: BUSD,
             amount: Amount,
           });
           let Data1 = await getTokenPrice({
             fromTokenAddress: CollateralAddress,
             toTokenAddress: BUSD,
-            amount: Amount,
+            amount: Amount1,
           });
-          let Data2 = await getTokenPrice({
-            fromTokenAddress: CollateralAddress,
-            toTokenAddress: BUSD,
-            amount: Amount,
-          });
+          let BnbUsdtPrice = fromWei(Data.data.toTokenAmount);
+          let TokenUsdtPrice = fromWei(Data1.data.toTokenAmount);
           return (
-            (Item.LastPrice = fromWei(
-              Data.data.toTokenAmount,
-              UnderlyingDecimals
-            )),
-            (Item.LastUsdtPrice = fromWei(
-              Data1.data.toTokenAmount,
-              UnderlyingDecimals
-            ))
+            (Item.LastPrice = TokenUsdtPrice / BnbUsdtPrice),
+            (Item.LastUsdtPrice = TokenUsdtPrice)
           );
         }
       });
@@ -263,7 +267,7 @@ export default {
         this.$bus.$emit("OPEN_WRAPER_PAFE", true);
       }
     },
-    sellInsurance(data, type, isH5) {
+    sellInsurance(data, isH5) {
       this.ActiveInsurance = data.InsuranceName;
       this.ActiveData = data;
       this.TradeType = "Sell";
@@ -279,7 +283,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .insurance_title {
   display: flex;
   align-items: center;
@@ -532,7 +536,7 @@ export default {
       right: 10px;
       width: 24px;
       height: 24px;
-      top: 10px;
+      top: 20px;
       fill: #ccc;
       cursor: pointer;
     }
@@ -736,12 +740,10 @@ export default {
       }
     }
   }
-  .insurance_detail_h5 {
-  }
   .checkType {
     display: flex;
     height: 32px;
-    margin: 16px 10px;
+    margin: 0 10px 16px 10px;
     @include themeify {
       background: themed("color-e8e8eb");
     }

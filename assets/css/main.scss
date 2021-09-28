@@ -1,4 +1,4 @@
-@import "./base.scss";
+@import "./themes.scss";
 * {
   margin: 0px;
   padding: 0px;
@@ -65,7 +65,6 @@ select {
   outline: none;
 }
 
-// 去掉数字类型右侧上下箭头
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -103,7 +102,7 @@ $td-gap: 16px;
 .table {
   width: 100%;
   border-collapse: collapse;
-  color: $text-t;
+  color: #dbdbdb;
   thead {
     th {
       height: 44px;
@@ -119,7 +118,7 @@ $td-gap: 16px;
   }
   tbody {
     tr {
-      border-bottom: 1px solid $border;
+      border-bottom: 1px solid #303030;
       &:last-child {
         border-bottom: none;
       }
@@ -139,8 +138,8 @@ $td-gap: 16px;
           display: flex;
           align-items: center;
           margin-left: 16px;
-          color: $text-m;
-          background: $main-color;
+          color: #ffffff;
+          background: #fd7e14;
           height: 32px;
           line-height: 32px;
           padding: 0px 10px;
@@ -151,15 +150,15 @@ $td-gap: 16px;
             margin-right: 4px;
           }
           &:hover {
-            background: darken($color: $main-color, $amount: 50%);
+            background: darken($color: #fd7e14, $amount: 50%);
           }
         }
         > button {
           display: flex;
           align-items: center;
           margin-left: 16px;
-          color: $text-m;
-          background: $main-color;
+          color: #ffffff;
+          background: #fd7e14;
           height: 32px;
           line-height: 32px;
           padding: 0px 10px;
@@ -170,10 +169,10 @@ $td-gap: 16px;
             margin-right: 4px;
           }
           &:hover {
-            background: darken($color: $main-color, $amount: 50%);
+            background: darken($color: #fd7e14, $amount: 50%);
           }
           &:disabled {
-            background: rgba($main-color, 0.8);
+            background: rgba(#fd7e14, 0.8);
           }
         }
       }

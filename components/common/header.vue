@@ -28,7 +28,7 @@
         Migration</span
       >
       <a
-        v-if="!userInfo.data.isLogin"
+        v-if="!CurrentAccount.isLogin"
         class="connect-wallet-btn"
         @click="openWallectSelect"
         >{{ $t("Header.ConnectWallet") }}
@@ -80,7 +80,6 @@ import WallectSelect from "./wallet-select";
 import CurrentAccount from "~/components/account/current-account.vue";
 import ChangeAccount from "~/components/account/change-account.vue";
 import Langauage from "~/components/common/langauage.vue";
-import { maticNetwork, bscNetwork } from "~/interface/common_contract.js";
 import { HelmetBalance } from "../../web3/index.js";
 export default {
   name: "p-header",
@@ -103,8 +102,11 @@ export default {
     };
   },
   computed: {
-    userInfo() {
+    CurrentAccount() {
       return this.$store.state.userInfo;
+    },
+    RefreshData() {
+      return this.$store.state.refreshNumber;
     },
     ChainID() {
       let chainID = this.$store.state.chainID;
@@ -115,18 +117,37 @@ export default {
     },
   },
   watch: {
-    userInfo: {
-      handler: "userInfoWatch",
+    CurrentAccount: {
+      handler: "reloadData",
       immediate: true,
     },
     ChainID(newValue) {
       this.chainID = newValue;
     },
-  },
-  mounted() {
-    this.getHelmetBalance();
+    RefreshData: {
+      handler: "refreshData",
+      immediate: true,
+    },
   },
   methods: {
+    reloadData(Value) {
+      if (Value && Value.account) {
+        let account = Value.account;
+        account = account.toUpperCase();
+        this.accountText =
+          account.substr(0, 1) +
+          account.substr(1, 1).toLowerCase() +
+          account.substr(2, 3) +
+          "..." +
+          account.substr(-4);
+        this.getHelmetBalance();
+      }
+    },
+    refreshData(Value, NewValue) {
+      if (Value != NewValue) {
+        this.getHelmetBalance();
+      }
+    },
     jump() {
       this.$router.push("/migration");
     },
@@ -152,18 +173,7 @@ export default {
     closeCurrentAccount() {
       this.showCurrentAccount = false;
     },
-    userInfoWatch(newValue) {
-      if (newValue.data && newValue.data.account) {
-        let account = newValue.data.account;
-        account = account.toUpperCase();
-        this.accountText =
-          account.substr(0, 1) +
-          account.substr(1, 1).toLowerCase() +
-          account.substr(2, 3) +
-          "..." +
-          account.substr(-4);
-      }
-    },
+
     openWallectSelect() {
       this.showWallectSelect = true;
       this.WallectSelectType = "ALL";
@@ -179,7 +189,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "~/assets/css/base.scss";
+@import "~/assets/css/themes.scss";
 .header-container {
   > .account {
     height: 100%;
