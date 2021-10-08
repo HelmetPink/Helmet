@@ -46,7 +46,7 @@
                   :startVal="Number(0)"
                   :endVal="Number(TotalHelmetsBorrowedVolume)"
                   :duration="2000"
-                  :decimals="2"
+                  :decimals="0"
                 />
               </template>
             </span>
@@ -80,6 +80,10 @@
         </div>
       </li>
     </ul>
+    <BuyHelmetDialog
+      :DialogVisible="BuyHelmetVisible"
+      :DialogClose="BuyHelmetClose"
+    />
   </div>
 </template>
 <script>
@@ -90,15 +94,16 @@ import {
   getLongTokenValue,
   getTokenPrice,
 } from "~/interface/event.js";
-import { BalanceOf } from "~/interface/read_contract.js";
 import countTo from "vue-count-to";
 import { fromWei } from "../../web3/index.js";
 import { TokenBalance } from "~/web3/index.js";
+import BuyHelmetDialog from "../../components/dialogs/buy-helmet-dialog.vue";
 import Web3 from "web3";
 export default {
   name: "insurance_data",
   components: {
     countTo,
+    BuyHelmetDialog
   },
   data() {
     return {
@@ -109,6 +114,7 @@ export default {
       TotalHelmetsBorrowedVolume: 0,
       Helmetvolume: 0,
       GuardVolume: 0,
+      BuyHelmetVisible: false,
     };
   },
   computed: {
@@ -135,18 +141,20 @@ export default {
         this.TotalHelmetsBorrowedVolume = res;
       });
       this.getHelmetVolume().then((res) => {
-        console.log(res);
         this.Helmetvolume = res;
       });
-     
+
       this.getHelmetPrice().then((res) => {
         this.HelmetPrice = fromWei(res.data.toTokenAmount);
       });
     });
   },
   methods: {
-    handleClickBuy() {                            
-      this.$bus.$emit("OPEN_BUY_DIALOG", true);
+    handleClickBuy() {
+      this.BuyHelmetVisible = true;
+    },
+    BuyHelmetClose() {
+      this.BuyHelmetVisible = false;
     },
     userInfoWatch(newValue) {
       if (newValue) {

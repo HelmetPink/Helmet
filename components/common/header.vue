@@ -143,8 +143,8 @@ export default {
         this.getHelmetBalance();
       }
     },
-    refreshData(Value, NewValue) {
-      if (Value != NewValue) {
+    refreshData(NewValue, Value) {
+      if (Value != NewValue && NewValue > Value) {
         this.getHelmetBalance();
       }
     },
@@ -156,10 +156,6 @@ export default {
     },
     handleClickAirdrop() {
       this.$bus.$emit("AIRDROP_DIALOG", true);
-    },
-    async handleClickNetwork() {
-      this.showWallectSelect = true;
-      this.WallectSelectType = "NETWORK";
     },
     openChangeWallet() {
       this.showChangeWallet = true;
@@ -332,7 +328,7 @@ export default {
     min-width: 1026px;
     // height: 80px;
     @include themeify {
-      background: themed("color-f8f9fa");
+      background: transparent;
     }
     .logo {
       display: none;
@@ -358,7 +354,7 @@ export default {
     justify-content: space-between;
     padding: 12px 10px 50px;
     @include themeify {
-      background: themed("color-ffffff");
+      background: transparent;
     }
     .logo {
       display: flex;
